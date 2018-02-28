@@ -1,0 +1,42 @@
+<div class="modal-style">	
+	<div class="modal-header clearfix">
+		<h4 ng-if="accion == 'crear'" class="modal-title">Nuevo plan</h4>
+		<h4 ng-if="accion == 'editar'" class="modal-title">Editar plan</h4>
+		<h4 ng-if="accion == 'eliminar'" class="modal-title">Eliminar plan</h4>
+		<span class="close ion ion-android-close" ng-click="modalClose()"></span>
+	</div>
+	<div class="modal-body">
+		<form class="form-horizontal" name="modal-demo-form" ng-if="accion == 'crear' || accion == 'editar'" action="javascript:;">
+			<div class="row form-group">
+				<div class="col-sm-6">
+					<label>Descripción</label>
+					<input type="text" class="form-control" ng-model="plan.descripcion">
+				</div>
+				<div class="col-sm-6">
+					<label>Días</label>
+					<input type="number" class="form-control" min="1" ng-model="plan.dias">
+				</div>
+			</div>
+			<div class="row form-group">
+				<div class="col-sm-6">
+					<label>Porcentaje</label>
+					<input type="number" class="form-control" min="0" ng-model="plan.porcentaje">
+				</div>
+				<div class="col-sm-6">
+					<label class="control-label">Sucursal</label>
+					<select class="form-control" ng-model="plan.sucursales_id" ng-options="item.id as item.descripcion for item in sucursales"></select>
+				</div>
+			</div>
+		</form>
+		<div class="row form-group" ng-if="accion == 'eliminar'">
+			<h3>¿Realmente desea eliminar este plan?</h3>
+		</div>
+		<div class="row form-group">
+			<div class="col-sm-12 text-right">
+				<button class="btn btn-success" ng-if="accion == 'crear'" ng-click="saveData(plan)">Registrar</button>
+				<button class="btn btn-success" ng-if="accion == 'editar'" ng-click="saveData(plan)">Actualizar</button>
+				<button class="btn btn-danger" ng-if="accion == 'eliminar'" ng-click="saveData(plan)">Confirmar</button>
+			</div>
+		</div>
+	</div>
+</div>

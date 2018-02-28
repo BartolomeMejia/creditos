@@ -1,0 +1,113 @@
+<div class="page">
+	<div class="page-wrap">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="panel panel-default panel-hovered panel-stacked mb20">
+					<div class="panel-heading"><h4>Detalle del crédito</h4></div>
+					<div class="panel-body">
+						<div class="row">
+							<div class="form-horizontal">
+								<div class="form-group">
+
+									<label class="col-md-1 control-label">PDI:</label>
+									<div class="col-md-4">
+										<input type="text" class="form-control" ng-model="cliente.cliente.dpi" disabled>
+									</div>
+
+									<label class="col-md-2 control-label">Plan de préstamo:</label>
+									<div class="col-md-4">
+										<input type="text" class="form-control" ng-model="cliente.planes.descripcion" disabled>
+									</div>
+
+									<br>
+									<br>
+
+									<label class="col-md-1 control-label">Nombre:</label>
+									<div class="col-md-4">
+										<input type="text" class="form-control" ng-model="cliente.nombrecompleto" disabled>
+									</div>
+									<label class="col-md-2 control-label">Fecha de Inicio:</label>
+									<div class="col-md-4">
+										<input type="text" class="form-control" ng-model="cliente.fecha_inicio" disabled>
+									</div>
+
+									<br>
+									<br>
+
+									<label class="col-md-1 control-label">Cobrador:</label>
+									<div class="col-md-4">
+										<input type="text" class="form-control" ng-model="cliente.usuariocobrador.nombre" disabled>
+									</div>
+									<label class="col-md-2 control-label">Fecha de Finalización:</label>
+									<div class="col-md-4">
+										<input type="text" class="form-control" ng-model="cliente.porcentaje" disabled>
+									</div>
+
+								</div>
+							</div>
+						</div>
+						<br>
+						<br>
+						<div class="row" style="margin-left: 18%;">
+							<div class="col-md-4">
+								<div class="panel panel-default mb20 mini-box panel-hovered">
+									<div class="panel-body">
+										<div class="clearfix">
+											<div class="info left">
+												<h2 class="mt0 text-primary text-bold">{{cliente.saldo}}</h2>
+											</div>
+										</div>
+									</div>
+									<div class="panel-footer clearfix panel-footer-sm panel-footer-primary">
+										<p class="mt0 mb0 left">Saldo actual</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-sm-4">
+								<div class="panel panel-default mb20 mini-box panel-hovered">
+									<div class="panel-body">
+										<div class="clearfix">
+											<div class="info left">
+												<h2 class="mt0 text-success text-bold">{{cliente.total}}</h2>
+											</div>
+										</div>
+									</div>
+									<div class="panel-footer clearfix panel-footer-sm panel-footer-success">
+										<p class="mt0 mb0 left">Total de crédito</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<br>
+						<br>
+						<div class="row">
+							<div class="col-md-1"></div>
+							<div class="col-md-10">
+								<progressbar class="progress-striped" value="cliente.porcentaje" type="success">{{cliente.porcentaje}}%</progressbar>
+								<!-- <progressbar class="progress-striped" ng-model="cliente.porcentaje" type="primary">{{cliente.porcentaje}}</progressbar> -->
+							</div>
+						</div>
+						<br>
+						<br>
+						<div class="row">
+							<div class="col-sm-4"></div>
+							<div class="col-sm-4">
+								<a type="button" class="btn btn-success btn-rounded" href="#/clientes">Imprimir estado de cuenta</a>
+								<a type="button" class="btn btn-success btn-rounded" href="#/abonos/{{ cliente.cliente.dpi }}">Abonar cuotas</a>
+								<a type="button" class="btn btn-success btn-rounded" href="#/clientes">Renovar crédito</a>
+							</div>
+						</div>
+						<br>
+						<br>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="toast toast-{{positionModel}}">
+			<alert ng-repeat="toast in toasts" type="{{toast.type}}" close="closeAlert($index)" class="toast-{{toast.anim}}">
+				<div ng-bind-html="toast.msg"></div>
+			</alert>
+		</div>
+	</div> <!-- #end page-wrap -->
+</div>
