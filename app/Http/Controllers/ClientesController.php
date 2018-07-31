@@ -10,33 +10,28 @@ use App\Clientes;
 use App\Creditos;
 use App\CreditosDetalle;
 
-class ClientesController extends Controller
-{
+class ClientesController extends Controller {
     public $statusCode  = 200;
     public $result      = false;
     public $message     = "";
     public $records     = [];
 
-    public function index()
-    {
+    public function index() {
         try {
             $registros = Clientes::with('referenciasPersonales','creditos')->get();
 
-            if( $registros ){
+            if ($registros) {
                 $this->statusCode   = 200;
                 $this->result       = true;
                 $this->message      = "Registros consultados exitosamente";
                 $this->records      = $registros;
-            }
-            else
+            } else
                 throw new \Exception("No se encontraron registros");
-                
         } catch (\Exception $e) {
             $this->statusCode   = 200;
             $this->result       = false;
             $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al consultar los registros";
-        }
-        finally{
+        } finally {
             $response = [
                 'result'    => $this->result,
                 'message'   => $this->message,
@@ -57,7 +52,7 @@ class ClientesController extends Controller
     public function store(Request $request)
     {
         try {
-            $nuevoRegistro = \DB::transaction( function() use ( $request){
+            $nuevoRegistro = \DB::transaction( function() use ($request) {
                                 $nuevoRegistro = Clientes::create([
                                                     'nombre'        => $request->input('nombre'),
                                                     'apellido'      => $request->input('apellido'),
