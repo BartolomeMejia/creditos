@@ -7,13 +7,19 @@ angular.module("app.ctrls", ["LocalStorageModule", "app.constants"])
 // Root Controller
 .controller("AppCtrl", ["$rootScope", "$scope", "$timeout","$window", "localStorageService", "$http", "API_URL" , function($rs, $scope, $timeout, $window, localStorageService, $http, API_URL) {
 
-	$http.get(API_URL+'session/check').then(function(response) {
+	$http.get(API_URL+'session/check').then(successCallback, errorCallback)
+
+	function successCallback(response) {
 		if (!response.data.result) {
-			console.log('without active session')
 			localStorageService.cookie.remove('usuario');
 			window.location.href = "login.html";
 		}
-	});
+	}
+
+	function errorCallback() {
+		localStorageService.cookie.remove('usuario');
+		window.location.href = "login.html";
+	}
 
 	if(!localStorageService.cookie.get('usuario'))
 		window.location.href = "login.html";
