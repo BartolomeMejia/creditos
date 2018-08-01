@@ -54,13 +54,17 @@
 					</select>
 				</div>
 			</div>
-			<div class="row form-group">
+			<div class="row form-group" ng-if="accion == 'crear' || accion == 'editar'">
 				<div class="col-sm-12 text-right">
 					<button class="btn btn-success" ng-if="accion == 'crear'" ng-click="saveData(cliente)" ng-disabled="form.$invalid">Registrar</button>
 					<button class="btn btn-success" ng-if="accion == 'editar'" ng-click="saveData(cliente)" ng-disabled="form.$invalid">Actualizar</button>
-					<button class="btn btn-danger" ng-if="accion == 'eliminar'" ng-click="saveData(cliente)">Confirmar</button>
 				</div>
 			</div>
 		</form>
+		<div class="row form-group" ng-if="accion == 'eliminar'">
+			<div class="col-sm-12 text-right">
+				<button class="btn btn-danger" ng-click="saveData(cliente)">Confirmar</button>
+			</div>
+		</div>
 	</div>
 </div>

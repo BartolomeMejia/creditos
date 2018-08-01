@@ -186,6 +186,7 @@
 		$scope.modalCreateOpen = function() {
 			$scope.usuario = {};
 			$scope.accion = 'crear';
+			$scope.passwordRequired = true;
 
 			modal = $modal.open({
 				templateUrl: "views/usuarios/modal.html",
