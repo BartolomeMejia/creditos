@@ -2,10 +2,18 @@
 "use strict";
 
 
-angular.module("app.ctrls", ["LocalStorageModule"])
+angular.module("app.ctrls", ["LocalStorageModule", "app.constants"])
 
 // Root Controller
-.controller("AppCtrl", ["$rootScope", "$scope", "$timeout","$window", "localStorageService", function($rs, $scope, $timeout, $window, localStorageService) {
+.controller("AppCtrl", ["$rootScope", "$scope", "$timeout","$window", "localStorageService", "$http", "API_URL" , function($rs, $scope, $timeout, $window, localStorageService, $http, API_URL) {
+
+	$http.get(API_URL+'session/check').then(function(response) {
+		if (!response.data.result) {
+			console.log('without active session')
+			localStorageService.cookie.remove('usuario');
+			window.location.href = "login.html";
+		}
+	});
 
 	if(!localStorageService.cookie.get('usuario'))
 		window.location.href = "login.html";
@@ -131,7 +139,7 @@ angular.module("app.ctrls", ["LocalStorageModule"])
          	Fullscreen.all()
 	};
 
-	$scope.cerrarSesion = function(){
+	$scope.cerrarSesion = function() {
 		localStorageService.cookie.remove('usuario');
 		window.location.href = "login.html";
 	}	

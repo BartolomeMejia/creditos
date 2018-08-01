@@ -17,10 +17,11 @@ use Exception;
 
 class UsuariosController extends Controller
 {
-    public $status_code = 200;
-    public $result = false;
-    public $message = "Ocurrió un problema con tu transacción, intenta más tarde";
-    public $records = [];
+    protected $status_code = 200;
+    protected $result = false;
+    protected $message = "Ocurrió un problema con tu transacción, intenta más tarde";
+    protected $records = [];
+    protected $sessionKey = 'usuario';
 
     public function index()
     {
@@ -76,14 +77,14 @@ class UsuariosController extends Controller
             } else
                 throw new \Exception("Usuario ingresado ya existe, favor verifica");
                   
-            $this->status_code   = 200;
-            $this->result       = true;
-            $this->message      = "Registro creado exitosamente";
-            $this->records      = $nuevoRegistro;
+            $this->status_code = 200;
+            $this->result = true;
+            $this->message = "Registro creado exitosamente";
+            $this->records = $nuevoRegistro;
         } catch (\Exception $e) {
             $this->status_code   = 200;
             $this->result       = false;
-            $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al crear el registro";
+            $this->message = env('APP_DEBUG') ? $e->getMessage() : $this->message;
         } finally {
             $response = [
                 'result'    => $this->result,
@@ -110,7 +111,7 @@ class UsuariosController extends Controller
         } catch (\Exception $e) {
             $this->status_code   = 404;
             $this->result       = false;
-            $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al consultar el registro";
+            $this->message = env('APP_DEBUG') ? $e->getMessage() : $this->message;
         } finally {
             $response = [
                 'result'    => $this->result,
@@ -153,7 +154,7 @@ class UsuariosController extends Controller
             \DB::rollback();
             $this->status_code   = 200;
             $this->result       = false;
-            $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al editar el registro";
+            $this->message = env('APP_DEBUG') ? $e->getMessage() : $this->message;
         } finally {
             $response = [
                 'result'    => $this->result,
@@ -180,7 +181,7 @@ class UsuariosController extends Controller
         } catch (\Exception $e) {
             $this->status_code   = 200;
             $this->result       = false;
-            $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al eliminar el registro";
+            $this->message = env('APP_DEBUG') ? $e->getMessage() : $this->message;
         } finally {
             $response = [
                 'result'    => $this->result,
@@ -195,21 +196,19 @@ class UsuariosController extends Controller
     {
         try {
             if (Auth::attempt(['user'=> $request->input('user'),'password'=> $request->input('password')])) {
-                //Session::put('idUsuario', Auth::user()->id);
-
-                $request->session()->put('usuario', Auth::user());
+                $request->session()->put($this->sessionKey, Auth::user());
 
                 $this->records      =   [Auth::user()];
                 $this->message      =   "Sesión iniciada";
                 $this->result       =   true;
                 $this->status_code   =   200;
             } else {
-                throw new \Exception("Usuario o password incorrecto");
+                throw new Exception("Usuario o password incorrecto");
             }
-        } catch (\Exception $e) {
-            $this->status_code   =   200;
-            $this->message      =   env('APP_DEBUG')?$e->getMessage():'Ocurrió un problema al iniciar la sesión';
-            $this->result       =   false;
+        } catch (Exception $e) {
+            $this->status_code = 200;
+            $this->message = env('APP_DEBUG') ? $e->getMessage() : $this->message;
+            $this->result = false;
         } finally {
             $response = [
                 'message'   =>  $this->message,
@@ -224,7 +223,8 @@ class UsuariosController extends Controller
     public function listaCobradores(Request $request)
     {
         try {
-            $registros = Usuarios::where('tipo_usuarios_id',4)->where('sucursales_id',$request->session()->get('usuario')->sucursales_id)->get();
+            dd($request->session()->get('usuario'));
+            $registros = Usuarios::where('tipo_usuarios_id',4)->where('sucursales_id', $request->session()->get($this->sessionKey)->sucursales_id)->get();
 
             if (count($registros) > 0) {
                 $this->status_code   = 200;
@@ -236,7 +236,7 @@ class UsuariosController extends Controller
         } catch (Exception $e) {
             $this->status_code   = 200;
             $this->result       = false;
-            $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al consultar los registros";
+            $this->message = env('APP_DEBUG') ? $e->getMessage() : $this->message;
         } finally {
             $response = [
                 'result'    => $this->result,
@@ -245,6 +245,32 @@ class UsuariosController extends Controller
             ];
 
             return response()->json($response, $this->status_code);
+        }
+    }
+
+    public function checkSession(Request $request)
+    {
+        try {
+            if ($request->session()->get($this->sessionKey)) {
+                $this->status_code = 200;
+                $this->result = true;
+                $this->message = 'Active session';
+            } else {
+                $this->status_code = 200;
+                $this->result = false;
+                $this->message = 'Session expired';
+            }
+        } catch(Exception $e) {
+            $this->status_code = 400;
+            $this->result = false;
+            $this->message = env('APP_DEBUG') ? $e->getMessage() : $this->message;
+        } finally {
+            $responseObject = [
+                'result'    => $this->result,
+                'message'   => $this->message,
+            ];
+
+            return response()->json($responseObject, $this->status_code);
         }
     }
 }
