@@ -4,38 +4,40 @@
 		<span class="close ion ion-android-close" ng-click="modalClose()"></span>
 	</div>
 	<div class="modal-body">
-		<form class="form-horizontal" name="modal-demo-form" ng-if="accion == 'crear' || accion == 'editar'" action="javascript:;">
+		<div class="row form-group" ng-if="accion == 'eliminar'">
+			<h3>¿Realmente desea eliminar este cliente?</h3>
+		</div>
+		<form class="form-horizontal" name="form" ng-if="accion == 'crear' || accion == 'editar'" action="javascript:;" novalidate>
 			<div class="row form-group">
 				<div class="col-sm-12">
 					<label>DPI</label>
-					<input type="text" class="form-control" ng-model="cliente.dpi">
+					<input type="text" class="form-control" ng-model="cliente.dpi" required>
 				</div>
 			</div>
 			<div class="row form-group">
 				<div class="col-sm-12">
 					<label>Nombre</label>
-					<input type="text" class="form-control" ng-model="cliente.nombre">
+					<input type="text" class="form-control" ng-model="cliente.nombre" required>
 				</div>
 				<div class="col-sm-12">
 					<label>Apellido</label>
-					<input type="text" class="form-control" ng-model="cliente.apellido">
+					<input type="text" class="form-control" ng-model="cliente.apellido" required>
 				</div>
 			</div>
 			<div class="row form-group">
 				<div class="col-sm-12">
 					<label>Dirección</label>
-					<input type="text" class="form-control" ng-model="cliente.direccion">
+					<input type="text" class="form-control" ng-model="cliente.direccion" required>
 				</div>
 			</div>
 			<div class="row form-group">
 				<div class="col-sm-6">
 					<label>Teléfono</label>
-					<input type="text" class="form-control" ng-model="cliente.telefono">
+					<input type="text" class="form-control" ng-model="cliente.telefono" required>
 				</div>
 				<div class="col-sm-6">
 					<label class="control-label">Género</label>
-					<select class="form-control" ng-model="cliente.sexo">
-						<option value="0" selected>Seleccione</option>
+					<select class="form-control" ng-model="cliente.sexo" required>
 						<option value="1">Masculino</option>
 						<option value="2">Femenino</option>
 					</select>
@@ -44,21 +46,17 @@
 			<div class="row form-group">
 				<div class="col-sm-6">
 					<label class="control-label">Estado civil</label>
-					<select class="form-control" ng-model="cliente.estado_civil">
-						<option value="0" selected>Seleccione</option>
+					<select class="form-control" ng-model="cliente.estado_civil" required>
 						<option value="1">Soltero (a)</option>
 						<option value="2">Casado (a)</option>
 					</select>
 				</div>
 			</div>
-		</form>
-		<div class="row form-group" ng-if="accion == 'eliminar'">
-			<h3>¿Realmente desea eliminar este cliente?</h3>
-		</div>
-		<div class="row form-group">
-			<div class="col-sm-12 text-right">
-				<button class="btn btn-success" ng-if="accion == 'crear'" ng-click="saveDataNewClient(cliente)">Registrar</button>
+			<div class="row form-group">
+				<div class="col-sm-12 text-right">
+					<button class="btn btn-success" ng-if="accion == 'crear'" ng-click="saveDataNewClient(cliente)" ng-disabled="form.$invalid">Registrar</button>
+				</div>
 			</div>
-		</div>
+		</form>
 	</div>
 </div>
