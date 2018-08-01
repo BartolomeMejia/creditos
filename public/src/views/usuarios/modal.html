@@ -1,4 +1,4 @@
-<div class="modal-style">	
+<div class="modal-style">
 	<div class="modal-header clearfix">
 		<h4 ng-if="accion == 'crear'" class="modal-title">Nuevo usuario</h4>
 		<h4 ng-if="accion == 'editar'" class="modal-title">Editar usuario</h4>
@@ -6,56 +6,60 @@
 		<span class="close ion ion-android-close" ng-click="modalClose()"></span>
 	</div>
 	<div class="modal-body">
-		<form class="form-horizontal" name="modal-demo-form" ng-if="accion == 'crear' || accion == 'editar'" action="javascript:;">
+		<div class="row form-group" ng-if="accion == 'eliminar'">
+			<h3>¿Realmente desea eliminar este usuario?</h3>
+		</div>
+		<form class="form-horizontal" name="form" ng-if="accion == 'crear' || accion == 'editar'" action="javascript:;" novalidate>
 			<div class="row form-group">
 				<div class="col-sm-6">
 					<label>Nombre de usuario</label>
-					<input type="text" class="form-control" ng-model="usuario.nombre">
+					<input type="text" class="form-control" ng-model="usuario.nombre" required>
 				</div>
 				<div class="col-sm-6">
 					<label>Usuario</label>
-					<input type="text" class="form-control" ng-model="usuario.user">
+					<input type="text" class="form-control" ng-model="usuario.user" required>
 				</div>
 			</div>
 			<div class="row form-group">
 				<div class="col-sm-6">
 					<label>Contraseña</label>
-					<input type="password" class="form-control" ng-model="usuario.password">
+					<input type="password" class="form-control" ng-model="usuario.password" ng-required="passwordRequired">
 				</div>
 				<div class="col-sm-6">
 					<label>Contraseña 2</label>
-					<input type="password" class="form-control" ng-model="usuario.password2">
+					<input type="password" class="form-control" ng-model="usuario.password2" ng-required="passwordRequired">
 				</div>
 			</div>
 			<div class="row form-group">
 				<div class="col-sm-6">
 					<label class="control-label">Tipo de usuario</label>
-					<select class="form-control" ng-model="usuario.tipo_usuarios_id" ng-options="item.id as item.descripcion for item in tipousuarios"></select>
+					<select class="form-control" ng-model="usuario.tipo_usuarios_id" ng-options="item.id as item.descripcion for item in tipousuarios" required></select>
 				</div>
 				<div class="col-sm-6">
 					<label class="control-label">Sucursal</label>
-					<select class="form-control" ng-model="usuario.sucursales_id" ng-options="item.id as item.descripcion for item in sucursales"></select>
+					<select class="form-control" ng-model="usuario.sucursales_id" ng-options="item.id as item.descripcion for item in sucursales" required></select>
 				</div>
 			</div>
 			<div class="row form-group" ng-if="accion == 'editar'">
 				<div class="col-sm-6">
 					<div class="ui-checkbox">
 						<label>
-							<input type="checkbox" ng-model="usuario.estado"> 
+							<input type="checkbox" ng-model="usuario.estado">
 							<span>Activo</span>
 						</label>
 					</div>
 				</div>
 			</div>
+			<div class="row form-group" ng-if="accion == 'crear' || accion == 'editar'">
+				<div class="col-sm-12 text-right">
+					<button class="btn btn-success" ng-if="accion == 'crear'" ng-click="saveData(usuario)" ng-disabled="form.$invalid">Registrar</button>
+					<button class="btn btn-success" ng-if="accion == 'editar'" ng-click="saveData(usuario)" ng-disabled="form.$invalid">Actualizar</button>
+				</div>
+			</div>
 		</form>
 		<div class="row form-group" ng-if="accion == 'eliminar'">
-			<h3>¿Realmente desea eliminar este usuario?</h3>
-		</div>
-		<div class="row form-group">
 			<div class="col-sm-12 text-right">
-				<button class="btn btn-success" ng-if="accion == 'crear'" ng-click="saveData(usuario)">Registrar</button>
-				<button class="btn btn-success" ng-if="accion == 'editar'" ng-click="saveData(usuario)">Actualizar</button>
-				<button class="btn btn-danger" ng-if="accion == 'eliminar'" ng-click="saveData(usuario)">Confirmar</button>
+				<button class="btn btn-danger" ng-click="saveData(usuario)">Confirmar</button>
 			</div>
 		</div>
 	</div>

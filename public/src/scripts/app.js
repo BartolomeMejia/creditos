@@ -97,7 +97,11 @@
 				{
 					name: "ngMap",
 					files: ["scripts/lazyload/ng-map.min.js"]
-				}
+				},
+                {
+                    name: "app.service.collector",
+                    files: ["scripts/lazyload/services/collector.js"]
+                },
 			]
 		})
 	}])
@@ -163,7 +167,7 @@
 				deps: ["$ocLazyLoad", function(a) {
 					return a.load({
 						name: "app.creditos",
-						files: ["scripts/controllers/CreditosController.js"]
+						files: ["scripts/lazyload/controllers/CreditosController.js"]
 					})
 				}]
 			}
@@ -176,7 +180,7 @@
                 deps: ["$ocLazyLoad", function(a) {
                     return a.load({
                         name: "app.abonos",
-                        files: ["scripts/controllers/AbonosController.js"]
+                        files: ["scripts/lazyload/controllers/AbonosController.js"]
                     })
                 }]
             }
@@ -189,7 +193,7 @@
                 deps: ["$ocLazyLoad", function(a) {
                     return a.load({
                         name: "app.abonos",
-                        files: ["scripts/controllers/AbonosController.js"]
+                        files: ["scripts/lazyload/controllers/AbonosController.js"]
                     })
                 }]
             }
@@ -202,7 +206,7 @@
 				deps: ["$ocLazyLoad", function(a) {
 					return a.load({
 						name: "app.usuarios",
-						files: ["scripts/controllers/UsuariosController.js"]
+						files: ["scripts/lazyload/controllers/UsuariosController.js"]
 					})
 				}]
 			}
@@ -215,7 +219,7 @@
 				deps: ["$ocLazyLoad", function(a) {
 					return a.load({
 						name: "app.clientes",
-						files: ["scripts/controllers/ClientesController.js"]
+						files: ["scripts/lazyload/controllers/ClientesController.js"]
 					})
 				}]
 			}
@@ -228,7 +232,7 @@
 				deps: ["$ocLazyLoad", function(a) {
 					return a.load({
 						name: "app.sucursales",
-						files: ["scripts/controllers/SucursalesController.js"]
+						files: ["scripts/lazyload/controllers/SucursalesController.js"]
 					})
 				}]
 			}
@@ -241,7 +245,7 @@
 				deps: ["$ocLazyLoad", function(a) {
 					return a.load({
 						name: "app.planes",
-						files: ["scripts/controllers/PlanesController.js"]
+						files: ["scripts/lazyload/controllers/PlanesController.js"]
 					})
 				}]
 			}
@@ -254,7 +258,7 @@
 				deps: ["$ocLazyLoad", function(a) {
 					return a.load({
 						name: "app.montos",
-						files: ["scripts/controllers/MontosController.js"]
+						files: ["scripts/lazyload/controllers/MontosController.js"]
 					})
 				}]
 			}
@@ -267,7 +271,7 @@
 				deps: ["$ocLazyLoad", function(a) {
 					return a.load({
 						name: "app.detallecliente",
-						files: ["scripts/controllers/DetalleClienteController.js"]
+						files: ["scripts/lazyload/controllers/DetalleClienteController.js"]
 					})
 				}]
 			}
