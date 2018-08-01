@@ -19,6 +19,7 @@
 		$scope.currentPage = 1;
 		$scope.positionModel = "topRight";
 		$scope.toasts = [];
+		$scope.passwordRequired = true;
 		var modal;
 
 		$scope.cargarTipoUsuarios = function() {
@@ -185,6 +186,7 @@
 		$scope.modalCreateOpen = function() {
 			$scope.usuario = {};
 			$scope.accion = 'crear';
+			$scope.passwordRequired = true;
 
 			modal = $modal.open({
 				templateUrl: "views/usuarios/modal.html",
@@ -198,6 +200,7 @@
 		$scope.modalEditOpen = function(data) {			
 			$scope.accion = 'editar';
 			$scope.usuario = data;
+			$scope.passwordRequired = false;
 
 			data.estado == 1 ? $scope.usuario.estado = true : $scope.usuario.estado = false;
 
