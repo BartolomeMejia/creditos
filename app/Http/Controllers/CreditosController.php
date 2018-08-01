@@ -62,10 +62,10 @@ class CreditosController extends Controller
         try {
 
             $plan = Planes::find($request->input('idplan'));
-
+            
             $fecha_fin = strtotime ( '+'.$plan->dias.' day', strtotime ( $request->input('fecha_inicio') ));
             $fecha_fin = date ( 'j-m-Y' , $fecha_fin );
-            dd($fecha_fin);
+        
             $nuevoRegistro = \DB::transaction( function() use ($request, $fecha_fin){
                                 $nuevoRegistro = Creditos::create([
                                                     'clientes_id'           => $request->input('idcliente'),

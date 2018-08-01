@@ -13,11 +13,13 @@
             $scope.toasts = [];
             $scope.resumen = {};
             var modal;
-
             $scope.validarCliente = function(search_client){
+
+                console.log(API_URL+'creditocliente');
+
                 $http({
                     method: 'GET',
-                    url:    API_URL+'buscarcliente',
+                    url:    API_URL+'creditocliente',
                     params: search_client
                 })
                     .then(function successCallback(response) {

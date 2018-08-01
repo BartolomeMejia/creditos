@@ -203,25 +203,28 @@ class ClientesController extends Controller {
     public function buscarCliente(Request $request)
     {
         try {
-            $registro = Clientes::where('dpi', $request->input('dpi') )->with('creditos')->first();
-            $ultimoAbono = CreditosDetalle::where('creditos_id', $registro->creditos->id)->orderBy('id', 'desc')->first();
-            $abono = 0;
+            $cliente = Clientes::where('dpi', $request->input('dpi') )->first();
+            
+            if($cliente){
 
-            if( $ultimoAbono ){
-                if($ultimoAbono->estado == 0)
-                    $abono = $ultimoAbono->abono; 
-            }
+                $credito = Creditos::where("clientes_id", $cliente->id)->first();
 
-            if( $registro ){
-                $registro->creditos->saldo_abonado = $abono;
-                $this->statusCode   = 200;
-                $this->result       = true;
-                $this->message      = "Registro consultado exitosamente";
-                $this->records      = $registro;
+                if($credito){
+                    $this->statusCode   = 200;
+                    $this->result       = true;
+                    $this->message      = "Registro consultado exitosamente";
+                    $this->records      = $credito;
+                }
+                else{
+                    $this->statusCode   = 200;
+                    $this->result       = true;
+                    $this->message      = "Registro consultado exitosamente";
+                    $this->records      = $cliente;
+                }
             }
-            else
-                throw new \Exception("No se encontró el registro");
-                
+            else {
+                throw new \Exception("Cliente no encontrado");
+            }   
         } catch (\Exception $e) {
             $this->statusCode   = 200;
             $this->result       = false;
@@ -237,6 +240,52 @@ class ClientesController extends Controller {
 
             return response()->json($response, $this->statusCode);
         }
+    }
+
+    public function buscarCreditoCliente(Request $request){
+            try{
+            
+                $creditoCliente = Clientes::where('dpi', $request->input('dpi'))->with('creditos')->first();
+            
+                if($creditoCliente){
+                    
+                    if($creditoCliente->creditos){        
+                        $ultimoAbono = CreditosDetalle::where('creditos_id', $creditoCliente->creditos->id)->orderBy('id', 'desc')->first();
+                        $abono = 0;
+
+                        if( $ultimoAbono ){
+                            if($ultimoAbono->estado == 0)
+                                $abono = $ultimoAbono->abono; 
+                        }
+
+                        $creditoCliente->creditos->saldo_abonado = $abono;
+                        $this->statusCode   = 200;
+                        $this->result       = true;
+                        $this->message      = "Registro consultado exitosamente";
+                        $this->records      = $creditoCliente;
+                    }
+                    else{
+                        throw new \Exception("Cliente no cuenta con crédito");      
+                    }
+                }
+                else{
+                    throw new \Exception("Cliente ingresado no cuenta con crédito");  
+                }
+            }
+            catch (\Exception $e){
+                $this->statusCode   = 200;
+                $this->result       = false;
+                $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al consultar el registro";
+            }
+            finally{
+                $response = [
+                    'result'    => $this->result,
+                    'message'   => $this->message,
+                    'records'   => $this->records,
+                ];
+    
+                return response()->json($response, $this->statusCode);
+            }
     }
 
     public function detalleCreditoCliente(Request $request){
