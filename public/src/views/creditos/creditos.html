@@ -24,6 +24,7 @@
 			<div class="col-sm-12">
 				<div class="panel panel-default panel-hovered panel-stacked mb20">
 				<div class="panel-heading">Detalle del crédito</div>
+				<form class="form-horizontal" name="form" action="javascript:;" novalidate></form>
 					<div class="panel-body">
 						<div class="row">
 							<div class="col-sm-4">
@@ -43,11 +44,11 @@
 						<div class="row">
 							<div class="col-sm-4">
 								<label>Plan de préstamo</label>
-								<select class="form-control" ng-model="detalle_cliente.planes_id" ng-options="item as item.descripcion for item in planes"></select>
+								<select class="form-control" ng-model="detalle_cliente.planes_id" ng-options="item as item.descripcion for item in planes" ng-change="calcularFechaFinal(detalle_cliente.planes_id)" required></select>
 							</div>
 							<div class="col-sm-4">
 								<label>Monto</label>
-								<select class="form-control" ng-model="detalle_cliente.monto_id" ng-options="item as item.monto for item in montosprestamo" ng-change="calcularInteresCuota(detalle_cliente.planes_id)"></select>
+								<select class="form-control" ng-model="detalle_cliente.monto_id" ng-options="item as item.monto for item in montosprestamo" ng-change="calcularInteresCuota(detalle_cliente.planes_id)" required></select>
 							</div>
 							<div class="col-sm-4">
 								<label>Interés</label>
@@ -73,16 +74,17 @@
 						<div class="row">
 							<div class="col-sm-4">
 								<label>Cobrador</label>
-								<select class="form-control" ng-model="detalle_cliente.usuarios_cobrador" ng-options="item as item.nombre for item in usuarios_cobrador"></select>
+								<select class="form-control" ng-model="detalle_cliente.usuarios_cobrador" ng-options="item as item.nombre for item in usuarios_cobrador" required></select>
 							</div>
 						</div>
 						<br>
 						<div class="row">
 							<div class="col-md-12 col-md-offset-5">
-								<button align="center" type="button" class="btn btn-success btn-rounded" ng-click="saveData(detalle_cliente)" md-ink-ripple>Guardar nuevo crédito</button>
+								<button align="center" type="button" class="btn btn-success btn-rounded" ng-click="saveData(detalle_cliente)" ng-disabled="form.$invalid">Guardar nuevo crédito</button>
 							</div>
 						</div>
 					</div>
+				</form>
 				</div>
 			</div>
 		</div>
