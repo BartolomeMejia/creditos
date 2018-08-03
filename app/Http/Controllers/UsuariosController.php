@@ -223,7 +223,6 @@ class UsuariosController extends Controller
     public function listaCobradores(Request $request)
     {
         try {
-            dd($request->session()->get('usuario'));
             $registros = Usuarios::where('tipo_usuarios_id',4)->where('sucursales_id', $request->session()->get($this->sessionKey)->sucursales_id)->get();
 
             if (count($registros) > 0) {

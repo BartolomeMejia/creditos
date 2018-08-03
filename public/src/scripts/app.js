@@ -238,6 +238,19 @@
 			}
 		});
 
+		$routeProvider.when("/collectors", {
+			templateUrl: "views/collectors/collectors.html",
+			controller: "CollectorController",
+			resolve: {
+				deps: ["$ocLazyLoad", function(a) {
+					return a.load({
+						name: "app.collector",
+						files: ["scripts/lazyload/controllers/collector.js"]
+					})
+				}]
+			}
+		});
+
 		$routeProvider.when("/planes", {
 			templateUrl: "views/planes/planes.html",
 			controller: "PlanesController",
