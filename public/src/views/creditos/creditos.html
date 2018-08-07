@@ -9,7 +9,7 @@
 							<div class="form-group">
 								<label class="col-sm-1 control-label">Número de DPI:</label>
 								<div class="col-md-5">
-									<input type="number" class="form-control" ng-model="search_client.dpi">
+									<input type="number" id="customerDpi" class="form-control" ng-model="search_client.dpi">
 								</div>
 								<div class="col-md-1">
 									<button type="button" class="btn btn-info ion ion-plus" ng-click="modalCreateOpen()" md-ink-ripple></button>
@@ -24,7 +24,7 @@
 			<div class="col-sm-12">
 				<div class="panel panel-default panel-hovered panel-stacked mb20">
 				<div class="panel-heading">Detalle del crédito</div>
-				<form class="form-horizontal" name="form" action="javascript:;" novalidate></form>
+				<form class="form-horizontal" name="form" action="javascript:;" novalidate>
 					<div class="panel-body">
 						<div class="row">
 							<div class="col-sm-4">
@@ -44,7 +44,7 @@
 						<div class="row">
 							<div class="col-sm-4">
 								<label>Plan de préstamo</label>
-								<select class="form-control" ng-model="detalle_cliente.planes_id" ng-options="item as item.descripcion for item in planes" ng-change="calcularFechaFinal(detalle_cliente.planes_id)" required></select>
+								<select class="form-control" ng-model="detalle_cliente.planes_id" ng-options="item as item.descripcion for item in planes" required></select>
 							</div>
 							<div class="col-sm-4">
 								<label>Monto</label>
@@ -63,7 +63,12 @@
 							</div>
 							<div class="col-sm-4">
 								<label>Fecha inicio</label>
-								<input type="text" class="form-control" ng-bind="detalle_cliente.fecha_inicio | date:'MM/dd/yyyy'" ng-model="detalle_cliente.fecha_inicio" disabled>
+								<div class="input-group date" >
+									<input  type="text" id="fechainicio" class="form-control" ng-model="detalle_cliente.fecha_inicio" ng-change="getEndDate(detalle_cliente.planes_id)" required>
+									<div class="input-group-addon" >
+										<span class="glyphicon glyphicon-th"></span>
+									</div>
+								</div>	
 							</div>
 							<div class="col-sm-4">
 								<label>Fecha fin</label>
@@ -95,3 +100,7 @@
 		</div>
 	</div>
 </div>
+
+<script>
+        $('.input-group.date').datepicker({format: "dd-mm-yyyy"}); 
+    </script>

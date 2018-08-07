@@ -209,17 +209,14 @@ class ClientesController extends Controller {
 
                 $credito = Creditos::where("clientes_id", $cliente->id)->first();
 
-                if($credito){
-                    $this->statusCode   = 200;
-                    $this->result       = true;
-                    $this->message      = "Registro consultado exitosamente";
-                    $this->records      = $credito;
-                }
-                else{
+                if(!$credito){
                     $this->statusCode   = 200;
                     $this->result       = true;
                     $this->message      = "Registro consultado exitosamente";
                     $this->records      = $cliente;
+                }
+                else{
+                    throw new \Exception("El cliente ingresado ya cuenta con crédito");
                 }
             }
             else {
