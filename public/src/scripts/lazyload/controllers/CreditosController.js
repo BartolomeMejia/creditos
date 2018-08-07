@@ -53,6 +53,12 @@
             $scope.detalle_cliente.cuota_diaria = ($scope.detalle_cliente.interes + $scope.detalle_cliente.monto_id.monto) / plan.dias;
         };
 
+		$scope.getEndDate = function( plan ){
+			var startDate = $("#fechainicio").val().split("-")
+			var endDate = new Date(startDate[2], startDate[1] - 1, startDate[0])
+			endDate.setDate(endDate.getDate() + plan.dias);
+			$scope.detalle_cliente.fecha_fin = $filter('date')(endDate,'dd-MM-yyyy');
+		}
 
         $scope.cargarPlanes();
         $scope.cargarMonto();
@@ -69,22 +75,11 @@
 					$('#row-detalle').removeClass('hidden');
 					$scope.detalle_cliente = response.data.records;
 					$scope.detalle_cliente.nombre = response.data.records.nombre+' '+response.data.records.apellido;
-					
-					// Obtiene y da formato a la fecha de inicio
-					var fecha_inicio = $filter('date')(new Date(),'dd-MM-yyyy');
-					$scope.detalle_cliente.fecha_inicio = fecha_inicio;
-
-					// Calcula y da formato a la fecha fin
-					var fecha_fin = new Date();
-					var numberOfDaysToAdd = 1;
-					fecha_fin.setDate(fecha_fin.getDate() + numberOfDaysToAdd); 
-				  	$scope.detalle_cliente.fecha_fin = $filter('date')(fecha_fin,'dd-MM-yyyy');
 
 				    $scope.createToast("success", "<strong>Éxito: </strong>"+response.data.message);
 				    $timeout( function(){ $scope.closeAlert(0); }, 5000);
 				}
 				else {
-					console.log(response.data)
 					$scope.createToast("danger", "<strong>Error: </strong>"+response.data.message);
 				    $timeout( function(){ $scope.closeAlert(0); }, 5000);	
 				}
@@ -107,7 +102,7 @@
 					fecha_inicio:detalleCredito.fecha_inicio,
 					fecha_limite:detalleCredito.fecha_fin
 				};
-				console.log(datos);
+				
 				$http({
 					method: 'POST',
 				  	url: 	API_URL+'creditos',
@@ -116,7 +111,9 @@
 				.then(function successCallback(response) {
 					if( response.data.result ) {
 
-					    $scope.createToast("success", "<strong>Éxito: </strong>"+response.data.message);
+						$scope.createToast("success", "<strong>Éxito: </strong>"+response.data.message);
+						$('#row-detalle').addClass('hidden');
+						$('#customerDpi').val("");
 					    $timeout( function(){ $scope.closeAlert(0); }, 5000);
 					}
 					else {
@@ -145,16 +142,6 @@
                                 $scope.detalle_cliente = response.data.records;
                                 $scope.detalle_cliente.nombre = response.data.records.nombre+' '+response.data.records.apellido;
 
-                                // Obtiene y da formato a la fecha de inicio
-                                var fecha_inicio = $filter('date')(new Date(),'dd-MM-yyyy');
-                                $scope.detalle_cliente.fecha_inicio = fecha_inicio;
-
-                                // Calcula y da formato a la fecha fin
-                                var fecha_fin = new Date();
-                                var numberOfDaysToAdd = 1;
-                                fecha_fin.setDate(fecha_fin.getDate() + numberOfDaysToAdd);
-                                $scope.detalle_cliente.fecha_fin = $filter('date')(fecha_fin,'dd-MM-yyyy');
-
                                 modal.close();
                                 $scope.createToast("success", "<strong>Éxito: </strong>" + response.data.message);
                                 $timeout(function () {
@@ -169,7 +156,6 @@
                             }
                         },
                         function errorCallback(response) {
-                            console.log(response.data.message);
                         });
             }
         }

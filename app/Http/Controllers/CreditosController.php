@@ -62,10 +62,10 @@ class CreditosController extends Controller
         try {
 
             $plan = Planes::find($request->input('idplan'));
-
+            
             $fecha_fin = strtotime ( '+'.$plan->dias.' day', strtotime ( $request->input('fecha_inicio') ));
             $fecha_fin = date ( 'j-m-Y' , $fecha_fin );
-            dd($fecha_fin);
+        
             $nuevoRegistro = \DB::transaction( function() use ($request, $fecha_fin){
                                 $nuevoRegistro = Creditos::create([
                                                     'clientes_id'           => $request->input('idcliente'),
@@ -73,7 +73,7 @@ class CreditosController extends Controller
                                                     'montos_prestamo_id'    => $request->input('idmonto'),
                                                     'usuarios_creo'         => $request->session()->get('usuario')->id,
                                                     'usuarios_cobrador'     => $request->input('idusuario'),
-                                                    'saldo'                 => $request->input('deudatotal') - $request->input('cuota_diaria'),
+                                                    'saldo'                 => $request->input('deudatotal'),
                                                     'interes'               => 0,
                                                     'deudatotal'            => $request->input('deudatotal'),
                                                     'cuota_diaria'          => $request->input('cuota_diaria'),
@@ -86,12 +86,12 @@ class CreditosController extends Controller
                                 if( !$nuevoRegistro )
                                     throw new \Exception("Error al crear el registro");
                                 else{
-                                    $detalleCredito = new CreditosDetalle;
+                                    /*$detalleCredito = new CreditosDetalle;
                                     $detalleCredito->creditos_id    = $nuevoRegistro->id;
                                     $detalleCredito->fecha_pago     = \Carbon\Carbon::parse($request->input('fecha_inicio'))->format('Y-m-d');
                                     $detalleCredito->abono          = $request->input('cuota_diaria');
                                     $detalleCredito->estado         = 1;
-                                    $detalleCredito->save();
+                                    $detalleCredito->save();*/
 
                                     return $nuevoRegistro;
                                 }
