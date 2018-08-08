@@ -10,53 +10,45 @@ use App\Usuarios;
 use Auth;
 use DB;
 use Session;
+use Exception;
 
 //revisar el usuario que no sea repedito
 //validar el password que vaya vacio
 
 class UsuariosController extends Controller
 {
-    public $statusCode  = 200;
-    public $result      = false;
-    public $message     = "";
-    public $records     = [];
+    protected $status_code = 200;
+    protected $result = false;
+    protected $message = "Ocurrió un problema con tu transacción, intenta más tarde";
+    protected $records = [];
+    protected $sessionKey = 'usuario';
 
     public function index()
     {
         try {
             $registros = Usuarios::where("estado", 1)->with('tipoUsuarios','sucursal')->get();
 
-            if( $registros ){
-                $this->statusCode   = 200;
-                $this->result       = true;
-                $this->message      = "Registros consultados exitosamente";
-                $this->records      = $registros;
-            }
-            else
+            if ($registros) {
+                $this->status_code = 200;
+                $this->result = true;
+                $this->message = "Registros consultados exitosamente";
+                $this->records = $registros;
+            } else
                 throw new \Exception("No se encontraron registros");
-                
         } catch (\Exception $e) {
-            $this->statusCode   = 404;
-            $this->result       = false;
-            $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al consultar los registros";
-        }
-        finally{
+            $this->status_code = 404;
+            $this->result = false;
+            $this->message = env('APP_DEBUG') ? $e->getMessage() : $this->message;
+        } finally {
             $response = [
-                'result'    => $this->result,
-                'message'   => $this->message,
-                'records'   => $this->records,
+                'result' => $this->result,
+                'message' => $this->message,
+                'records' => $this->records,
             ];
 
-            return response()->json($response, $this->statusCode);
+            return response()->json($response, $this->status_code);
         }
     }
-
-    
-    public function create()
-    {
-        //
-    }
-
     
     public function store(Request $request)
     {
@@ -64,8 +56,7 @@ class UsuariosController extends Controller
 
             $registro = Usuarios::where('user',strtolower($request->input('user')))->get();
 
-            if(count($registro) == 0)
-            {
+            if (count($registro) == 0) {
                 $nuevoRegistro = \DB::transaction( function() use ( $request){
                                     $nuevoRegistro = Usuarios::create([
                                                         'tipo_usuarios_id'  => $request->input('idtipousuario'),
@@ -83,29 +74,25 @@ class UsuariosController extends Controller
                                     else
                                         return $nuevoRegistro;
                                 });
-            }
-            else
+            } else
                 throw new \Exception("Usuario ingresado ya existe, favor verifica");
                   
-            $this->statusCode   = 200;
-            $this->result       = true;
-            $this->message      = "Registro creado exitosamente";
-            $this->records      = $nuevoRegistro;
-
+            $this->status_code = 200;
+            $this->result = true;
+            $this->message = "Registro creado exitosamente";
+            $this->records = $nuevoRegistro;
         } catch (\Exception $e) {
-            $this->statusCode   = 200;
+            $this->status_code   = 200;
             $this->result       = false;
-            $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al crear el registro";
-        }
-        finally
-        {
+            $this->message = env('APP_DEBUG') ? $e->getMessage() : $this->message;
+        } finally {
             $response = [
                 'result'    => $this->result,
                 'message'   => $this->message,
                 'records'   => $this->records,
             ];
 
-            return response()->json($response, $this->statusCode);
+            return response()->json($response, $this->status_code);
         }
     }
 
@@ -114,45 +101,34 @@ class UsuariosController extends Controller
         try {
             $registro = Usuarios::with('tipoUsuarios','sucursal')->find( $id );
 
-            if( $registro ){
-                $this->statusCode   = 200;
+            if ($registro) {
+                $this->status_code   = 200;
                 $this->result       = true;
                 $this->message      = "Registro consultado exitosamente";
                 $this->records      = $registro;
-            }
-            else
+            } else
                 throw new \Exception("No se encontró el registro");
-                
         } catch (\Exception $e) {
-            $this->statusCode   = 404;
+            $this->status_code   = 404;
             $this->result       = false;
-            $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al consultar el registro";
-        }
-        finally
-        {
+            $this->message = env('APP_DEBUG') ? $e->getMessage() : $this->message;
+        } finally {
             $response = [
                 'result'    => $this->result,
                 'message'   => $this->message,
                 'records'   => $this->records,
             ];
 
-            return response()->json($response, $this->statusCode);
+            return response()->json($response, $this->status_code);
         }
     }
-
-    
-    public function edit($id)
-    {
-        //
-    }
-    
     public function update(Request $request, $id)
     {
         try {
 
             $registroUsuario = Usuarios::where('user',strtolower($request->input('user')))->get();
 
-            if( count($registroUsuario) == 0 )
+            if (count($registroUsuario) == 0)
                 \DB::beginTransaction();
                 $registro = Usuarios::find( $id );
                 $registro->tipo_usuarios_id = $request->input('idtipousuario', $registro->tipo_usuarios_id);
@@ -170,125 +146,130 @@ class UsuariosController extends Controller
                 $registro->save();
 
             \DB::commit();
-            $this->statusCode   = 200;
+            $this->status_code   = 200;
             $this->result       = true;
             $this->message      = "Registro editado exitosamente";
             $this->records      = $registro;
-                
         } catch (\Exception $e) {
             \DB::rollback();
-            $this->statusCode   = 200;
+            $this->status_code   = 200;
             $this->result       = false;
-            $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al editar el registro";
-        }
-        finally
-        {
+            $this->message = env('APP_DEBUG') ? $e->getMessage() : $this->message;
+        } finally {
             $response = [
                 'result'    => $this->result,
                 'message'   => $this->message,
                 'records'   => $this->records,
             ];
 
-            return response()->json($response, $this->statusCode);
+            return response()->json($response, $this->status_code);
         }
     }
 
-    
     public function destroy($id)
     {
         try {
-            $deleteRegistro = \DB::transaction( function() use ( $id ){
+            $deleteRegistro = \DB::transaction( function() use ($id) {
                                 $registro = Usuarios::find( $id );
                                 $registro->delete();
                             });
 
-            $this->statusCode   = 200;
+            $this->status_code   = 200;
             $this->result       = true;
             $this->message      = "Registro eliminado exitosamente";
             
         } catch (\Exception $e) {
-            $this->statusCode   = 200;
+            $this->status_code   = 200;
             $this->result       = false;
-            $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al eliminar el registro";
-        }
-        finally
-        {
+            $this->message = env('APP_DEBUG') ? $e->getMessage() : $this->message;
+        } finally {
             $response = [
                 'result'    => $this->result,
                 'message'   => $this->message,
             ];
 
-            return response()->json($response, $this->statusCode);
+            return response()->json($response, $this->status_code);
         }
     }
 
     public function login(Request $request)
     {
-        try
-        {
-            if (Auth::attempt(['user'=> $request->input('user'),'password'=> $request->input('password')]))
-            {
-                //Session::put('idUsuario', Auth::user()->id);
-
-                $request->session()->put('usuario', Auth::user());
+        try {
+            if (Auth::attempt(['user'=> $request->input('user'),'password'=> $request->input('password')])) {
+                $request->session()->put($this->sessionKey, Auth::user());
 
                 $this->records      =   [Auth::user()];
                 $this->message      =   "Sesión iniciada";
                 $this->result       =   true;
-                $this->statusCode   =   200;
+                $this->status_code   =   200;
+            } else {
+                throw new Exception("Usuario o password incorrecto");
             }
-            else
-            {
-                throw new \Exception("Usuario o password incorrecto");
-                
-            }
-        }
-        catch (\Exception $e)
-        {
-            $this->statusCode   =   200;
-            $this->message      =   env('APP_DEBUG')?$e->getMessage():'Ocurrió un problema al iniciar la sesión';
-            $this->result       =   false;
-        }
-        finally
-        {
-            $response = 
-            [
+        } catch (Exception $e) {
+            $this->status_code = 200;
+            $this->message = env('APP_DEBUG') ? $e->getMessage() : $this->message;
+            $this->result = false;
+        } finally {
+            $response = [
                 'message'   =>  $this->message,
                 'result'    =>  $this->result,
                 'records'   =>  $this->records
             ];
             
-            return response()->json($response, $this->statusCode);
+            return response()->json($response, $this->status_code);
         }
     }
 
-    public function listaCobradores(Request $request){
+    public function listaCobradores(Request $request)
+    {
         try {
+            $registros = Usuarios::where('tipo_usuarios_id',4)->where('sucursales_id', $request->session()->get($this->sessionKey)->sucursales_id)->get();
 
-            $registros = Usuarios::where('tipo_usuarios_id',4)->where('sucursales_id',$request->session()->get('usuario')->sucursales_id)->get();
-
-            if( $registros ){
-                $this->statusCode   = 200;
+            if (count($registros) > 0) {
+                $this->status_code   = 200;
                 $this->result       = true;
                 $this->message      = "Registros consultados exitosamente";
                 $this->records      = $registros;
-            }
-            else
-                throw new \Exception("No se encontraron registros");
-                
-        } catch (\Exception $e) {
-            $this->statusCode   = 200;
+            } else
+                throw new Exception("No existen cobradores registrados");  
+        } catch (Exception $e) {
+            $this->status_code   = 200;
             $this->result       = false;
-            $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al consultar los registros";
-        }
-        finally{
+            $this->message = env('APP_DEBUG') ? $e->getMessage() : $this->message;
+        } finally {
             $response = [
                 'result'    => $this->result,
                 'message'   => $this->message,
                 'records'   => $this->records,
             ];
 
-            return response()->json($response, $this->statusCode);
+            return response()->json($response, $this->status_code);
+        }
+    }
+
+    public function checkSession(Request $request)
+    {
+        try {
+            if ($request->session()->get($this->sessionKey)) {
+                $this->status_code = 200;
+                $this->result = true;
+                $this->message = 'Active session';
+            } else {
+                $this->status_code = 200;
+                $this->result = false;
+                $this->message = 'Session expired';
+            }
+        } catch(Exception $e) {
+            $this->status_code = 400;
+            $this->result = false;
+            $this->message = env('APP_DEBUG') ? $e->getMessage() : $this->message;
+        } finally {
+            $responseObject = [
+                'result'    => $this->result,
+                'message'   => $this->message,
+            ];
+
+            return response()->json($responseObject, $this->status_code);
         }
     }
 }
