@@ -1,142 +1,153 @@
-;(function() {
-	"use strict";
+; (function () {
+  "use strict";
 
-	angular.module("app.collector", ["app.constants", 'app.service.collector'])
+  angular.module("app.collector", ["app.constants", 'app.service.collector'])
 
-	.controller("CollectorController", ["$scope", "$filter", "$http", "$modal", "$interval", 'collectorService', 'API_URL', function($scope, $filter, $http, $modal, $timeout, collectorService,  API_URL)  {	
-		
-		// general vars
-		$scope.datas = [];
-		$scope.currentPageStores = [];
-		$scope.searchKeywords = ''
-		$scope.filteredData = [];	
-		$scope.row = '';
-		$scope.numPerPageOpts = [5, 10, 25, 50, 100];
-		$scope.numPerPage = $scope.numPerPageOpts[1];
-		$scope.currentPage = 1;
-		$scope.positionModel = 'topRight';
-		$scope.toasts = [];
-		$scope.showCollectorTable = true;
-		$scope.collectorSelected = '';
-		$scope.customerList = [];
-		var modal;
+    .controller("CollectorController", ["$scope", "$filter", "$http", "$modal", "$interval", 'collectorService', 'API_URL', function ($scope, $filter, $http, $modal, $timeout, collectorService, API_URL) {
 
-		function loadData() {
-			collectorService.index().then(function(response) {
-				$scope.datas = response.data.records;
-				$scope.search();
-				$scope.select($scope.currentPage);
-			});
-		}
+      // general vars
+      $scope.datas = [];
+      $scope.currentPageStores = [];
+      $scope.searchKeywords = ''
+      $scope.filteredData = [];
+      $scope.row = '';
+      $scope.numPerPageOpts = [5, 10, 25, 50, 100];
+      $scope.numPerPage = $scope.numPerPageOpts[1];
+      $scope.currentPage = 1;
+      $scope.positionModel = 'topRight';
+      $scope.toasts = [];
+      $scope.showCollectorTable = true;
+      $scope.collectorSelected = '';
+      $scope.customerList = [];
+      var modal;
+      var pivotStructure = [];
 
-		// datatable collector functions
-		$scope.select = function(page) {
-			var start = (page - 1)*$scope.numPerPage,
-				end = start + $scope.numPerPage;
+      function loadData() {
+        collectorService.index().then(function (response) {
+          $scope.datas = response.data.records;
+          $scope.search();
+          $scope.select($scope.currentPage);
+        });
+      }
 
-			$scope.currentPageStores = $scope.filteredData.slice(start, end);
-		}
+      // datatable collector functions
+      $scope.select = function (page) {
+        var start = (page - 1) * $scope.numPerPage,
+          end = start + $scope.numPerPage;
 
-		$scope.onFilterChange = function() {
-			$scope.select(1);
-			$scope.currentPage = 1;
-			$scope.row = '';
-		}
+        $scope.currentPageStores = $scope.filteredData.slice(start, end);
+      }
 
-		$scope.onNumPerPageChange = function() {
-			$scope.select(1);
-			$scope.currentPage = 1;
-		}
+      $scope.onFilterChange = function () {
+        $scope.select(1);
+        $scope.currentPage = 1;
+        $scope.row = '';
+      }
 
-		$scope.onOrderChange = function() {
-			$scope.select(1);
-			$scope.currentPage = 1;
-		}
+      $scope.onNumPerPageChange = function () {
+        $scope.select(1);
+        $scope.currentPage = 1;
+      }
 
-		$scope.search = function() {
-			$scope.filteredData = $filter("filter")($scope.datas, $scope.searchKeywords);
-			$scope.onFilterChange();		
-		}
+      $scope.onOrderChange = function () {
+        $scope.select(1);
+        $scope.currentPage = 1;
+      }
 
-		$scope.order = function(rowName) {
-			if($scope.row == rowName)
-				return;
-			$scope.row = rowName;
-			$scope.filteredData = $filter('orderBy')($scope.datas, rowName);
-			$scope.onOrderChange();
-		}	
+      $scope.search = function () {
+        $scope.filteredData = $filter("filter")($scope.datas, $scope.searchKeywords);
+        $scope.onFilterChange();
+      }
 
-		loadData();
+      $scope.order = function (rowName) {
+        if ($scope.row == rowName)
+          return;
+        $scope.row = rowName;
+        $scope.filteredData = $filter('orderBy')($scope.datas, rowName);
+        $scope.onOrderChange();
+      }
 
-		$scope.showCustomerView = (data) => {
-			collectorService.detail(data.id).then( (response) => {
-				$scope.collectorSelected = data.nombre;
-				$scope.customerList = response.data.records.registros;
-				$scope.showCollectorTable = false;
-			});
-		}
+      loadData();
 
-		$scope.closeCustomerView = () => {
-			$scope.showCollectorTable = true;
-		}
+      $scope.showCustomerView = (data) => {
+        collectorService.detail(data.id).then((response) => {
+          $scope.collectorSelected = data.nombre;
+          $scope.showCollectorTable = false;
 
-		// modals function
-		$scope.modalCreateOpen = () => {
-			$scope.usuario = {};
-			$scope.accion = 'crear';
+          pivotStructure = $scope.datas;
+          $scope.datas = [];
+          $scope.datas = response.data.records.registros;
+          $scope.search();
+          $scope.select($scope.currentPage);
+        });
+      }
 
-			modal = $modal.open({
-				templateUrl: "views/usuarios/modal.html",
-				scope: $scope,
-				size: "md",
-				resolve: function() {},
-				windowClass: "default"
-			});
-		}
+      $scope.closeCustomerView = () => {
+        $scope.showCollectorTable = true;
+        $scope.datas = [];
+        $scope.datas = pivotStructure;
+        $scope.searchKeywords = '';
+        $scope.search();
+        $scope.select($scope.currentPage);
+      }
 
-		$scope.modalEditOpen = (data) => {			
-			$scope.accion = 'editar';
-			$scope.usuario = data;
+      // modals function
+      $scope.modalCreateOpen = () => {
+        $scope.usuario = {};
+        $scope.accion = 'crear';
 
-			data.estado == 1 ? $scope.usuario.estado = true : $scope.usuario.estado = false;
+        modal = $modal.open({
+          templateUrl: "views/usuarios/modal.html",
+          scope: $scope,
+          size: "md",
+          resolve: function () { },
+          windowClass: "default"
+        });
+      }
 
-			modal = $modal.open({
-				templateUrl: "views/usuarios/modal.html",
-				scope: $scope,
-				size: "md",
-				resolve: function() {},
-				windowClass: "default"
-			});
-		}
+      $scope.modalEditOpen = (data) => {
+        $scope.accion = 'editar';
+        $scope.usuario = data;
 
-		$scope.modalDeleteOpen = (data) => {			
-			$scope.accion = 'eliminar';
+        data.estado == 1 ? $scope.usuario.estado = true : $scope.usuario.estado = false;
 
-			$scope.usuario = data;
-			modal = $modal.open({
-				templateUrl: "views/usuarios/modal.html",
-				scope: $scope,
-				size: "md",
-				resolve: function() {},
-				windowClass: "default"
-			});
-		}
+        modal = $modal.open({
+          templateUrl: "views/usuarios/modal.html",
+          scope: $scope,
+          size: "md",
+          resolve: function () { },
+          windowClass: "default"
+        });
+      }
 
-		$scope.modalClose = () => {
-			modal.close();
-        }
-        
-        // toast function
-		$scope.createToast = (tipo, mensaje) => {
-			$scope.toasts.push({
-				anim: "bouncyflip",
-				type: tipo,
-				msg: mensaje
-			});
-		}
+      $scope.modalDeleteOpen = (data) => {
+        $scope.accion = 'eliminar';
 
-		$scope.closeAlert = (index) => {
-			$scope.toasts.splice(index, 1);
-		}
-	}])
+        $scope.usuario = data;
+        modal = $modal.open({
+          templateUrl: "views/usuarios/modal.html",
+          scope: $scope,
+          size: "md",
+          resolve: function () { },
+          windowClass: "default"
+        });
+      }
+
+      $scope.modalClose = () => {
+        modal.close();
+      }
+
+      // toast function
+      $scope.createToast = (tipo, mensaje) => {
+        $scope.toasts.push({
+          anim: "bouncyflip",
+          type: tipo,
+          msg: mensaje
+        });
+      }
+
+      $scope.closeAlert = (index) => {
+        $scope.toasts.splice(index, 1);
+      }
+    }])
 }())
