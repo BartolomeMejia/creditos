@@ -36,10 +36,12 @@ Route::group(['prefix' => 'ws'], function() {
 		return \Redirect::to('/');
 	});
 
+	Route::get('session/check',				'UsuariosController@checkSession');
 	Route::get('cobradorclientes',			'CreditosController@cobradorClientes');
 	Route::get('listacobradores',			'UsuariosController@listacobradores');
 	Route::post('registrarabonos',			'CreditosController@registrarAbono');
 	Route::get('buscarcliente',				'ClientesController@buscarCliente');
+	Route::get('creditocliente',			'ClientesController@buscarCreditoCliente');
 	Route::get('detallecliente',			'ClientesController@detalleCreditoCliente');
 	Route::get('boletapdf',					'CreditosController@boletaPDF');
 });

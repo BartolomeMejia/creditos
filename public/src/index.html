@@ -11,6 +11,7 @@
 	<!-- Icons -->
 	<link rel="stylesheet" href="fonts/ionicons/css/ionicons.min.css">
 	<link rel="stylesheet" href="fonts/font-awesome/css/font-awesome.min.css">
+	
 	<!-- Css/Less Stylesheets -->
 	<!-- build:css styles/angular-material.min.css -->
 	<link rel="stylesheet" href="styles/vendors/angular-material.min.css">
@@ -26,6 +27,7 @@
  	<link href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,300' rel='stylesheet' type='text/css'>
 	<!-- Match Media polyfill for IE9 -->
 	<!--[if IE 9]> <script src="scripts/ie/matchMedia.js"></script>  <![endif]--> 
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.min.css" />
 </head>
 <body ng-app="app" id="app" custom-page class="app off-canvas {{themeActive}}" ng-class="{'nav-expand': navFull, 'body-full': bodyFull}" ng-controller="AppCtrl">
 	<header class="site-head" ng-controller="HeadCtrl" id="site-head" ng-class="{'fixedHeader': fixedHeader}" ng-include=" 'views/header.html' ">
@@ -113,6 +115,7 @@
 	<script src="scripts/todo/app.todo.js"></script>
 	<script src="../bower_components/angular-local-storage/dist/angular-local-storage.js"></script>
 	<script src="scripts/constants/app.constants.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.min.js"></script>
 	<!-- /build -->
 </body>
 </html>
