@@ -18,7 +18,9 @@
       $scope.toasts = [];
       $scope.showCollectorTable = true;
       $scope.collectorSelected = '';
-      $scope.customerList = [];
+      $scope.totalCobrar = 0;
+      $scope.totalMinimoCobrar = 0;
+      $scope.totalCartera = 0;
       var modal;
       var pivotStructure = [];
 
@@ -74,9 +76,26 @@
           $scope.collectorSelected = data.nombre;
           $scope.showCollectorTable = false;
 
+          $scope.totalCobrar = response.data.records.total_cobrar;
+          $scope.totalMinimoCobrar = response.data.records.total_minimo;
+
+          response.data.records.registros.forEach(element => {
+            let parseDate = new Date(element.updated_at).getDate()
+            let currentDate = new Date().getDate()
+
+            if (parseDate == currentDate) {
+              element.updated_at = 1
+            } else {
+              element.updated_at = 0
+            }
+            
+            $scope.totalCartera = $scope.totalCartera + element.deudatotal
+          });
+
           pivotStructure = $scope.datas;
           $scope.datas = [];
           $scope.datas = response.data.records.registros;
+          $scope.searchKeywords = '';
           $scope.search();
           $scope.select($scope.currentPage);
         });
@@ -89,6 +108,9 @@
         $scope.searchKeywords = '';
         $scope.search();
         $scope.select($scope.currentPage);
+        $scope.totalCobrar = 0;
+        $scope.totalMinimoCobrar = 0;
+        $scope.totalCartera = 0;
       }
 
       // modals function
