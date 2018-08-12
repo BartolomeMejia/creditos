@@ -59,18 +59,23 @@
         $scope.toasts.splice(index, 1);
       };
 
-      $scope.modalcuotas = function () {
-        $scope.resumen.cantidadabonada = $scope.cantidad_ingresada;
-        $scope.resumen.cantidadcuotas = parseInt($scope.cantidad_ingresada / $scope.detalle_cliente.cuota_diaria);
-        $scope.resumen.abonocapital = $scope.cantidad_ingresada - ($scope.resumen.cantidadcuotas * $scope.detalle_cliente.cuota_diaria);
-
-        modal = $modal.open({
-          templateUrl: "views/abonos/modal.html",
-          scope: $scope,
-          size: "md",
-          resolve: function () { },
-          windowClass: "default"
-        });
+      $scope.modalcuotas = function (cantidadAbonada) {
+        console.log('abono ', cantidadAbonada)
+        if (cantidadAbonada != '' && parseFloat(cantidadAbonada) > 0) {
+          $scope.resumen.cantidadabonada = $scope.cantidad_ingresada;
+          $scope.resumen.cantidadcuotas = parseInt($scope.cantidad_ingresada / $scope.detalle_cliente.cuota_diaria);
+          $scope.resumen.abonocapital = $scope.cantidad_ingresada - ($scope.resumen.cantidadcuotas * $scope.detalle_cliente.cuota_diaria);
+  
+          modal = $modal.open({
+            templateUrl: "views/abonos/modal.html",
+            scope: $scope,
+            size: "md",
+            resolve: function () { },
+            windowClass: "default"
+          });
+        } else {
+          $scope.createToast("danger", "<strong>Error: </strong>" + 'Debe ingresar una cantidad válida');
+        }
       }
       
       $scope.modalClose = function () {
