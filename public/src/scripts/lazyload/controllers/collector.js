@@ -80,10 +80,13 @@
           $scope.totalMinimoCobrar = response.data.records.total_minimo;
 
           response.data.records.registros.forEach(element => {
-            let parseDate = new Date(element.updated_at).toString()
-            let currentDate = new Date().toString()
+            const recordDate = new Date(element.updated_at)
+            const currentDate = new Date()
 
-            if (parseDate == currentDate) {
+            const recorDateParsed = recordDate.getDate() + '-' + recordDate.getMonth() + '-' + recordDate.getFullYear()
+            const currentDateParsed = currentDate.getDate() + '-' + currentDate.getMonth() + '-' + currentDate.getFullYear()
+
+            if (recorDateParsed === currentDateParsed) {
               element.updated_at = 1
             } else {
               element.updated_at = 0
