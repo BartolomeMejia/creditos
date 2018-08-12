@@ -15,6 +15,7 @@ class ClientesController extends Controller {
     public $result      = false;
     public $message     = "";
     public $records     = [];
+    protected $sessionKey = 'usuario';
 
     public function index() {
         try {
@@ -54,6 +55,7 @@ class ClientesController extends Controller {
         try {
             $nuevoRegistro = \DB::transaction( function() use ($request) {
                                 $nuevoRegistro = Clientes::create([
+                                                    'sucursal_id'   => $request->session()->get($this->sessionKey)->sucursales_id,
                                                     'nombre'        => $request->input('nombre'),
                                                     'apellido'      => $request->input('apellido'),
                                                     'dpi'           => $request->input('dpi'),
