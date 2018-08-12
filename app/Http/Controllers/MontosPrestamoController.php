@@ -15,10 +15,25 @@ class MontosPrestamoController extends Controller
     public $message     = "";
     public $records     = [];
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $registros = MontosPrestamo::with('sucursal')->get();
+
+            if($request->session()->get('usuario')->tipo_usuarios_id == 1){
+                    
+                $registros = MontosPrestamo::select("montos_prestamo.*")
+                                ->with("sucursal")
+                                ->join("sucursales", "montos_prestamo.sucursales_id","=","sucursales.id")
+                                ->where(".sucursales_id", $request->input("branch_id"))
+                                ->get();
+            }
+            else{
+                $registros = MontosPrestamo::select("montos_prestamo.*")
+                                ->with("sucursal")
+                                ->join("sucursales", "montos_prestamo.sucursales_id","=","sucursales.id")
+                                ->where("montos_prestamo.sucursales_id", $request->session()->get('usuario')->sucursales_id)
+                                ->get();
+            }
 
             if ($registros){
                 $this->statusCode   = 200;

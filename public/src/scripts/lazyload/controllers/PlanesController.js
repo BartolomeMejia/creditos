@@ -19,19 +19,35 @@
 		$scope.positionModel = "topRight";
 		$scope.toasts = [];
 		var modal;
+		var firstBranch; 
 
 		$scope.cargarSucursales = function() {
-			$http.get(API_URL+'sucursales', {}).then(function(response) {
-				if (response.data.result) 
-					$scope.sucursales = response.data.records;
+			$http.get(API_URL+'sucursales', {})
+			.then(function successCallback(response) {
+				if (response.data.result) {
+					if($scope.usuario.tipo_usuarios_id == 1)
+						$scope.sucursales = response.data.records;
+					else
+						$scope.sucursales = response.data.records.filter(x => x.id == $scope.usuario.sucursales_id)						
+				}
 			});
 		}
 
-		$scope.LlenarTabla = function()
+		$scope.LlenarTabla = function(branch_id)
 		{
+			var branch_selectd;
+
+			if(branch_id != null){
+				branch_selectd = branch_id
+			}
+			else{
+				branch_selectd = 1;
+			}
+
 			$http({
 				method: 'GET',
-			  	url: 	API_URL+'planes'
+				url: 	API_URL+'planes',
+				params: {branch_id:branch_selectd}
 			})
 			.then(function successCallback(response)  {
 			    $scope.datas = response.data.records;
@@ -41,6 +57,10 @@
 			function errorCallback(response)  {			
 			   console.log( response.data.message );
 			});
+		}
+
+		$scope.changeDataBranch = function(branch_id){
+			$scope.LlenarTabla(branch_id);
 		}
 
 		// FUNCIONES DE DATATABLE
@@ -80,8 +100,8 @@
 			$scope.onOrderChange();
 		}	
 
-		$scope.LlenarTabla();
 		$scope.cargarSucursales();
+		$scope.LlenarTabla($("branch_id").val());
 
 		// Función para Toast
 		$scope.createToast = function(tipo, mensaje) {
@@ -97,6 +117,7 @@
 		}
 
 		$scope.saveData = function( plan ) {
+			console.log(plan)
 			if ($scope.accion == 'crear') {
 				$http({
 					method: 'POST',
@@ -110,7 +131,7 @@
 				})
 				.then(function successCallback(response) {
 					if( response.data.result ) {
-					    $scope.LlenarTabla();
+					    $scope.LlenarTabla($("#branch_id").val());
 					    modal.close();
 					    $scope.createToast("success", "<strong>Éxito: </strong>"+response.data.message);
 					    $timeout( function(){ $scope.closeAlert(0); }, 5000);
@@ -125,6 +146,7 @@
 				});
 			}
 			else if ($scope.accion == 'editar') {
+				console.log(plan.id)
 				$http({
 					method: 'PUT',
 				  	url: 	API_URL+'planes/'+plan.id,
@@ -137,7 +159,7 @@
 				})
 				.then(function successCallback(response) {
 					if( response.data.result ) {
-					    $scope.LlenarTabla();
+					    $scope.LlenarTabla($("#branch_id").val());
 					    modal.close();
 					    $scope.createToast("success", "<strong>Éxito: </strong>"+response.data.message);
 					    $timeout( function(){ $scope.closeAlert(0); }, 3000);
@@ -158,7 +180,7 @@
 				})
 				.then(function successCallback(response) {
 					if( response.data.result ) {
-					    $scope.LlenarTabla();
+					    $scope.LlenarTabla($("#branch_id").val());
 					    modal.close();
 					    $scope.createToast("success", "<strong>Éxito: </strong>"+response.data.message);
 					    $timeout( function(){ $scope.closeAlert(0); }, 3000);

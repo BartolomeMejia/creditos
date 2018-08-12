@@ -15,11 +15,25 @@ class PlanesController extends Controller
     public $message     = "";
     public $records     = [];
     
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $registros = Planes::with('sucursal')->get();
-
+            if($request->session()->get('usuario')->tipo_usuarios_id == 1){
+                    
+                $registros = Planes::select("planes.*")
+                                ->with("sucursal")
+                                ->join("sucursales", "planes.sucursales_id","=","sucursales.id")
+                                ->where("planes.sucursales_id", $request->input("branch_id"))
+                                ->get();
+            }
+            else{
+                $registros = Planes::select("planes.*")
+                                ->with("sucursal")
+                                ->join("sucursales", "planes.sucursales_id","=","sucursales.id")
+                                ->where("planes.sucursales_id", $request->session()->get('usuario')->sucursales_id)
+                                ->get();
+            }
+            
             if ($registros)
             {
                 $this->statusCode = 200;

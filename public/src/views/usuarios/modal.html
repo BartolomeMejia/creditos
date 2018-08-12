@@ -9,6 +9,7 @@
 		<div class="row form-group" ng-if="accion == 'eliminar'">
 			<h3>¿Realmente desea eliminar este usuario?</h3>
 		</div>
+	
 		<form class="form-horizontal" name="form" ng-if="accion == 'crear' || accion == 'editar'" action="javascript:;" novalidate>
 			<div class="row form-group">
 				<div class="col-sm-6">
@@ -57,6 +58,7 @@
 				</div>
 			</div>
 		</form>
+		
 		<div class="row form-group" ng-if="accion == 'eliminar'">
 			<div class="col-sm-12 text-right">
 				<button class="btn btn-danger" ng-click="saveData(usuario)">Confirmar</button>

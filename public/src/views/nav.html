@@ -23,13 +23,13 @@
 				<span class="text">Dashboard</span>
 			</a>
 		</li>
-		<li>
+		<li ng-show="usuario.tipo_usuarios_id == 1 || usuario.tipo_usuarios_id == 2 || usuario.tipo_usuarios_id == 3">
 			<a href="#/creditos" md-ink-ripple>
 				<i class="ion ion-cash"></i>
 				<span class="text">Nuevo crédito</span>
 			</a>
 		</li>
-		<li>
+		<li ng-show="usuario.tipo_usuarios_id == 1 || usuario.tipo_usuarios_id == 2 || usuario.tipo_usuarios_id == 3">
 			<a href="#/abonos" md-ink-ripple>
 				<i class="ion ion-cash"></i>
 				<span class="text">Abonar crédito</span>
@@ -41,7 +41,8 @@
 				<span class="text">Clientes</span>
 			</a>
 		</li>
-		<li>
+		
+		<li ng-show="usuario.tipo_usuarios_id == 1">
 			<a href="#/sucursales" md-ink-ripple>
 				<i class="ion ion-home"></i>
 				<span class="text">Sucursales</span>
@@ -59,13 +60,13 @@
 				<span class="text">Montos</span>
 			</a>
 		</li>
-		<li>
+		<li ng-show="usuario.tipo_usuarios_id == 1 || usuario.tipo_usuarios_id == 2 || usuario.tipo_usuarios_id == 3">
 			<a href="#/usuarios" md-ink-ripple>
 				<i class="ion ion-person-stalker"></i>
 				<span class="text">Usuarios</span>
 			</a>
 		</li>
-		<li>
+		<li ng-show="usuario.tipo_usuarios_id == 1 || usuario.tipo_usuarios_id == 2 || usuario.tipo_usuarios_id == 3">
 			<a href="javascript:;" md-ink-ripple>
 				<i class="ion ion-android-options"></i>
 				<span class="text">Reportes</span>

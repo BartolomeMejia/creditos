@@ -15,8 +15,6 @@
             var modal;
             $scope.validarCliente = function(search_client){
 
-                console.log(API_URL+'creditocliente');
-
                 $http({
                     method: 'GET',
                     url:    API_URL+'creditocliente',

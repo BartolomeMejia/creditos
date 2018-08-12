@@ -5,9 +5,30 @@
 				<div class="panel panel-default table-responsive panel-hovered mb20"  >
 					<div class="panel-heading"><h4>Montos</h4></div>
 					<div class="panel-body">
-						<div class="row">
-							<button type="button" class="btn btn-success btn-rounded" ng-click="modalCreateOpen()" md-ink-ripple><i class="fa fa-plus"></i> Crear monto</button>						
-						</div>
+					
+						<div class="col-sm-6">
+								<div class="row" ng-show="usuario.tipo_usuarios_id == 1 || usuario.tipo_usuarios_id == 2 || usuario.tipo_usuarios_id == 3">
+									<button type="button" class="btn btn-success btn-rounded" ng-click="modalCreateOpen()" md-ink-ripple><i class="fa fa-plus"></i> Crear monto</button>						
+								</div>
+							</div>	
+							<div class="col-sm-6">
+								<div class="row" ng-show="usuario.tipo_usuarios_id == 1">								
+									<div class="form-horizontal">
+										<div class="form-group">
+											<label class="col-md-4 control-label">Sucursal:</label>
+											<div class="col-md-8">
+												<select id="branch_id" class="form-control" ng-model="monto.sucursales_id" ng-change="changeDataBranch(monto.sucursales_id)">
+													<option ng-selected="{{item.id == usuario.sucursales_id}}"
+															ng-repeat="item in sucursales"
+															value="{{item.id}}">
+															{{item.descripcion}}
+													</option>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
 						<br>
 						<div class="row">
 							<div class="small text-bold left mt5">

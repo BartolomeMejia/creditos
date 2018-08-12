@@ -21,10 +21,14 @@ class UsuariosController extends Controller
     public $message     = "";
     public $records     = [];
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $registros = Usuarios::where("estado", 1)->with('tipoUsuarios','sucursal')->get();
+            if($request->session()->get('usuario')->tipo_usuarios_id == 1){
+                $registros = Usuarios::with('tipoUsuarios','sucursal')->get();
+            } else {
+                $registros = Usuarios::where('sucursales_id', $request->session()->get('usuario')->sucursales_id)->with('tipoUsuarios','sucursal')->get();
+            }
 
             if( $registros ){
                 $this->statusCode   = 200;
@@ -68,11 +72,11 @@ class UsuariosController extends Controller
             {
                 $nuevoRegistro = \DB::transaction( function() use ( $request){
                                     $nuevoRegistro = Usuarios::create([
-                                                        'tipo_usuarios_id'  => $request->input('idtipousuario'),
+                                                        'tipo_usuarios_id'  => $request->input('tipo_usuarios_id'),
                                                         'nombre'            => $request->input('nombre'),
                                                         'user'              => strtolower($request->input('user')),
                                                         'estado'            => 1,
-                                                        'sucursales_id'     => $request->input('idsucursal'),
+                                                        'sucursales_id'     => $request->input('sucursales_id'),
                                                         'password'          => \Hash::make($request->input('password')),
                                                         'password_2'        => \Hash::make($request->input('password2')),
 
@@ -226,7 +230,7 @@ class UsuariosController extends Controller
     {
         try
         {
-            if (Auth::attempt(['user'=> $request->input('user'),'password'=> $request->input('password')]))
+            if (Auth::attempt(['user'=> $request->input('user'),'password'=> $request->input('password'), "estado" => 1]))
             {
                 //Session::put('idUsuario', Auth::user()->id);
 

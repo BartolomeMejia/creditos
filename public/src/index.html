@@ -38,7 +38,7 @@
 		<aside class="nav-wrap" ng-class="{'nav-expand': navFull, 'nav-offcanvas': navOffCanvas}" id="site-nav" custom-scrollbar ng-include="'views/nav.html'">
 		</aside>
 		<!-- content-here -->
-		<div ng-class="{'nav-expand': navFull, 'fixedHeader': fixedHeader}" class="content-container" id="content" ng-view>
+		<div ng-class="{'nav-expand': navFull, 'fixedHeader': fixedHeader}" class="content-container" id="content" ng-view ng-controller="NavCtrl">
 		</div>
 	</div> <!-- #end main-container -->
 	<!-- settings -->

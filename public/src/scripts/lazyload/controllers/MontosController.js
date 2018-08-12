@@ -22,18 +22,32 @@
 
 		$scope.cargarSucursales = function() {
 			$http.get(API_URL+'sucursales', {}).then(function(response) {
-				if (response.data.result) 
-					$scope.sucursales = response.data.records;
+				if (response.data.result) {
+					if($scope.usuario.tipo_usuarios_id == 1)
+						$scope.sucursales = response.data.records;
+					else
+						$scope.sucursales = response.data.records.filter(x => x.id == $scope.usuario.sucursales_id)	
+				}
 			});
 		}
 
-		$scope.LlenarTabla = function()
+		$scope.LlenarTabla = function(branch_id)
 		{
+			var branch_selectd;
+			if(branch_id != null){
+				branch_selectd = branch_id
+			}
+			else{
+				branch_selectd = 1;
+			}
+
 			$http({
 				method: 'GET',
-			  	url: 	API_URL+'montosprestamo'
+				url: 	API_URL+'montosprestamo',
+				params: {branch_id:branch_selectd}
 			})
 			.then(function successCallback(response)  {
+				console.log(response)
 			    $scope.datas = response.data.records;
 				$scope.search();
 				$scope.select($scope.currentPage);
@@ -41,6 +55,10 @@
 			function errorCallback(response)  {			
 			   console.log( response.data.message );
 			});
+		}
+
+		$scope.changeDataBranch = function(branch_id){
+			$scope.LlenarTabla(branch_id);
 		}
 
 		// FUNCIONES DE DATATABLE
@@ -80,7 +98,7 @@
 			$scope.onOrderChange();
 		}	
 
-		$scope.LlenarTabla();
+		$scope.LlenarTabla($("branch_id").val());
 		$scope.cargarSucursales();
 
 		// Función para Toast
@@ -97,6 +115,7 @@
 		}
 
 		$scope.saveData = function( monto ) {
+		
 			if ($scope.accion == 'crear') {
 				$http({
 					method: 'POST',
@@ -108,7 +127,7 @@
 				})
 				.then(function successCallback(response) {
 					if( response.data.result ) {
-					    $scope.LlenarTabla();
+					    $scope.LlenarTabla($("branch_id").val());
 					    modal.close();
 					    $scope.createToast("success", "<strong>Éxito: </strong>"+response.data.message);
 					    $timeout( function(){ $scope.closeAlert(0); }, 5000);
@@ -133,7 +152,7 @@
 				})
 				.then(function successCallback(response) {
 					if( response.data.result ) {
-					    $scope.LlenarTabla();
+					    $scope.LlenarTabla($("branch_id").val());
 					    modal.close();
 					    $scope.createToast("success", "<strong>Éxito: </strong>"+response.data.message);
 					    $timeout( function(){ $scope.closeAlert(0); }, 3000);
@@ -154,7 +173,7 @@
 				})
 				.then(function successCallback(response) {
 					if( response.data.result ) {
-					    $scope.LlenarTabla();
+					    $scope.LlenarTabla($("branch_id").val());
 					    modal.close();
 					    $scope.createToast("success", "<strong>Éxito: </strong>"+response.data.message);
 					    $timeout( function(){ $scope.closeAlert(0); }, 3000);

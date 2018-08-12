@@ -13,8 +13,8 @@
 					<input type="number" class="form-control" min="1" ng-model="monto.monto">
 				</div>
 				<div class="col-sm-6">
-					<label class="control-label">Sucursal</label>
-					<select class="form-control" ng-model="monto.sucursales_id" ng-options="item.id as item.descripcion for item in sucursales"></select>
+					<label>Sucursal</label>
+					<select class="form-control" ng-model="plan.sucursales_id" ng-options="item.id as item.descripcion for item in sucursales" required></select>
 				</div>
 			</div>
 		</form>

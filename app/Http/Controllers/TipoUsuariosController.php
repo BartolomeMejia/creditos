@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Session;
 use App\TipoUsuarios;
 
 class TipoUsuariosController extends Controller
@@ -15,10 +16,13 @@ class TipoUsuariosController extends Controller
     public $message = '';
     public $records = [];
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $registros = TipoUsuarios::all();
+            if($request->session()->get('usuario')->tipo_usuarios_id == 1)
+                $registros = TipoUsuarios::all();
+            else
+                $registros = TipoUsuarios::where('id','<>',1)->get();
 
             if($registros)
             {

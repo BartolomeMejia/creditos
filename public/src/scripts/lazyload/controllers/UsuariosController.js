@@ -108,6 +108,8 @@
 
 		$scope.saveData = function( usuario ) {
 			if ($scope.accion == 'crear') {
+				console.log(usuario)
+
 				$http({
 					method: 'POST',
 				  	url: 	API_URL+'usuarios',
@@ -144,7 +146,7 @@
 				  	}
 				})
 				.then(function successCallback(response) {
-					if( response.data.result ) {
+						if( response.data.result ) {
 					    $scope.LlenarTabla();
 					    modal.close();
 					    $scope.createToast("success", "<strong>Éxito: </strong>"+response.data.message);
