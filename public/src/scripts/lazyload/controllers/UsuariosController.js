@@ -31,8 +31,12 @@
 
 		$scope.cargarSucursales = function() {
 			$http.get(API_URL+'sucursales', {}).then(function(response) {
-				if (response.data.result) 
-					$scope.sucursales = response.data.records;
+				if (response.data.result) {
+					if($scope.usuario.tipo_usuarios_id == 1)
+						$scope.sucursales = response.data.records;
+					else
+						$scope.sucursales = response.data.records.filter(x => x.id == $scope.usuario.sucursales_id)						
+				}
 			});
 		}
 
@@ -43,7 +47,11 @@
 			  	url: 	API_URL+'usuarios'
 			})
 			.then(function successCallback(response)  {
-			    $scope.datas = response.data.records;
+				if($scope.usuario.tipo_usuarios_id == 1)
+					$scope.datas = response.data.records;
+				else
+					$scope.datas = response.data.records.filter(x => x.tipo_usuarios_id != 1)	
+
 				$scope.search();
 				$scope.select($scope.currentPage);
 			}, 

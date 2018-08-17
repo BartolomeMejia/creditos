@@ -7,6 +7,28 @@
             <h4>Cobradores</h4>
           </div>
           <div class="panel-body">
+
+            
+              <div class="row" ng-show="usuario.tipo_usuarios_id == 1">								
+                <div class="form-horizontal">
+                  <div class="form-group">
+                    <label class="col-md-8 control-label">Sucursal:</label>
+                    <div class="col-md-4">
+                      <select id="branch_id" class="form-control" ng-model="colletors.sucursales_id" ng-change="changeDataBranch(colletors.sucursales_id)">
+                        <option ng-selected="{{item.id == usuario.sucursales_id}}"
+                            ng-repeat="item in sucursales"
+                            value="{{item.id}}">
+                            {{item.descripcion}}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              
+            </div>
+
+            <br>
+            
             <div class="row">
               <div class="small text-bold left mt5">
                 Mostrar&nbsp;

@@ -18,12 +18,25 @@
       $scope.toasts = [];
       var modal;
 
-      $scope.LlenarTabla = () => {
+      function loadBranches(){
+        $http.get(API_URL+'sucursales', {})
+        .then(function successCallback(response) {
+          if (response.data.result) {
+              $scope.sucursales = response.data.records;						
+          }
+        });
+      }
+
+      $scope.LlenarTabla = (branch_id) => {
+
+        var branch_selectd = branch_id != null ? branch_id : $scope.usuario.sucursales_id;
+
         $http({
           method: 'GET',
           url: API_URL + 'clientes'
         }).then(function successCallback(response) {
-          $scope.datas = response.data.records;
+          console.log($scope.datas)
+          $scope.datas = response.data.records.filter(x => x.sucursal_id == branch_selectd);
           $scope.search();
           $scope.select($scope.currentPage);
         }, function errorCallback(response) {
@@ -68,6 +81,7 @@
         $scope.onOrderChange();
       }
 
+      loadBranches()
       $scope.LlenarTabla();
 
       // Función para Toast
@@ -81,6 +95,10 @@
 
       $scope.closeAlert = function (index) {
         $scope.toasts.splice(index, 1);
+      }
+
+      $scope.changeDataBranch = (branch_id) => {
+        $scope.LlenarTabla(branch_id);
       }
 
       $scope.saveData = function (cliente) {

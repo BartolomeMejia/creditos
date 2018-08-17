@@ -6,6 +6,7 @@
     .controller("CollectorController", ["$scope", "$filter", "$http", "$modal", "$interval", 'collectorService', 'API_URL', function ($scope, $filter, $http, $modal, $timeout, collectorService, API_URL) {
 
       // general vars
+      $scope.loadBranches = [];
       $scope.datas = [];
       $scope.currentPageStores = [];
       $scope.searchKeywords = ''
@@ -24,9 +25,25 @@
       var modal;
       var pivotStructure = [];
 
-      function loadData() {
+
+      function loadBranches(){
+        $http.get(API_URL+'sucursales', {})
+        .then(function successCallback(response) {
+          if (response.data.result) {
+            if($scope.usuario.tipo_usuarios_id == 1)
+              $scope.sucursales = response.data.records;
+            else
+              $scope.sucursales = response.data.records.filter(x => x.id == $scope.usuario.sucursales_id)						
+          }
+        });
+      }
+
+      function loadData(branch_id) {
+
+        var branch_selectd = branch_id != null ? branch_id : $scope.usuario.sucursales_id;
+        
         collectorService.index().then(function (response) {
-          $scope.datas = response.data.records;
+          $scope.datas = response.data.records.filter(x => x.sucursales_id == branch_selectd);
           $scope.search();
           $scope.select($scope.currentPage);
         });
@@ -68,8 +85,13 @@
         $scope.filteredData = $filter('orderBy')($scope.datas, rowName);
         $scope.onOrderChange();
       }
+      
+      loadBranches();
+      loadData($("branch_id").val());
 
-      loadData();
+      $scope.changeDataBranch = (branch_id) => {
+        loadData(branch_id);
+      }
 
       $scope.showCustomerView = (data) => {
         collectorService.detail(data.id).then((response) => {

@@ -205,7 +205,7 @@ class ClientesController extends Controller {
     public function buscarCliente(Request $request)
     {
         try {
-            $cliente = Clientes::where('dpi', $request->input('dpi') )->first();
+            $cliente = Clientes::where('dpi', $request->input('dpi') )->where('sucursal_id', $request->session()->get('usuario')->sucursales_id)->first();
             
             if($cliente){
 
@@ -244,7 +244,7 @@ class ClientesController extends Controller {
     public function buscarCreditoCliente(Request $request){
             try{
             
-                $creditoCliente = Clientes::where('dpi', $request->input('dpi'))->with('creditos')->first();
+                $creditoCliente = Clientes::where('dpi', $request->input('dpi'))->where('sucursal_id', $request->session()->get('usuario')->sucursales_id)->with('creditos')->first();
             
                 if($creditoCliente){
                     
