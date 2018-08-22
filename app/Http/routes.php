@@ -43,6 +43,7 @@ Route::group(['prefix' => 'ws'], function() {
 	Route::get('buscarcliente',				'ClientesController@buscarCliente');
 	Route::get('creditocliente',			'ClientesController@buscarCreditoCliente');
 	Route::get('detallecliente',			'ClientesController@detalleCreditoCliente');
+	Route::get('branch/customers',			'ClientesController@customersByBranch');	
 	Route::get('boletapdf',					'CreditosController@boletaPDF');
 });
 

@@ -101,7 +101,11 @@
                 {
                     name: "app.service.collector",
                     files: ["scripts/lazyload/services/collector.js"]
-                },
+				},
+				{
+                    name: "app.service.customers",
+                    files: ["scripts/lazyload/services/customers.js"]
+                }
 			]
 		})
 	}])

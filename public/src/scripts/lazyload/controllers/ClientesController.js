@@ -35,7 +35,6 @@
           method: 'GET',
           url: API_URL + 'clientes'
         }).then(function successCallback(response) {
-          console.log($scope.datas)
           $scope.datas = response.data.records.filter(x => x.sucursal_id == branch_selectd);
           $scope.search();
           $scope.select($scope.currentPage);

@@ -44,7 +44,7 @@
             $http.get(API_URL+'listacobradores', {}).then(function(response) {
                 if (response.data.result)
                 	console.log(response.data.records);
-                    $scope.usuarios_cobrador = response.data.records;
+                    $scope.usuarios_cobrador = response.data.records.filter(x => x.sucursales_id == $scope.usuario.sucursales_id);
             });
         };
 

@@ -73,6 +73,7 @@ class CreditosController extends Controller
                                                     'montos_prestamo_id'    => $request->input('idmonto'),
                                                     'usuarios_creo'         => $request->session()->get('usuario')->id,
                                                     'usuarios_cobrador'     => $request->input('idusuario'),
+                                                    'sucursal_id'           => $request->session()->get('usuario')->sucursales_id,
                                                     'saldo'                 => $request->input('deudatotal'),
                                                     'interes'               => 0,
                                                     'deudatotal'            => $request->input('deudatotal'),

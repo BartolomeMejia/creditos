@@ -244,7 +244,7 @@ class ClientesController extends Controller {
     public function buscarCreditoCliente(Request $request){
             try{
             
-                $creditoCliente = Clientes::where('dpi', $request->input('dpi'))->where('sucursal_id', $request->session()->get('usuario')->sucursales_id)->with('creditos')->first();
+                $creditoCliente = Clientes::where('nombre', $request->input('name'))->where('apellido', $request->input('lastname'))->where('sucursal_id', $request->session()->get('usuario')->sucursales_id)->with('creditos')->first();
             
                 if($creditoCliente){
                     
@@ -312,6 +312,33 @@ class ClientesController extends Controller {
             else
                 throw new \Exception("Error al consultar el registro");
                 
+        } catch (\Exception $e) {
+            $this->statusCode   = 200;
+            $this->result       = false;
+            $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al consultar el registro";
+        }
+        finally
+        {
+            $response = [
+                'result'    => $this->result,
+                'message'   => $this->message,
+                'records'   => $this->records,
+            ];
+
+            return response()->json($response, $this->statusCode);
+        }
+    }
+
+    public function customersByBranch(Request $request){
+        try{
+            $customers = Clientes::where('sucursal_id',$request->session()->get('usuario')->sucursales_id)->get();
+
+            if($customers){
+                $this->statusCode   = 200;
+                $this->result       = true;
+                $this->message      = "Registro consultado exitosamente";
+                $this->records      = $customers;
+            }
         } catch (\Exception $e) {
             $this->statusCode   = 200;
             $this->result       = false;
