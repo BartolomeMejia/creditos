@@ -6,7 +6,7 @@
     .controller("ClientesController", ["$scope", "$filter", "$http", "$modal", "$interval", "API_URL", function ($scope, $filter, $http, $modal, $timeout, API_URL) {
 
       //Variables generales
-      $scope.datas = [];
+      $scope.datas = Array();
       $scope.currentPageStores = [];
       $scope.searchKeywords = "";
       $scope.filteredData = [];
@@ -18,16 +18,16 @@
       $scope.toasts = [];
       var modal;
 
-      function loadBranches(){
-        $http.get(API_URL+'sucursales', {})
-        .then(function successCallback(response) {
-          if (response.data.result) {
-              $scope.sucursales = response.data.records;						
-          }
-        });
+      function loadBranches() {
+        $http.get(API_URL + 'sucursales', {})
+          .then(function successCallback(response) {
+            if (response.data.result) {
+              $scope.sucursales = response.data.records;
+            }
+          });
       }
 
-      $scope.LlenarTabla = (branch_id) => {
+      $scope.LlenarTabla = function (branch_id) {
 
         var branch_selectd = branch_id != null ? branch_id : $scope.usuario.sucursales_id;
 
@@ -35,7 +35,13 @@
           method: 'GET',
           url: API_URL + 'clientes'
         }).then(function successCallback(response) {
-          $scope.datas = response.data.records.filter(x => x.sucursal_id == branch_selectd);
+          // $scope.datas = response.data.records.filter(x => x.sucursal_id == branch_selectd)
+          response.data.records.forEach(function (item) {
+            if (item.sucursal_id == branch_selectd) {
+              $scope.datas.push(item)
+            }
+          })
+
           $scope.search();
           $scope.select($scope.currentPage);
         }, function errorCallback(response) {
@@ -96,7 +102,7 @@
         $scope.toasts.splice(index, 1);
       }
 
-      $scope.changeDataBranch = (branch_id) => {
+      $scope.changeDataBranch = function (branch_id) {
         $scope.LlenarTabla(branch_id);
       }
 

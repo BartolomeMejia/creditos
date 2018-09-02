@@ -1,235 +1,239 @@
-;(function() 
-{
-	"use strict";
+(function () {
+  "use strict"
 
-	angular.module("app.montos", ["app.constants"])
+  angular.module("app.montos", ["app.constants"])
 
-	.controller("MontosController", ["$scope", "$filter", "$http", "$modal", "$interval", "API_URL", function($scope, $filter, $http, $modal, $timeout, API_URL)  {	
-		
-		// Variables generales
-		$scope.sucursales = [];
-		$scope.datas = [];
-		$scope.currentPageStores = [];
-		$scope.searchKeywords = "";
-		$scope.filteredData = [];	
-		$scope.row = "";
-		$scope.numPerPageOpts = [5, 10, 25, 50, 100];
-		$scope.numPerPage = $scope.numPerPageOpts[1];
-		$scope.currentPage = 1;
-		$scope.positionModel = "topRight";
-		$scope.toasts = [];
-		var modal;
+    .controller("MontosController", ["$scope", "$filter", "$http", "$modal", "$interval", "API_URL", function ($scope, $filter, $http, $modal, $timeout, API_URL) {
 
-		$scope.cargarSucursales = function() {
-			$http.get(API_URL+'sucursales', {}).then(function(response) {
-				if (response.data.result) {
-					if($scope.usuario.tipo_usuarios_id == 1)
-						$scope.sucursales = response.data.records;
-					else
-						$scope.sucursales = response.data.records.filter(x => x.id == $scope.usuario.sucursales_id)	
-				}
-			});
-		}
+      // Variables generales
+      $scope.sucursales = []
+      $scope.datas = []
+      $scope.currentPageStores = []
+      $scope.searchKeywords = ""
+      $scope.filteredData = []
+      $scope.row = ""
+      $scope.numPerPageOpts = [5, 10, 25, 50, 100]
+      $scope.numPerPage = $scope.numPerPageOpts[1]
+      $scope.currentPage = 1
+      $scope.positionModel = "topRight"
+      $scope.toasts = []
+      var modal
 
-		$scope.LlenarTabla = function(branch_id)
-		{
-			var branch_selectd;
-			if(branch_id != null){
-				branch_selectd = branch_id
-			}
-			else{
-				branch_selectd = 1;
-			}
+      $scope.cargarSucursales = function () {
+        $http.get(API_URL + 'sucursales', {}).then(function (response) {
+          if (response.data.result) {
+            if ($scope.usuario.tipo_usuarios_id == 1)
+              $scope.sucursales = response.data.records
+            else {
+              // $scope.sucursales = response.data.records.filter(x => x.id == $scope.usuario.sucursales_id)
+              response.data.records.forEach(function (item) {
+                if (item.id == $scope.usuario.sucursales_id) {
+                  $scope.sucursales.push(item)
+                }
+              })
+            }
+          }
+        })
+      }
 
-			$http({
-				method: 'GET',
-				url: 	API_URL+'montosprestamo',
-				params: {branch_id:branch_selectd}
-			})
-			.then(function successCallback(response)  {
-				console.log(response)
-			    $scope.datas = response.data.records;
-				$scope.search();
-				$scope.select($scope.currentPage);
-			}, 
-			function errorCallback(response)  {			
-			   console.log( response.data.message );
-			});
-		}
+      $scope.LlenarTabla = function (branch_id) {
+        var branch_selectd
+        if (branch_id != null) {
+          branch_selectd = branch_id
+        }
+        else {
+          branch_selectd = 1
+        }
 
-		$scope.changeDataBranch = function(branch_id){
-			$scope.LlenarTabla(branch_id);
-		}
+        $http({
+          method: 'GET',
+          url: API_URL + 'montosprestamo',
+          params: { branch_id: branch_selectd }
+        })
+          .then(function successCallback(response) {
+            console.log(response)
+            $scope.datas = response.data.records
+            $scope.search()
+            $scope.select($scope.currentPage)
+          },
+            function errorCallback(response) {
+              console.log(response.data.message)
+            })
+      }
 
-		// FUNCIONES DE DATATABLE
-		$scope.select = function(page) {
-			var start = (page - 1)*$scope.numPerPage,
-				end = start + $scope.numPerPage;
+      $scope.changeDataBranch = function (branch_id) {
+        $scope.LlenarTabla(branch_id)
+      }
 
-			$scope.currentPageStores = $scope.filteredData.slice(start, end);
-		}
+      // FUNCIONES DE DATATABLE
+      $scope.select = function (page) {
+        var start = (page - 1) * $scope.numPerPage,
+          end = start + $scope.numPerPage
 
-		$scope.onFilterChange = function() {
-			$scope.select(1);
-			$scope.currentPage = 1;
-			$scope.row = '';
-		}
+        $scope.currentPageStores = $scope.filteredData.slice(start, end)
+      }
 
-		$scope.onNumPerPageChange = function() {
-			$scope.select(1);
-			$scope.currentPage = 1;
-		}
+      $scope.onFilterChange = function () {
+        $scope.select(1)
+        $scope.currentPage = 1
+        $scope.row = ''
+      }
 
-		$scope.onOrderChange = function() {
-			$scope.select(1);
-			$scope.currentPage = 1;
-		}
+      $scope.onNumPerPageChange = function () {
+        $scope.select(1)
+        $scope.currentPage = 1
+      }
 
-		$scope.search = function() {
-			$scope.filteredData = $filter("filter")($scope.datas, $scope.searchKeywords);
-			$scope.onFilterChange();		
-		}
+      $scope.onOrderChange = function () {
+        $scope.select(1)
+        $scope.currentPage = 1
+      }
 
-		$scope.order = function(rowName) {
-			if($scope.row == rowName)
-				return;
-			$scope.row = rowName;
-			$scope.filteredData = $filter('orderBy')($scope.datas, rowName);
-			$scope.onOrderChange();
-		}	
+      $scope.search = function () {
+        $scope.filteredData = $filter("filter")($scope.datas, $scope.searchKeywords)
+        $scope.onFilterChange()
+      }
 
-		$scope.LlenarTabla($("branch_id").val());
-		$scope.cargarSucursales();
+      $scope.order = function (rowName) {
+        if ($scope.row == rowName)
+          return
+        $scope.row = rowName
+        $scope.filteredData = $filter('orderBy')($scope.datas, rowName)
+        $scope.onOrderChange()
+      }
 
-		// Función para Toast
-		$scope.createToast = function(tipo, mensaje) {
-			$scope.toasts.push({
-				anim: "bouncyflip",
-				type: tipo,
-				msg: mensaje
-			});
-		}
+      $scope.LlenarTabla($("branch_id").val())
+      $scope.cargarSucursales()
 
-		$scope.closeAlert = function(index) {
-			$scope.toasts.splice(index, 1);
-		}
+      // Función para Toast
+      $scope.createToast = function (tipo, mensaje) {
+        $scope.toasts.push({
+          anim: "bouncyflip",
+          type: tipo,
+          msg: mensaje
+        })
+      }
 
-		$scope.saveData = function( monto ) {
-		
-			if ($scope.accion == 'crear') {
-				$http({
-					method: 'POST',
-				  	url: 	API_URL+'montosprestamo',
-				  	data: { 
-				  		monto: monto.monto,
-				  		idsucursal: monto.sucursales_id
-				  	}
-				})
-				.then(function successCallback(response) {
-					if( response.data.result ) {
-					    $scope.LlenarTabla($("branch_id").val());
-					    modal.close();
-					    $scope.createToast("success", "<strong>Éxito: </strong>"+response.data.message);
-					    $timeout( function(){ $scope.closeAlert(0); }, 5000);
-					}
-					else {
-						$scope.createToast("danger", "<strong>Error: </strong>"+response.data.message);
-					    $timeout( function(){ $scope.closeAlert(0); }, 5000);	
-					}
-				}, 
-				function errorCallback(response) {
-				   console.log( response.data.message );
-				});
-			}
-			else if ($scope.accion == 'editar') {
-				$http({
-					method: 'PUT',
-				  	url: 	API_URL+'montosprestamo/'+monto.id,
-				  	data: { 
-				  		monto: monto.monto,
-				  		idsucursal: monto.sucursales_id
-				  	}
-				})
-				.then(function successCallback(response) {
-					if( response.data.result ) {
-					    $scope.LlenarTabla($("branch_id").val());
-					    modal.close();
-					    $scope.createToast("success", "<strong>Éxito: </strong>"+response.data.message);
-					    $timeout( function(){ $scope.closeAlert(0); }, 3000);
-					}
-					else {
-						$scope.createToast("danger", "<strong>Error: </strong>"+response.data.message);
-					    $timeout( function(){ $scope.closeAlert(0); }, 5000);	
-					}
-				}, 
-				function errorCallback(response) {
-				   console.log( response.data.message );
-				});
-			}
-			else if ($scope.accion == 'eliminar') {
-				$http({
-					method: 'DELETE',
-				  	url: 	API_URL+'montosprestamo/'+monto.id,
-				})
-				.then(function successCallback(response) {
-					if( response.data.result ) {
-					    $scope.LlenarTabla($("branch_id").val());
-					    modal.close();
-					    $scope.createToast("success", "<strong>Éxito: </strong>"+response.data.message);
-					    $timeout( function(){ $scope.closeAlert(0); }, 3000);
-					}
-					else {
-						$scope.createToast("danger", "<strong>Error: </strong>"+response.data.message);
-					    $timeout( function(){ $scope.closeAlert(0); }, 5000);	
-					}
-				}, 
-				function errorCallback(response) {
-				   console.log( response.data.message );
-				});
-			}
-		}
+      $scope.closeAlert = function (index) {
+        $scope.toasts.splice(index, 1)
+      }
 
-		// Funciones para Modales
-		$scope.modalCreateOpen = function() {
-			$scope.monto = {};
-			$scope.accion = 'crear';
+      $scope.saveData = function (monto) {
 
-			modal = $modal.open({
-				templateUrl: "views/montos/modal.html",
-				scope: $scope,
-				size: "md",
-				resolve: function() {},
-				windowClass: "default"
-			});
-		}
+        if ($scope.accion == 'crear') {
+          $http({
+            method: 'POST',
+            url: API_URL + 'montosprestamo',
+            data: {
+              monto: monto.monto,
+              idsucursal: monto.sucursales_id
+            }
+          })
+            .then(function successCallback(response) {
+              if (response.data.result) {
+                $scope.LlenarTabla($("branch_id").val())
+                modal.close()
+                $scope.createToast("success", "<strong>Éxito: </strong>" + response.data.message)
+                $timeout(function () { $scope.closeAlert(0) }, 5000)
+              }
+              else {
+                $scope.createToast("danger", "<strong>Error: </strong>" + response.data.message)
+                $timeout(function () { $scope.closeAlert(0) }, 5000)
+              }
+            },
+              function errorCallback(response) {
+                console.log(response.data.message)
+              })
+        }
+        else if ($scope.accion == 'editar') {
+          $http({
+            method: 'PUT',
+            url: API_URL + 'montosprestamo/' + monto.id,
+            data: {
+              monto: monto.monto,
+              idsucursal: monto.sucursales_id
+            }
+          })
+            .then(function successCallback(response) {
+              if (response.data.result) {
+                $scope.LlenarTabla($("branch_id").val())
+                modal.close()
+                $scope.createToast("success", "<strong>Éxito: </strong>" + response.data.message)
+                $timeout(function () { $scope.closeAlert(0) }, 3000)
+              }
+              else {
+                $scope.createToast("danger", "<strong>Error: </strong>" + response.data.message)
+                $timeout(function () { $scope.closeAlert(0) }, 5000)
+              }
+            },
+              function errorCallback(response) {
+                console.log(response.data.message)
+              })
+        }
+        else if ($scope.accion == 'eliminar') {
+          $http({
+            method: 'DELETE',
+            url: API_URL + 'montosprestamo/' + monto.id,
+          })
+            .then(function successCallback(response) {
+              if (response.data.result) {
+                $scope.LlenarTabla($("branch_id").val())
+                modal.close()
+                $scope.createToast("success", "<strong>Éxito: </strong>" + response.data.message)
+                $timeout(function () { $scope.closeAlert(0) }, 3000)
+              }
+              else {
+                $scope.createToast("danger", "<strong>Error: </strong>" + response.data.message)
+                $timeout(function () { $scope.closeAlert(0) }, 5000)
+              }
+            },
+              function errorCallback(response) {
+                console.log(response.data.message)
+              })
+        }
+      }
 
-		$scope.modalEditOpen = function(data) {			
-			$scope.accion = 'editar';
-			$scope.monto = data;
+      // Funciones para Modales
+      $scope.modalCreateOpen = function () {
+        $scope.monto = {}
+        $scope.accion = 'crear'
 
-			modal = $modal.open({
-				templateUrl: "views/montos/modal.html",
-				scope: $scope,
-				size: "md",
-				resolve: function() {},
-				windowClass: "default"
-			});
-		}
+        modal = $modal.open({
+          templateUrl: "views/montos/modal.html",
+          scope: $scope,
+          size: "md",
+          resolve: function () { },
+          windowClass: "default"
+        })
+      }
 
-		$scope.modalDeleteOpen = function(data) {			
-			$scope.accion = 'eliminar';
+      $scope.modalEditOpen = function (data) {
+        $scope.accion = 'editar'
+        $scope.monto = data
 
-			modal = $modal.open({
-				templateUrl: "views/montos/modal.html",
-				scope: $scope,
-				size: "md",
-				resolve: function() {},
-				windowClass: "default"
-			});
-		}
+        modal = $modal.open({
+          templateUrl: "views/montos/modal.html",
+          scope: $scope,
+          size: "md",
+          resolve: function () { },
+          windowClass: "default"
+        })
+      }
 
-		$scope.modalClose = function() {
-			modal.close();
-		}
-	}])
+      $scope.modalDeleteOpen = function (data) {
+        $scope.accion = 'eliminar'
+
+        modal = $modal.open({
+          templateUrl: "views/montos/modal.html",
+          scope: $scope,
+          size: "md",
+          resolve: function () { },
+          windowClass: "default"
+        })
+      }
+
+      $scope.modalClose = function () {
+        modal.close()
+      }
+    }])
 }())

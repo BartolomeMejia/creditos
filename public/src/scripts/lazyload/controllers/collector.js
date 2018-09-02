@@ -7,7 +7,8 @@
 
       // general vars
       $scope.loadBranches = [];
-      $scope.datas = [];
+      $scope.datas = Array();
+      $scope.sucursales = Array();
       $scope.currentPageStores = [];
       $scope.searchKeywords = ''
       $scope.filteredData = [];
@@ -26,24 +27,35 @@
       var pivotStructure = [];
 
 
-      function loadBranches(){
-        $http.get(API_URL+'sucursales', {})
-        .then(function successCallback(response) {
-          if (response.data.result) {
-            if($scope.usuario.tipo_usuarios_id == 1)
-              $scope.sucursales = response.data.records;
-            else
-              $scope.sucursales = response.data.records.filter(x => x.id == $scope.usuario.sucursales_id)						
-          }
-        });
+      function loadBranches() {
+        $http.get(API_URL + 'sucursales', {})
+          .then(function successCallback(response) {
+            if (response.data.result) {
+              if ($scope.usuario.tipo_usuarios_id == 1)
+                $scope.sucursales = response.data.records;
+              else {
+                // $scope.sucursales = response.data.records.filter(x => x.id == $scope.usuario.sucursales_id)
+                response.data.records.forEach(function (item) {
+                  if (item.id == $scope.usuario.sucursales_id) {
+                    $scope.sucursales.push(item)
+                  }
+                })
+              }
+            }
+          });
       }
 
       function loadData(branch_id) {
 
         var branch_selectd = branch_id != null ? branch_id : $scope.usuario.sucursales_id;
-        
+
         collectorService.index().then(function (response) {
-          $scope.datas = response.data.records.filter(x => x.sucursales_id == branch_selectd);
+          // $scope.datas = response.data.records.filter(x => x.sucursales_id == branch_selectd)
+          response.data.records.forEach(function (item) {
+            if (item.sucursales_id == branch_selectd) {
+              $scope.sucursales.push(item)
+            }
+          })
           $scope.search();
           $scope.select($scope.currentPage);
         });
@@ -85,23 +97,23 @@
         $scope.filteredData = $filter('orderBy')($scope.datas, rowName);
         $scope.onOrderChange();
       }
-      
+
       loadBranches();
       loadData($("branch_id").val());
 
-      $scope.changeDataBranch = (branch_id) => {
+      $scope.changeDataBranch = function (branch_id) {
         loadData(branch_id);
       }
 
-      $scope.showCustomerView = (data) => {
-        collectorService.detail(data.id).then((response) => {
+      $scope.showCustomerView = function (data) {
+        collectorService.detail(data.id).then(function (response) {
           $scope.collectorSelected = data.nombre;
           $scope.showCollectorTable = false;
 
           $scope.totalCobrar = response.data.records.total_cobrar;
           $scope.totalMinimoCobrar = response.data.records.total_minimo;
 
-          response.data.records.registros.forEach(element => {
+          response.data.records.registros.forEach(function (element) {
             const recordDate = new Date(element.updated_at)
             const currentDate = new Date()
 
@@ -113,7 +125,7 @@
             } else {
               element.updated_at = 0
             }
-            
+
             $scope.totalCartera = $scope.totalCartera + element.deudatotal
           });
 
@@ -126,7 +138,7 @@
         });
       }
 
-      $scope.closeCustomerView = () => {
+      $scope.closeCustomerView = function () {
         $scope.showCollectorTable = true;
         $scope.datas = [];
         $scope.datas = pivotStructure;
@@ -139,7 +151,7 @@
       }
 
       // modals function
-      $scope.modalCreateOpen = () => {
+      $scope.modalCreateOpen = function () {
         $scope.usuario = {};
         $scope.accion = 'crear';
 
@@ -152,7 +164,7 @@
         });
       }
 
-      $scope.modalEditOpen = (data) => {
+      $scope.modalEditOpen = function (data) {
         $scope.accion = 'editar';
         $scope.usuario = data;
 
@@ -167,7 +179,7 @@
         });
       }
 
-      $scope.modalDeleteOpen = (data) => {
+      $scope.modalDeleteOpen = function (data) {
         $scope.accion = 'eliminar';
 
         $scope.usuario = data;
@@ -180,12 +192,12 @@
         });
       }
 
-      $scope.modalClose = () => {
+      $scope.modalClose = function () {
         modal.close();
       }
 
       // toast function
-      $scope.createToast = (tipo, mensaje) => {
+      $scope.createToast = function (tipo, mensaje) {
         $scope.toasts.push({
           anim: "bouncyflip",
           type: tipo,
@@ -193,7 +205,7 @@
         });
       }
 
-      $scope.closeAlert = (index) => {
+      $scope.closeAlert = function (index) {
         $scope.toasts.splice(index, 1);
       }
     }])
