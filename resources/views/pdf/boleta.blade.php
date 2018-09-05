@@ -58,9 +58,6 @@
 	</style>
 
 	<body class="body-width">
-		<div class="top-bar">
-			<div class="blue-bar"></div>
-		</div>
 		<div class="title">BOLETA DE CONTROL DE PAGO</div>
 		<table>
 			<tr>

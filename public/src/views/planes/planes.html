@@ -6,7 +6,7 @@
 					<div class="panel-heading"><h4>Planes</h4></div>
 					<div class="panel-body">
 						<div class="col-sm-6">
-							<div class="row" ng-show="usuario.tipo_usuarios_id == 1 || usuario.tipo_usuarios_id == 2 || usuario.tipo_usuarios_id == 3">
+							<div class="row" ng-if="usuario.tipo_usuarios_id == 1 || usuario.tipo_usuarios_id == 2 || usuario.tipo_usuarios_id == 3">
 								<button type="button" class="btn btn-success btn-rounded" ng-click="modalCreateOpen()" md-ink-ripple><i class="fa fa-plus"></i> Crear plan</button>						
 							</div>
 						</div>	
@@ -29,6 +29,8 @@
 							</div>
 						</div>
 						
+						<br>
+						<br>
 						<br>
 						<div class="row">
 							<div class="small text-bold left mt5">
