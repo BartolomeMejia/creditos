@@ -23,8 +23,8 @@ angular.module("app.ctrls", ["LocalStorageModule", "app.constants"])
 		window.location.href = "login.html";
 	}
 
-	if(!localStorageService.cookie.get('usuario'))
-		window.location.href = "login.html";
+	// if(!localStorageService.cookie.get('usuario'))
+	// 	window.location.href = "login.html";
 	
 	var mm = window.matchMedia("(max-width: 767px)");
 	$rs.isMobile = mm.matches ? true: false;
