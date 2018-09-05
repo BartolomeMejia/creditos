@@ -10,6 +10,7 @@ angular.module("app.ctrls", ["LocalStorageModule", "app.constants"])
 	$http.get(API_URL+'session/check').then(successCallback, errorCallback)
 
 	function successCallback(response) {
+		console.log("entra al success")
 		if (!response.data.result) {
 			localStorageService.cookie.remove('usuario');
 			window.location.href = "login.html";
@@ -17,6 +18,7 @@ angular.module("app.ctrls", ["LocalStorageModule", "app.constants"])
 	}
 
 	function errorCallback() {
+		console.log("entra al error")
 		localStorageService.cookie.remove('usuario');
 		window.location.href = "login.html";
 	}
