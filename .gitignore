@@ -4,7 +4,4 @@ Homestead.yaml
 Homestead.json
 .env
 .DS_Store
-public/bower_components
-public/dist
 public/node_modules
-public/dist
