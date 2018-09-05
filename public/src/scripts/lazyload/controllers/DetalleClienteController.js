@@ -5,11 +5,8 @@
 	angular.module("app.detallecliente", ["app.constants"])
 
 	.controller("DetalleClienteController", ["$scope", "$routeParams", "$filter", "$http", "$modal", "$interval", "API_URL", function($scope, $routeParams, $filter, $http, $modal, $timeout, API_URL)  {	
-		//Variables generales
-
+		
 		$scope.cliente = {};
-
-
 		$scope.datosCliente = function(id)
 		{
 			$http({

@@ -89,12 +89,12 @@
       loadBranches();
       loadData($("branch_id").val());
 
-      $scope.changeDataBranch = (branch_id) => {
+      $scope.changeDataBranch = function(branch_id){
         loadData(branch_id);
       }
 
-      $scope.showCustomerView = (data) => {
-        collectorService.detail(data.id).then((response) => {
+      $scope.showCustomerView = function(data){
+        collectorService.detail(data.id).then(function(response){
           $scope.collectorSelected = data.nombre;
           $scope.showCollectorTable = false;
 
@@ -126,7 +126,7 @@
         });
       }
 
-      $scope.closeCustomerView = () => {
+      $scope.closeCustomerView = function(){
         $scope.showCollectorTable = true;
         $scope.datas = [];
         $scope.datas = pivotStructure;
@@ -139,7 +139,7 @@
       }
 
       // modals function
-      $scope.modalCreateOpen = () => {
+      $scope.modalCreateOpen = function(){
         $scope.usuario = {};
         $scope.accion = 'crear';
 
@@ -152,7 +152,7 @@
         });
       }
 
-      $scope.modalEditOpen = (data) => {
+      $scope.modalEditOpen = function(data){
         $scope.accion = 'editar';
         $scope.usuario = data;
 

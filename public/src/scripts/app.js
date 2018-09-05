@@ -105,6 +105,10 @@
 				{
                     name: "app.service.customers",
                     files: ["scripts/lazyload/services/customers.js"]
+                },
+				{
+                    name: "app.service.dashboard",
+                    files: ["scripts/lazyload/services/dashboard.js"]
                 }
 			]
 		})
@@ -145,13 +149,14 @@
 
 		$routeProvider.when("/dashboard", {
 			templateUrl: "views/dashboard.html",
+			controller: "DashboardController",
 			resolve: {
 				deps: ["$ocLazyLoad", function(a) {
 					return a.load([jqload.c3, jqload.sparkline])
 					.then(function() {
 						return a.load({
-							name: "app.directives",
-							files: ["scripts/lazyload/directives/sparkline.directive.js"]
+							name: "app.dashboard",
+							files: ["scripts/lazyload/controllers/dashboard.js"]
 						})
 					})
 					.then(function() {
