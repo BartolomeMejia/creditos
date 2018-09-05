@@ -2,17 +2,17 @@
 	<!-- site logo -->
 	<a href="#/dashboard" class="site-logo text-uppercase">
 		<i class="ion ion-disc"></i>
-		<span class="text">Materia</span>
+		<span class="text">RapiCredit</span>
 	</a>
 </div>
 
 <!-- Site nav (vertical) -->
-<nav class="site-nav clearfix" role="navigation">
+<nav class="site-nav clearfix" role="navigation" ng-controller="NavCtrl">
 	<div class="profile clearfix mb15">
 		<img src="images/admin.jpg" alt="admin">
 		<div class="group">
-			<h5 class="name">Robert Smith</h5>
-			<small class="desig text-uppercase">UX Designer</small>
+			<h5 class="name">Bienvenido</h5>
+			<small class="desig text-uppercase">{{ usuario.nombre }}</small>
 		</div>
 	</div>
 	<!-- navigation -->
@@ -23,29 +23,65 @@
 				<span class="text">Dashboard</span>
 			</a>
 		</li>
+		<li ng-show="usuario.tipo_usuarios_id == 1 || usuario.tipo_usuarios_id == 2 || usuario.tipo_usuarios_id == 3">
+			<a href="#/creditos" md-ink-ripple>
+				<i class="ion ion-cash"></i>
+				<span class="text">Nuevo crédito</span>
+			</a>
+		</li>
+		<li ng-show="usuario.tipo_usuarios_id == 1 || usuario.tipo_usuarios_id == 2 || usuario.tipo_usuarios_id == 3">
+			<a href="#/abonos" md-ink-ripple>
+				<i class="ion ion-cash"></i>
+				<span class="text">Abonar crédito</span>
+			</a>
+		</li>
 		<li>
+			<a href="#/clientes" md-ink-ripple>
+				<i class="ion ion-ios-people"></i>
+				<span class="text">Clientes</span>
+			</a>
+		</li>
+		
+		<li ng-show="usuario.tipo_usuarios_id == 1">
+			<a href="#/sucursales" md-ink-ripple>
+				<i class="ion ion-home"></i>
+				<span class="text">Sucursales</span>
+			</a>
+		</li>
+		<li>
+			<a href="#/collectors" md-ink-ripple>
+				<i class="ion ion-person-stalker"></i>
+				<span class="text">Cobradores</span>
+			</a>
+		</li>
+		<li>
+			<a href="#/planes" md-ink-ripple>
+				<i class="ion ion-arrow-graph-up-right"></i>
+				<span class="text">Planes</span>
+			</a>
+		</li>
+		<li>
+			<a href="#/montos" md-ink-ripple>
+				<i class="ion ion-pound"></i>
+				<span class="text">Montos</span>
+			</a>
+		</li>
+		<li ng-show="usuario.tipo_usuarios_id == 1 || usuario.tipo_usuarios_id == 2 || usuario.tipo_usuarios_id == 3">
 			<a href="#/usuarios" md-ink-ripple>
 				<i class="ion ion-person-stalker"></i>
 				<span class="text">Usuarios</span>
 			</a>
 		</li>
-		<li>
+		<li ng-show="usuario.tipo_usuarios_id == 1 || usuario.tipo_usuarios_id == 2 || usuario.tipo_usuarios_id == 3">
 			<a href="javascript:;" md-ink-ripple>
 				<i class="ion ion-android-options"></i>
-				<span class="text">UI Kit</span>
+				<span class="text">Reportes</span>
 				<i class="arrow ion-chevron-left"></i>
 			</a>
 			<ul class="inner-drop list-unstyled">
-				<li><a href="#/ui/buttons" md-ink-ripple>Buttons</a></li>
-				<li><a href="#/ui/typography" md-ink-ripple>Typography</a></li>
-				<li><a href="#/ui/grids" md-ink-ripple>Grids</a></li>
-				<li><a href="#/ui/panels" md-ink-ripple>Panels</a></li>
-				<li><a href="#/ui/notifications" md-ink-ripple>Notifications</a></li>
-				<li><a href="#/ui/tabs" md-ink-ripple>Tabs &amp; Accordion</a></li>
-				<li><a href="#/ui/progress-bars" md-ink-ripple>Progress Bars</a></li>
-				<li><a href="#/ui/modals" md-ink-ripple>Modals</a></li>
-				<li><a href="#/ui/treeview" md-ink-ripple>Tree View</a></li>
-				<li><a href="#/ui/extras" md-ink-ripple>Extras</a></li>
+				<li><a href="#/ui/buttons" md-ink-ripple>Estado de cuenta</a></li>
+				<li><a href="#/ui/typography" md-ink-ripple>Ingresos por día</a></li>
+				<li><a href="#/ui/grids" md-ink-ripple>Ingresos mensuales</a></li>
 			</ul>
 		</li>
 	</ul> <!-- #end navigation -->

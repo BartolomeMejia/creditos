@@ -19,32 +19,31 @@
       $("#customerName").focus();
       loadCustomers()
 
-      function loadCustomers() {        
-          customersService.customers().then((response) => {
-            $scope.customers = response.data.records
+      function loadCustomers() {
+        customersService.customers().then(function (response) {
+          $scope.customers = response.data.records
         });
       }
 
-      $("#customerName").change('input',function() {
-          var opt = $('option[value="'+$(this).val()+'"]');
-          nameCustomer = opt.length ? opt.attr('data-name') : "";
-          lastNameCustomer = opt.length ? opt.attr('data-lastname') : "";
+      $("#customerName").change('input', function () {
+        var opt = $('option[value="' + $(this).val() + '"]');
+        nameCustomer = opt.length ? opt.attr('data-name') : "";
+        lastNameCustomer = opt.length ? opt.attr('data-lastname') : "";
 
       })
 
-      $scope.validarCliente = (search_client) => {
-
-        if(nameCustomer!= "" && lastNameCustomer!=""){
+      $scope.validarCliente = function (search_client) {
+        if (nameCustomer != "" && lastNameCustomer != "") {
           $http({
             method: 'GET',
             url: API_URL + 'creditocliente',
-            params: {name:nameCustomer, lastname:lastNameCustomer}
+            params: { name: nameCustomer, lastname: lastNameCustomer }
           }).then(function successCallback(response) {
             if (response.data.result) {
               $('.row-detalle').removeClass('hidden');
               $scope.detalle_cliente = response.data.records;
               $scope.detalle_cliente.nombre = response.data.records.nombre + ' ' + response.data.records.apellido;
-              $scope.detalle_cliente.cuota_diaria = "Q. " +parseFloat(response.data.records.creditos.cuota_diaria).toFixed(2);
+              $scope.detalle_cliente.cuota_diaria = "Q. " + parseFloat(response.data.records.creditos.cuota_diaria).toFixed(2);
               $scope.credito.total = "Q. " + parseFloat(response.data.records.creditos.deudatotal).toFixed(2);
               $scope.credito.saldo = "Q. " + parseFloat(response.data.records.creditos.saldo).toFixed(2);
               $scope.credito.saldo_abonado = "Q. " + parseFloat(response.data.records.creditos.saldo_abonado).toFixed(2);
@@ -58,9 +57,9 @@
               $timeout(function () { $scope.closeAlert(0); }, 5000);
             }
           }, function errorCallback(response) {
-            
+
           });
-        }else{
+        } else {
           $scope.createToast("danger", "<strong>Error: </strong> El nombre del cliente es incorrecto");
           $timeout(function () { $scope.closeAlert(0); }, 5000);
         }
@@ -84,7 +83,7 @@
       };
 
       $scope.modalcuotas = function (cantidadAbonada) {
-        
+
         if (cantidadAbonada != '' && parseFloat(cantidadAbonada) > 0) {
           $scope.resumen.cantidadabonada = $scope.cantidad_ingresada;
           $scope.resumen.cantidadcuotas = parseInt($scope.cantidad_ingresada / $scope.dailyFee);
@@ -101,7 +100,7 @@
           $scope.createToast("danger", "<strong>Error: </strong>" + 'Debe ingresar una cantidad válida');
         }
       }
-      
+
       $scope.modalClose = function () {
         modal.close();
       }
