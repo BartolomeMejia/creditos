@@ -30,7 +30,7 @@
                 // $scope.sucursales = response.data.records.filter(x => x.id == $scope.usuario.sucursales_id)
                 response.data.records.forEach(function (item) {
                   if (item.id == $scope.usuario.sucursales_id) {
-                    $scope.sucursales.piush(item)
+                    $scope.sucursales.push(item)
                   }
                 })
               }

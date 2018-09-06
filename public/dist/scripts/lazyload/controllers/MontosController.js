@@ -44,7 +44,7 @@
         else {
           branch_selectd = 1
         }
-
+        console.log(branch_selectd);
         $http({
           method: 'GET',
           url: API_URL + 'montosprestamo',
