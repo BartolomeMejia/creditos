@@ -24,7 +24,7 @@ class MontosPrestamoController extends Controller
                 $registros = MontosPrestamo::select("montos_prestamo.*")
                                 ->with("sucursal")
                                 ->join("sucursales", "montos_prestamo.sucursales_id","=","sucursales.id")
-                                ->where(".sucursales_id", $request->input("branch_id"))
+                                ->where("montos_prestamo.sucursales_id", $request->input("branch_id"))
                                 ->get();
             }
             else{
