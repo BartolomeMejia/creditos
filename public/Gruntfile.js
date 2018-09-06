@@ -143,7 +143,8 @@ module.exports = function(grunt) {
 				cwd: "<%= dir.src %>", 
 				dest: "<%= dir.dest %>",
 				src: [
-					"index.html"
+					"index.html",
+					"login.html"
 				],
 			}
 				
