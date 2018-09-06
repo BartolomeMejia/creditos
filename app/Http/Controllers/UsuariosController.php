@@ -200,7 +200,10 @@ class UsuariosController extends Controller
     {
         try{
             if (Auth::attempt(['user'=> $request->input('user'),'password'=> $request->input('password'), "estado" => 1])) {
-                $request->session()->put($this->sessionKey, Auth::user());
+            
+                //Session::push($this->sessionKey, Auth::user());
+                Session::put($this->sessionKey, Auth::user());
+                Session::save();
 
                 $this->records      =   [Auth::user()];
                 $this->message      =   "Sesión iniciada";
@@ -254,7 +257,9 @@ class UsuariosController extends Controller
     public function checkSession(Request $request)
     {
         try {
-            if ($request->session()->get($this->sessionKey)) {
+//            if ($request->session()->get($this->sessionKey)) {
+            
+            if (Session::has($this->sessionKey)) {
                 $this->status_code = 200;
                 $this->result = true;
                 $this->message = 'Active session';
