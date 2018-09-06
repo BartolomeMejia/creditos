@@ -11,9 +11,8 @@
 
       function successCallback(response) {
         if (!response.data.result) {
-          console.log("no hay respuesta")
-          // localStorageService.cookie.remove('usuario');
-          // window.location.href = "login.html";
+          localStorageService.cookie.remove('usuario');
+          window.location.href = "login.html";
         }
       }
 
