@@ -15,11 +15,13 @@ class MontosPrestamoController extends Controller
     public $message     = "";
     public $records     = [];
 
-    public function index(Request $request)
+    public function index()
     {
         try {
 
-            if($request->session()->get('usuario')->tipo_usuarios_id == 1){
+            $loanAmount = MontosPrestamo::with('sucursal')->get();
+
+            /*if($request->session()->get('usuario')->tipo_usuarios_id == 1){
                     
                 $registros = MontosPrestamo::select("montos_prestamo.*")
                                 ->with("sucursal")
@@ -33,13 +35,13 @@ class MontosPrestamoController extends Controller
                                 ->join("sucursales", "montos_prestamo.sucursales_id","=","sucursales.id")
                                 ->where("montos_prestamo.sucursales_id", $request->session()->get('usuario')->sucursales_id)
                                 ->get();
-            }
+            }*/
 
-            if ($registros){
+            if ($loanAmount){
                 $this->statusCode   = 200;
                 $this->result       = true;
                 $this->message      = "Registos consultados exitosamente";
-                $this->records      = $registros;
+                $this->records      = $loanAmount;
             }
             else
                 throw new \Exception("No se encontraron registros");

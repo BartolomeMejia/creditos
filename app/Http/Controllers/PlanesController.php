@@ -18,7 +18,10 @@ class PlanesController extends Controller
     public function index(Request $request)
     {
         try {
-            if($request->session()->get('usuario')->tipo_usuarios_id == 1){
+
+            $plans = Planes::with('sucursal')->get();
+
+            /*if($request->session()->get('usuario')->tipo_usuarios_id == 1){
                     
                 $registros = Planes::select("planes.*")
                                 ->with("sucursal")
@@ -32,14 +35,14 @@ class PlanesController extends Controller
                                 ->join("sucursales", "planes.sucursales_id","=","sucursales.id")
                                 ->where("planes.sucursales_id", $request->session()->get('usuario')->sucursales_id)
                                 ->get();
-            }
+            }*/
             
-            if ($registros)
+            if ($plans)
             {
                 $this->statusCode = 200;
                 $this->result     = true;
                 $this->message    = "Registros consultados exitosamente";
-                $this->records    = $registros;
+                $this->records    = $plans;
             }
             else
                 throw new \Exception("No se encontraron registros");

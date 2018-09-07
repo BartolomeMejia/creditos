@@ -28,13 +28,15 @@
 
 
       function loadBranches() {
+
+        $scope.sucursales = [];
+
         $http.get(API_URL + 'sucursales', {})
           .then(function successCallback(response) {
             if (response.data.result) {
               if ($scope.usuario.tipo_usuarios_id == 1)
                 $scope.sucursales = response.data.records;
-              else {
-                // $scope.sucursales = response.data.records.filter(x => x.id == $scope.usuario.sucursales_id)
+              else {              
                 response.data.records.forEach(function (item) {
                   if (item.id == $scope.usuario.sucursales_id) {
                     $scope.sucursales.push(item)
@@ -48,12 +50,11 @@
       function loadData(branch_id) {
 
         var branch_selectd = branch_id != null ? branch_id : $scope.usuario.sucursales_id;
-
+        $scope.datas = [];
         collectorService.index().then(function (response) {
-          // $scope.datas = response.data.records.filter(x => x.sucursales_id == branch_selectd)
           response.data.records.forEach(function (item) {
             if (item.sucursales_id == branch_selectd) {
-              $scope.sucursales.push(item)
+              $scope.datas.push(item)
             }
           })
           $scope.search();

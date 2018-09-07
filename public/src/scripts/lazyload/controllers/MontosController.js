@@ -19,13 +19,15 @@
       $scope.toasts = []
       var modal
 
+
       $scope.cargarSucursales = function () {
-        $http.get(API_URL + 'sucursales', {}).then(function (response) {
+        $scope.sucursales = [];
+        $http.get(API_URL + 'sucursales', {})
+        .then(function (response) {
           if (response.data.result) {
             if ($scope.usuario.tipo_usuarios_id == 1)
               $scope.sucursales = response.data.records
             else {
-              // $scope.sucursales = response.data.records.filter(x => x.id == $scope.usuario.sucursales_id)
               response.data.records.forEach(function (item) {
                 if (item.id == $scope.usuario.sucursales_id) {
                   $scope.sucursales.push(item)
@@ -37,28 +39,28 @@
       }
 
       $scope.LlenarTabla = function (branch_id) {
-        var branch_selectd
-        if (branch_id != null) {
-          branch_selectd = branch_id
-        }
-        else {
-          branch_selectd = 1
-        }
-        console.log(branch_selectd);
+     
+        var branch_selectd = branch_id != null ? branch_id : $scope.usuario.sucursales_id;
+        $scope.datas = [];
+
         $http({
           method: 'GET',
-          url: API_URL + 'montosprestamo',
-          params: { branch_id: branch_selectd }
+          url: API_URL + 'montosprestamo'
         })
-          .then(function successCallback(response) {
-            console.log(response)
-            $scope.datas = response.data.records
-            $scope.search()
-            $scope.select($scope.currentPage)
-          },
-            function errorCallback(response) {
-              console.log(response.data.message)
-            })
+        .then(function successCallback(response) {
+          
+          response.data.records.forEach(function (item) {
+            if (item.sucursales_id == branch_selectd) {
+              $scope.datas.push(item)
+            }
+          })
+          
+          $scope.search()
+          $scope.select($scope.currentPage)
+        },
+        function errorCallback(response) {
+          console.log(response.data.message)
+        })
       }
 
       $scope.changeDataBranch = function (branch_id) {

@@ -109,6 +109,10 @@
 				{
                     name: "app.service.dashboard",
                     files: ["scripts/lazyload/services/dashboard.js"]
+				},
+				{
+                    name: "app.service.pdfs",
+                    files: ["scripts/lazyload/services/pdfs.js"]
                 }
 			]
 		})
