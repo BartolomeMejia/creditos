@@ -1,9 +1,9 @@
  (function () {
   "use strict"
 
-  angular.module("app.creditos", ["app.constants"])
+  angular.module("app.creditos", ["app.constants", 'app.service.pdfs'])
 
-    .controller("CreditosController", ["$scope", "$filter", "$http", "$modal", "$interval", "API_URL", function ($scope, $filter, $http, $modal, $timeout, API_URL) {
+    .controller("CreditosController", ["$scope", "$filter", "$http", "$modal", "$interval", "pdfsService", "API_URL", function ($scope, $filter, $http, $modal, $timeout, pdfsService, API_URL) {
       $scope.positionModel = "topRight"
       $scope.detalle_cliente = {}
       $scope.toasts = []
@@ -38,16 +38,17 @@
       }
 
       $scope.cargarUsuariosCobrador = function () {
-        console.log("prueba")
+        
+        $scope.usuarios_cobrador = [];
+
         $http.get(API_URL + 'listacobradores', {}).then(function (response) {
-          if (response.data.result)
-            console.log(response.data.records)
-          // $scope.usuarios_cobrador = response.data.records.filter(x => x.sucursales_id == $scope.usuario.sucursales_id)
-          response.data.records.forEach(function (item) {
-            if (item.sucursales_id == $scope.usuario.sucursales_id) {
-              $scope.usuarios_cobrador.push(item)
-            }
-          })
+          if (response.data.result){
+            response.data.records.forEach(function (item) {
+              if (item.sucursales_id == $scope.usuario.sucursales_id) {
+                $scope.usuarios_cobrador.push(item)
+              }
+            })
+          }
         })
       }
 
@@ -113,7 +114,9 @@
         })
           .then(function successCallback(response) {
             if (response.data.result) {
-
+            
+              pdfsService.ticketcredit(response.data.records.id);
+              
               $scope.createToast("success", "<strong>Éxito: </strong>" + response.data.message)
               $('#row-detalle').addClass('hidden')
               $('#customerDpi').val("")

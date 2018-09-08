@@ -29,12 +29,14 @@
       }
 
       $scope.cargarSucursales = function () {
+        
+        $scope.sucursales = [];
+
         $http.get(API_URL + 'sucursales', {}).then(function (response) {
           if (response.data.result) {
             if ($scope.usuario.tipo_usuarios_id == 1)
               $scope.sucursales = response.data.records
             else {
-              // $scope.sucursales = response.data.records.filter(x => x.id == $scope.usuario.sucursales_id)
               response.data.records.forEach(function (item) {
                 if (item.id == $scope.usuario.sucursales_id) {
                   $scope.sucursales.push(item)
@@ -54,7 +56,6 @@
             if ($scope.usuario.tipo_usuarios_id == 1)
               $scope.datas = response.data.records
             else {
-              // $scope.datas = response.data.records.filter(x => x.tipo_usuarios_id != 1)
               response.data.records.forEach(function (item) {
                 if (item.tipo_usuarios_id != 1) {
                   $scope.datas.push(item)

@@ -30,12 +30,13 @@
       $scope.LlenarTabla = function (branch_id) {
 
         var branch_selectd = branch_id != null ? branch_id : $scope.usuario.sucursales_id;
+        $scope.datas = [];
 
         $http({
           method: 'GET',
           url: API_URL + 'clientes'
-        }).then(function successCallback(response) {
-          // $scope.datas = response.data.records.filter(x => x.sucursal_id == branch_selectd)
+        })
+        .then(function successCallback(response) {
           response.data.records.forEach(function (item) {
             if (item.sucursal_id == branch_selectd) {
               $scope.datas.push(item)
@@ -44,7 +45,8 @@
 
           $scope.search();
           $scope.select($scope.currentPage);
-        }, function errorCallback(response) {
+        }, 
+        function errorCallback(response) {
           console.log(response.data.message);
         });
       }
