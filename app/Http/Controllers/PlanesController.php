@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Planes;
+use Exception;
 
 class PlanesController extends Controller
 {
@@ -15,52 +16,30 @@ class PlanesController extends Controller
     public $message     = "";
     public $records     = [];
     
-    public function index(Request $request)
+    public function index()
     {
         try {
-
-            $plans = Planes::with('sucursal')->get();
-
-            /*if($request->session()->get('usuario')->tipo_usuarios_id == 1){
-                    
-                $registros = Planes::select("planes.*")
-                                ->with("sucursal")
-                                ->join("sucursales", "planes.sucursales_id","=","sucursales.id")
-                                ->where("planes.sucursales_id", $request->input("branch_id"))
-                                ->get();
-            }
-            else{
-                $registros = Planes::select("planes.*")
-                                ->with("sucursal")
-                                ->join("sucursales", "planes.sucursales_id","=","sucursales.id")
-                                ->where("planes.sucursales_id", $request->session()->get('usuario')->sucursales_id)
-                                ->get();
-            }*/
+            $plans = Planes::with('sucursal')->get();            
             
-            if ($plans)
-            {
+            if ($plans){
                 $this->statusCode = 200;
                 $this->result     = true;
                 $this->message    = "Registros consultados exitosamente";
                 $this->records    = $plans;
             }
             else
-                throw new \Exception("No se encontraron registros");
+                throw new Exception("No se encontraron registros");
                 
-        } catch (\Exception $e) 
-        {
+        } catch (Exception $e) {
             $this->statusCode = 200;
             $this->result     = false;
             $this->message    = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema la consultar los datos"; 
-        }
-        finally
-        {
+        } finally {
             $response = [
                 'result'    => $this->result,
                 'message'   => $this->message,
                 'records'   => $this->records,
             ];
-
             return response()->json($response, $this->statusCode);
         }
     }
@@ -80,7 +59,8 @@ class PlanesController extends Controller
                                     'descripcion'   => $request->input('descripcion'),
                                     'dias'          => $request->input('dias'),
                                     'porcentaje'    => $request->input('porcentaje'),
-                                    'sucursales_id' => $request->input('idsucursal'),
+                                    'domingo'       => $request->input('domingo'),
+                                    'sucursales_id' => $request->input('idsucursal'),                        
                                 ]);
 
                                 if( !$nuevoRegistro )
@@ -156,6 +136,7 @@ class PlanesController extends Controller
             $registro->descripcion   = $request->input('descripcion',$registro->descripcion);
             $registro->dias          = $request->input('dias',$registro->dias);
             $registro->porcentaje    = $request->input('porcentaje',$registro->porcentaje);
+            $registro->domingo       = $request->input('domingo',$registro->domingo);
             $registro->sucursales_id = $request->input('idsucursales',$registro->sucursales_id);
             $registro->save();
 

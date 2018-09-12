@@ -11,6 +11,7 @@ use App\CreditosDetalle;
 use App\CuotasClientes;
 use App\Planes;
 use Session;
+use App\Http\Traits\DatesTrait;
 
 class CreditosController extends Controller
 {
@@ -19,17 +20,18 @@ class CreditosController extends Controller
     public $message     = "";
     public $records     = [];
 
+    use DatesTrait;
+
     public function index()
     {
         try {
             $registros = Creditos::with('cliente','planes','montos','usuariocobrador','detalleCreditos')->get();
-
-            if( $registros ) 
-            {
+            
+            if( $registros ) {
                 $this->statusCode   = 200;
                 $this->result       = true;
                 $this->message      = "Registros consultados exitosamente";
-                $this->records      = $registros;  
+                $this->records      = $registros;   
             }
             else
                 throw new \Exception("No se encontraron registros");
@@ -63,10 +65,13 @@ class CreditosController extends Controller
 
             $plan = Planes::find($request->input('idplan'));
             
-            $fecha_fin = strtotime ( '+'.$plan->dias.' day', strtotime ( $request->input('fecha_inicio') ));
-            $fecha_fin = date ( 'j-m-Y' , $fecha_fin );
-        
-            $nuevoRegistro = \DB::transaction( function() use ($request, $fecha_fin){
+            if($plan->domingo == "1"){
+                $lastDate = $this->getLastDayWithoutSunday(\Carbon\Carbon::parse($request->input('fecha_inicio'))->format('Y-m-d'),$plan->dias);
+            } else {
+                $lastDate = $this->getLastDay(\Carbon\Carbon::parse($request->input('fecha_inicio'))->format('Y-m-d'),$plan->dias);
+            }
+
+            $nuevoRegistro = \DB::transaction( function() use ($request, $lastDate){
                                 $nuevoRegistro = Creditos::create([
                                                     'clientes_id'           => $request->input('idcliente'),
                                                     'planes_id'             => $request->input('idplan'),
@@ -80,7 +85,7 @@ class CreditosController extends Controller
                                                     'cuota_diaria'          => $request->input('cuota_diaria'),
                                                     'cuota_minima'          => $request->input('cuota_minima'),
                                                     'fecha_inicio'          => \Carbon\Carbon::parse($request->input('fecha_inicio'))->format('Y-m-d'),
-                                                    'fecha_fin'             => \Carbon\Carbon::parse($fecha_fin)->format('Y-m-d'),
+                                                    'fecha_fin'             => \Carbon\Carbon::parse($lastDate)->format('Y-m-d'),
                                                     'estado'                => 1,
                                                 ]);
 
@@ -126,7 +131,7 @@ class CreditosController extends Controller
     {
         try {
             $registro = Creditos::with('cliente','planes','montos','usuariocobrador','detalleCreditos')->find( $id );
-            
+        
             if ( $registro ) {
                 $cuotas = 0;
                 foreach ($registro as $keyRegistro => $valRegistro) {
@@ -369,25 +374,19 @@ class CreditosController extends Controller
 
     public function boletaPDF(Request $request){
 
-        $registro = Creditos::with('cliente','planes','montos','usuariocobrador','detalleCreditos')->find( $request->input('credito_id') );
+        $registro = Creditos::with('cliente','planes','montos')->find( $request->input('credito_id') );
         
         if ( $registro ) {
 
-            $cuotas = 0;
-            foreach ($registro as $keyRegistro => $valRegistro) {
-
-                if( $valRegistro['estado'] == 1 )
-                {
-                    $cuotas = $cuotas + 1;
-                }
-            }
-            $registro->cuotasPagadas = $cuotas;
-            $registro->cuotasPendientes = $registro->planes->dias - $registro->cuotas;
-
             $pdf = \App::make('dompdf');
-            $pdf = \PDF::loadView('pdf.boleta', ['data' => $registro])->setPaper('letter')->setOrientation('landscape');
-
-            return $pdf->download('boleta.pdf');
+            if($registro->planes->domingo == "1"){
+                $pdf = \PDF::loadView('pdf.boleta', ['data' => $registro])->setPaper('letter')->setOrientation('landscape');
+            } else {
+                $pdf = \PDF::loadView('pdf.boletawithsunday', ['data' => $registro])->setPaper('letter')->setOrientation('landscape');
+            }
+            $nameBoleta = $registro->cliente->nombre." " .$registro->cliente->apellido;
+            
+            return $pdf->download($nameBoleta.'.pdf');
         }
     }
 }

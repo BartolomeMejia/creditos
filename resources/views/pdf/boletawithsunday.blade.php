@@ -140,21 +140,6 @@
 			$dias = intval(($totaldias / 2));
 			$residuo = ($totaldias % 2);
 
-			$dateInitial = new \DateTime($data->fecha_inicio);
-			$secondsInitial = 0;
-			$timestampInitial = $dateInitial->getTimestamp();
-			$totalSunday = 0;
-
-			for ($i=0; $i<$dias; $i++)  {  
-				$secondsInitial = $secondsInitial + 86400;  
-				$caduca = date("D", $timestampInitial+$secondsInitial);  
-				
-				if ($caduca == "Sun")  {  
-					$i--;
-					$totalSunday++;  
-				}   
-			}
-			$residuoSunday = ($totalSunday % 2);
 		?>
 		<table class="tablapago">
 			<thead class="pago">
@@ -168,79 +153,37 @@
 				</tr>
 			</thead>
 			<tbody>
-			<?php
-				$date = new \DateTime($data->fecha_inicio);
-				$segundos = 0;
-				$timestamp = $date->getTimestamp();
-				$cant1 = 0;
-				$cant2 = 0;
-				$count1 = 0;
-				if($residuoSunday > 0)
-					$count2 = $dias+$residuo-$totalSunday+1;
-				else
-					$count2 = $dias+$residuo-$totalSunday;
-			?>
 				@for ($i = 0; $i < $dias; $i++)
 					<?php
-				
-						$segundos = $segundos + 86400;  
-						$caduca = date("D", $timestamp+$segundos);  
+					
+						$cant1 = $i+1;
+						$cant2 = $i+1+$dias+($residuo);
+						
+						$fecha1 = strtotime ( '+'.$cant1.' day' , strtotime ( $data->fecha_inicio) ) ;
+						$fecha1 = date ( 'd-m-Y' , $fecha1 );
 
-						if ($caduca == "Sun")  {  
-							$i--;
-						} else {
-							
-							$cant1 = $i+1;
-							$cant2 = $i+1+$dias+($residuo);
-
-							$fecha1 = strtotime ( '+'.$cant1.' day' , strtotime ( $data->fecha_inicio) ) ;
-							$fecha1 = date ( 'd-m-Y' , $fecha1 );
-							$date1 = new \DateTime($fecha1);
-							$sunday1 = date("D", $date1->getTimestamp());
-
-							$fecha2 = strtotime ( '+'.$cant2.' day' , strtotime ( $data->fecha_inicio ) ) ;
-							$fecha2 = date ( 'd-m-Y' , $fecha2 );
-							$date2 = new \DateTime($fecha2);
-							$sunday2 = date("D", $date2->getTimestamp());
+						$fecha2 = strtotime ( '+'.$cant2.' day' , strtotime ( $data->fecha_inicio ) ) ;
+						$fecha2 = date ( 'd-m-Y' , $fecha2 );
 					?>
-							<tr class="primeracolumna">
-								@if($sunday1 != "Sun")
-									<?php $count1++; ?>
-									<td class="columnapago">{!! $count1 !!}</td>
-									<td class="columnapago">Q. {!!number_format((float)($data->deudatotal-($data->cuota_diaria * ($count1-1))), 2, '.', '')!!}</td>
-									<td class="columnapago">{!! $fecha1 !!}</td>
-								@else
-									<td class="columnapago"></td>
-									<td class="columnapago"></td>
-									<td class="columnapago"></td>
-								@endif
-								@if($sunday2 != "Sun")
-									<?php $count2++; ?>
-									<td class="columnapago">{!! $count2 !!}</td>
-									<td class="columnapago">Q. {!!number_format((float)($data->deudatotal-($data->cuota_diaria * ($count2-1))), 2, '.', '')!!}</td>
-									<td class="columnapago">{!! $fecha2 !!}</td>
-								@else
-									<td class="columnapago"></td>
-									<td class="columnapago"></td>
-									<td class="columnapago"></td>
-								@endif
-							</tr>
-						<?php }; ?>
+					<tr class="primeracolumna">
+						<td class="columnapago">{!! $cant1 !!}</td>
+						<td class="columnapago">Q. {!!number_format((float)($data->deudatotal-($data->cuota_diaria * ($cant1-1))), 2, '.', '')!!}</td>
+						<td class="columnapago">{!! $fecha1 !!}</td>
+						<td class="columnapago">{!! $cant2 !!}</td>
+						<td class="columnapago">Q. {!!number_format((float)($data->deudatotal-($data->cuota_diaria * ($cant2-1))), 2, '.', '')!!}</td>
+						<td class="columnapago">{!! $fecha2 !!}</td>
+					</tr>
 				@endfor
 				@if ($residuo>0)
 					<?php 
-						$cant3 = $dias+$residuo;
-						if($residuoSunday > 0)
-							$count3 = $dias+$residuo-$totalSunday+1;
-						else
-							$count3 = $dias+$residuo-$totalSunday;
+						$cant3 = $dias+($residuo);
 					
 						$fecha3 = strtotime ( '+'.$cant3.' day' , strtotime ( $data->fecha_inicio ) );
 						$fecha3 = date ( 'j-m-Y' , $fecha3 );
 					?>
 					<tr class="primeracolumna">
-						<td class="columnapago">{!! $count3 !!}</td>
-						<td class="columnapago">Q. {!!number_format((float)($data->deudatotal-($data->cuota_diaria * ($count3-1))), 2, '.', '')!!}</td>
+						<td class="columnapago">{!! $cant3 !!}</td>
+						<td class="columnapago">Q. {!!number_format((float)($data->deudatotal-($data->cuota_diaria * ($cant3-1))), 2, '.', '')!!}</td>
 						<td class="columnapago">{!! $fecha3 !!}</td>
 						<td class="columnapago"></td>
 						<td class="columnapago"></td>

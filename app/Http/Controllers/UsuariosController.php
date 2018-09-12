@@ -38,8 +38,8 @@ class UsuariosController extends Controller
                 $this->message = "Registros consultados exitosamente";
                 $this->records = $registros;
             } else
-                throw new \Exception("No se encontraron registros");
-        } catch (\Exception $e) {
+                throw new Exception("No se encontraron registros");
+        } catch (Exception $e) {
             $this->status_code = 404;
             $this->result = false;
             $this->message = env('APP_DEBUG') ? $e->getMessage() : $this->message;

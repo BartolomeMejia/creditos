@@ -29,13 +29,9 @@ class DashboardController extends Controller
             $customers = 0;
             $customersWithCreditToDay = [];
             $resumenDashboard = new \stdClass();
-            /*if($request->session()->get('usuario')->tipo_usuarios_id == 1){
-                $branchId = $request->input('branch_id');
-            }
-            else{
-                $branchId = $request->session()->get('usuario')->sucursales_id;
-            }*/
             
+            $branchId = $request->session()->get('usuario')->tipo_usuarios_id == 1 ? 0 : $request->session()->get('usuario')->sucursales_id;
+
             if($branchId == 0){
                 $customers = Creditos::where("estado", 1)->count();
                 $customersWithCreditToDay = $this->getCustomersWithCreditToDay();

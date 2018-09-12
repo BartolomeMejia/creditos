@@ -10,6 +10,6 @@ class MontosPrestamo extends Model
 	protected $fillable = ['monto','sucursales_id'];
 
 	public function sucursal(){
-		return $this->hasOne('App\sucursales','id','sucursales_id');
+		return $this->hasOne('App\Sucursales','id','sucursales_id');
 	}
 }

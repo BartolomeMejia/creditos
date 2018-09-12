@@ -127,7 +127,6 @@
 
       $scope.saveData = function (usuario) {
         if ($scope.accion == 'crear') {
-          console.log(usuario)
 
           $http({
             method: 'POST',

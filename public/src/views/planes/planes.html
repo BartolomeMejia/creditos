@@ -104,6 +104,17 @@
                               				ng-class="{active: row == '-sucursal.descripcion'}"></i>
 									</div>
 								</th>
+								<th>
+									Cobro domingo
+									<div class="th">
+										<i class="fa fa-caret-up icon-up"
+											ng-click=" order('domingo') "
+												ng-class="{active: row == 'domingo'}"></i>
+										<i class="fa fa-caret-down icon-down"
+											ng-click=" order('-domingo') "
+												ng-class="{active: row == '-domingo'}"></i>
+									</div>
+								</th>
 								<th>Acciones</th>
 							</tr>
 						</thead>
@@ -114,6 +125,7 @@
 								<td>{{ data.dias }}</td>
 								<td>{{ data.porcentaje }} %</td>
 								<td>{{ data.sucursal.descripcion }}</td>
+								<td>{{ data.domingo == 1? "Si":"No" }}</td>
 								<td>
 									<div class="btn-group">
 					                    <button type="button" class="btn btn-info ion ion-edit" ng-click="modalEditOpen(data)" md-ink-ripple></button>

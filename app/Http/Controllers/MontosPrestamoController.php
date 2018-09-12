@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\MontosPrestamo;
+use Exception;
 
 class MontosPrestamoController extends Controller
 {
@@ -18,24 +19,7 @@ class MontosPrestamoController extends Controller
     public function index()
     {
         try {
-
             $loanAmount = MontosPrestamo::with('sucursal')->get();
-
-            /*if($request->session()->get('usuario')->tipo_usuarios_id == 1){
-                    
-                $registros = MontosPrestamo::select("montos_prestamo.*")
-                                ->with("sucursal")
-                                ->join("sucursales", "montos_prestamo.sucursales_id","=","sucursales.id")
-                                ->where("montos_prestamo.sucursales_id", $request->input("branch_id"))
-                                ->get();
-            }
-            else{
-                $registros = MontosPrestamo::select("montos_prestamo.*")
-                                ->with("sucursal")
-                                ->join("sucursales", "montos_prestamo.sucursales_id","=","sucursales.id")
-                                ->where("montos_prestamo.sucursales_id", $request->session()->get('usuario')->sucursales_id)
-                                ->get();
-            }*/
 
             if ($loanAmount){
                 $this->statusCode   = 200;
@@ -44,20 +28,17 @@ class MontosPrestamoController extends Controller
                 $this->records      = $loanAmount;
             }
             else
-                throw new \Exception("No se encontraron registros");
-                
-        } catch (\Exception $e) {
+                throw new Exception("No se encontraron registros");  
+        } catch (Exception $e) {
             $this->statusCode   = 200;
             $this->result       = false;
             $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al consultar los datos";
-        }
-        finally{
+        } finally {
             $response = [
                 'result'    => $this->result,
                 'message'   => $this->message,
                 'records'   => $this->records,
             ];
-
             return response()->json($response, $this->statusCode);
         }
     }

@@ -121,7 +121,6 @@
       }
 
       $scope.saveData = function (plan) {
-        console.log(plan)
         if ($scope.accion == 'crear') {
           $http({
             method: 'POST',
@@ -130,27 +129,26 @@
               descripcion: plan.descripcion,
               dias: plan.dias,
               porcentaje: plan.porcentaje,
-              idsucursal: plan.sucursales_id
+              idsucursal: plan.sucursales_id,
+              domingo: plan.domingo == true ? 1:0
             }
+          }).then(function successCallback(response) {
+            if (response.data.result) {
+              $scope.LlenarTabla($("#branch_id").val())
+              modal.close()
+              $scope.createToast("success", "<strong>Éxito: </strong>" + response.data.message)
+              $timeout(function () { $scope.closeAlert(0) }, 5000)
+            }
+            else {
+              $scope.createToast("danger", "<strong>Error: </strong>" + response.data.message)
+              $timeout(function () { $scope.closeAlert(0) }, 5000)
+            }
+          }, function errorCallback(response) {
+              console.log(response.data.message)
           })
-            .then(function successCallback(response) {
-              if (response.data.result) {
-                $scope.LlenarTabla($("#branch_id").val())
-                modal.close()
-                $scope.createToast("success", "<strong>Éxito: </strong>" + response.data.message)
-                $timeout(function () { $scope.closeAlert(0) }, 5000)
-              }
-              else {
-                $scope.createToast("danger", "<strong>Error: </strong>" + response.data.message)
-                $timeout(function () { $scope.closeAlert(0) }, 5000)
-              }
-            },
-              function errorCallback(response) {
-                console.log(response.data.message)
-              })
         }
         else if ($scope.accion == 'editar') {
-          console.log(plan.id)
+          
           $http({
             method: 'PUT',
             url: API_URL + 'planes/' + plan.id,
@@ -158,7 +156,8 @@
               descripcion: plan.descripcion,
               dias: plan.dias,
               porcentaje: plan.porcentaje,
-              idsucursal: plan.sucursales_id
+              idsucursal: plan.sucursales_id,
+              domingo: plan.domingo == true ? 1:0
             }
           })
             .then(function successCallback(response) {
@@ -217,7 +216,7 @@
       $scope.modalEditOpen = function (data) {
         $scope.accion = 'editar'
         $scope.plan = data
-
+        data.domingo == 1 ? $scope.plan.domingo = true : $scope.plan.domingo = false
         modal = $modal.open({
           templateUrl: "views/planes/modal.html",
           scope: $scope,
