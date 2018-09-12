@@ -23,17 +23,28 @@
       }
 
       $scope.cargarPlanes = function () {
+        $scope.planes = [];
         $http.get(API_URL + 'planes', {}).then(function (response) {
-          if (response.data.result) {
-            $scope.planes = response.data.records
+          if (response.data.result){
+            response.data.records.forEach(function (item) {
+              if (item.sucursales_id == $scope.usuario.sucursales_id) {
+                $scope.planes.push(item)
+              }
+            })
           }
         })
       }
 
       $scope.cargarMonto = function () {
+        $scope.montosprestamo = [];
         $http.get(API_URL + 'montosprestamo', {}).then(function (response) {
-          if (response.data.result)
-            $scope.montosprestamo = response.data.records
+          if (response.data.result){
+            response.data.records.forEach(function (item) {
+              if (item.sucursales_id == $scope.usuario.sucursales_id) {
+                $scope.montosprestamo.push(item)
+              }
+            })
+          }
         })
       }
 
@@ -57,11 +68,39 @@
         $scope.detalle_cliente.cuota_diaria = ($scope.detalle_cliente.interes + $scope.detalle_cliente.monto_id.monto) / plan.dias
       }
 
-      $scope.getEndDate = function (plan) {
+      function getEndDate (plan) {
         var startDate = $("#fechainicio").val().split("-")
         var endDate = new Date(startDate[2], startDate[1] - 1, startDate[0])
         endDate.setDate(endDate.getDate() + plan.dias)
-        $scope.detalle_cliente.fecha_fin = $filter('date')(endDate, 'dd-MM-yyyy')
+        return $filter('date')(endDate, 'dd-MM-yyyy')
+      }
+
+      function getEndDateWithoutSunday(plan){
+  
+          var fechaInicial = $("#fechainicio").val().split("-")
+          var dtInicial = new Date(fechaInicial[2], fechaInicial[1] - 1, fechaInicial[0]);
+
+          if(dtInicial.getDay()===0){
+            dtInicial = new Date(dtInicial.getTime()+86400000);// se agrega un dia
+          }
+
+          for (var i=0; i < parseInt(plan.dias); i++) {        
+            if(dtInicial.getDay()===0){
+              i = i - 1;
+            }
+            dtInicial = new Date(dtInicial.getTime()+86400000);// se agrega un dia
+          }
+          return $filter('date')(dtInicial, 'dd-MM-yyyy');
+      }
+
+      $scope.getEndDate = function (plan){
+        if(plan.domingo == "1"){
+          $scope.detalle_cliente.fecha_fin = getEndDateWithoutSunday(plan);
+          console.log("sin domingo")
+        } else {
+          $scope.detalle_cliente.fecha_fin = getEndDate(plan);
+          console.log("con domingo")
+        }
       }
 
       $scope.cargarPlanes()
@@ -106,6 +145,8 @@
           fecha_inicio: detalleCredito.fecha_inicio,
           fecha_limite: detalleCredito.fecha_fin
         }
+
+        console.log(datos)
 
         $http({
           method: 'POST',

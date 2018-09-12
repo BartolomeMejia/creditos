@@ -12,8 +12,6 @@
 		function loadData(){
 			dashboardService.index().then(function (response) {
                 $scope.resumen = response.data.records;
-        console.log($scope.resumen);
-                
             });
         }        
 	}])

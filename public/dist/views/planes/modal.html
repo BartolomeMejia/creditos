@@ -32,6 +32,17 @@
 					<select class="form-control" ng-model="plan.sucursales_id" ng-options="item.id as item.descripcion for item in sucursales" required></select>
 				</div>
 			</div>
+			<br>
+			<div class="row form-group">
+				<div class="col-sm-6">
+					<div class="ui-checkbox">
+						<label>
+							<input type="checkbox" ng-model="plan.domingo">
+							<span>Omitir día domingo</span>
+						</label>
+					</div>
+				</div>
+			</div>
 			<div class="row form-group" ng-if="accion == 'crear' || accion == 'editar'">
 				<div class="col-sm-12 text-right">
 					<button class="btn btn-success" ng-if="accion == 'crear'" ng-click="saveData(plan)" ng-disabled="form.$invalid">Registrar</button>
