@@ -84,7 +84,7 @@
             dtInicial = new Date(dtInicial.getTime()+86400000);// se agrega un dia
           }
 
-          for (var i=0; i < parseInt(plan.dias - 1); i++) {        
+          for (var i=0; i < parseInt(plan.dias); i++) {        
             if(dtInicial.getDay()===0){
               i = i - 1;
             }

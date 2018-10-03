@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css" />
-    
-</head>
-<style type="text/css">
+	<style>
+        <?php 	include( public_path() . '/css/fonts-roboto.css' );?>
+    </style>
+	<style type="text/css">
 		
 		.body-width {
 			width: 50%;
@@ -89,119 +84,188 @@
 		}
 
 	</style>
+
 	<body class="body-width">	
 		<div class="title">BOLETA DE CONTROL DE PAGO</div>
 		<table>
 			<tr>
 				<td class="firstcolumnlabel">Nombre Cliente:</td>
 				<td class="firstcolumninfo">
-					<span><strong></strong></span>
+					<span><strong>{!! $data->cliente->nombre.' '.$data->cliente->apellido !!}</strong></span>
 				</td>
 				<td class="secundcolumnlabel">DPI:</td>
 				<td class="secundcolumninfo">
-					<span><strong></strong></span>
+					<span><strong>{!! $data->cliente->dpi !!}</strong></span>
 				</td>
 			</tr>
 			<tr>
 				<td class="firstcolumnlabel">Dirección:</td>
 				<td class="firstcolumninfo">
-					<span><strong></strong></span>
+					<span><strong>{!! $data->cliente->direccion!!}</strong></span>
 				</td>
 				<td class="secundcolumnlabel">Teléfono:</td>
 				<td class="secundcolumninfo">
-					<span><strong></strong></span>
+					<span><strong>{!! $data->cliente->telefono!!}</strong></span>
 				</td>
 			</tr>
 			<tr>
 				<td class="firstcolumnlabel">Plan:</td>
 				<td class="firstcolumninfo">
-					<span><strong></strong></span>
+					<span><strong>{!! $data->planes->descripcion!!}</strong></span>
 				</td>
 				<td class="secundcolumnlabel">Fecha de entrega:</td>
 				<td class="secundcolumninfo">
-					<span><strong></strong></span>
+					<span><strong>{!! $data->fecha_inicio!!}</strong></span>
 				</td>
 			</tr>
 			<tr>
 				<td class="firstcolumnlabel">Monto:</td>
 				<td class="firstcolumninfo">
-					<span><strong></strong></span>
+					<span><strong>Q. {!!number_format((float)$data->montos->monto, 2, '.', '')!!}</strong></span>
 				</td>
 				<td class="secundcolumnlabel">Cuota diaria:</td>
 				<td class="secundcolumninfo">
-					<span><strong></strong></span>
+					<span><strong>Q. {!!number_format((float)$data->cuota_diaria, 2, '.', '')!!}</strong></span>
 				</td>
 			</tr>
 		
 		</table>
 		<br>
+		<?php 
 
-		<div class="col-md-6">
-		<table class="table">
-			<thead>
+			$totaldias = (strtotime($data->fecha_inicio)-strtotime($data->fecha_fin))/86400;
+			$totaldias = abs($totaldias); 
+			$totaldias = floor($totaldias);		
+
+			$dias = intval(($totaldias / 2));
+			$residuo = ($totaldias % 2);
+
+			$dateInitial = new \DateTime($data->fecha_inicio);
+			$secondsInitial = 0;
+			$timestampInitial = $dateInitial->getTimestamp();
+			$totalSunday = 0;
+
+			for ($i=0; $i<$dias; $i++)  {  
+				$secondsInitial = $secondsInitial + 86400;  
+				$caduca = date("D", $timestampInitial+$secondsInitial);  
+				
+				if ($caduca == "Sun")  {  
+					$i--;
+					$totalSunday++;  
+				}   
+			}
+			$residuoSunday = ($totalSunday % 2);
+		?>
+		<table class="tablapago">
+			<thead class="pago">
 				<tr>
-					<td>No.</td>
-					<td>Monto</td>
-					<td>Fecha pago</td>
+					<td class="columna">No.</td>
+					<td class="columna">Monto</td>
+					<td class="columna">Fecha pago</td>
+					<td class="columna">No.</td>
+					<td class="columna">Monto</td>
+					<td class="columna">Fecha pago</td>
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-				</tr>	
+			<?php
+				$date = new \DateTime($data->fecha_inicio);
+				$segundos = 0;
+				$timestamp = $date->getTimestamp();
+				$cant1 = 0;
+				$cant2 = 0;
+				$count1 = 0;
+				if($residuoSunday > 0)
+					$count2 = $dias+$residuo-$totalSunday+1;
+				else
+					$count2 = $dias+$residuo-$totalSunday;
+			?>
+				@for ($i = 0; $i < $dias; $i++)
+					<?php
+				
+						$segundos = $segundos + 86400;  
+						$caduca = date("D", $timestamp+$segundos);  
+
+						if ($caduca == "Sun")  {  
+							$i--;
+						} else {
+							
+							$cant1 = $i+1;
+							$cant2 = $i+1+$dias+($residuo);
+
+							$fecha1 = strtotime ( '+'.$cant1.' day' , strtotime ( $data->fecha_inicio) ) ;
+							$fecha1 = date ( 'd-m-Y' , $fecha1 );
+							$date1 = new \DateTime($fecha1);
+							$sunday1 = date("D", $date1->getTimestamp());
+
+							$fecha2 = strtotime ( '+'.$cant2.' day' , strtotime ( $data->fecha_inicio ) ) ;
+							$fecha2 = date ( 'd-m-Y' , $fecha2 );
+							$date2 = new \DateTime($fecha2);
+							$sunday2 = date("D", $date2->getTimestamp());
+					?>
+							<tr class="primeracolumna">
+								@if($sunday1 != "Sun")
+									<?php $count1++; ?>
+									<td class="columnapago">{!! $count1 !!}</td>
+									<td class="columnapago">Q. {!!number_format((float)($data->deudatotal-($data->cuota_diaria * ($count1-1))), 2, '.', '')!!}</td>
+									<td class="columnapago">{!! $fecha1 !!}</td>
+								@else
+									<td class="columnapago"></td>
+									<td class="columnapago"></td>
+									<td class="columnapago"></td>
+								@endif
+								@if($sunday2 != "Sun")
+									<?php $count2++; ?>
+									<td class="columnapago">{!! $count2 !!}</td>
+									<td class="columnapago">Q. {!!number_format((float)($data->deudatotal-($data->cuota_diaria * ($count2-1))), 2, '.', '')!!}</td>
+									<td class="columnapago">{!! $fecha2 !!}</td>
+								@else
+									<td class="columnapago"></td>
+									<td class="columnapago"></td>
+									<td class="columnapago"></td>
+								@endif
+							</tr>
+						<?php }; ?>
+				@endfor
+				@if ($residuo>0)
+					<?php 
+						$cant3 = $dias+$residuo;
+						if($residuoSunday > 0)
+							$count3 = $dias+$residuo-$totalSunday+1;
+						else
+							$count3 = $dias+$residuo-$totalSunday;
+					
+						$fecha3 = strtotime ( '+'.$cant3.' day' , strtotime ( $data->fecha_inicio ) );
+						$fecha3 = date ( 'j-m-Y' , $fecha3 );
+					?>
+					<tr class="primeracolumna">
+						<td class="columnapago">{!! $count3 !!}</td>
+						<td class="columnapago">Q. {!!number_format((float)($data->deudatotal-($data->cuota_diaria * ($count3-1))), 2, '.', '')!!}</td>
+						<td class="columnapago">{!! $fecha3 !!}</td>
+						<td class="columnapago"></td>
+						<td class="columnapago"></td>
+						<td class="columnapago"></td>
+					</tr>
+				@endif
 			</tbody>
 		</table>
-		</div>
-
-		<div class="col-md-6">
-		<table class="table">
-			<thead>
-				<tr>
-					<td>No.</td>
-					<td>Monto</td>
-					<td>Fecha pago</td>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-
-						<td></td>
-						<td></td>
-						<td></td>
-					
-						<td></td>
-						<td></td>
-						<td></td>
-					
-				</tr>
-
-			</tbody>
+		<span class="note"><strong>Nota: </strong>SE COBRARÁ MORA POR DÍA ATRASADO</span>
+		<br>
+		<br>
+		<table>
+			<tr>
+				<td class="rowfirm"></td>
+				<td class="rowfirm"></td>
+				<td class="rowfirm"></td>
+				<td class="fingerprint"></td>
+			</tr>
+			<tr>
+				<td class="rowfirmlabel">F. Préstamos</td>
+				<td class="rowfirmlabel">F. Encargada de grupo</td>
+				<td class="rowfirmlabel">F. Cliente</td>
+				<td class="rowfirmlabel">Huella</td>
+			</tr>
+		
 		</table>
-		</div>
-		<div id="contain3">
-			<span class="note"><strong>Nota: </strong>SE COBRARÁ MORA POR DÍA ATRASADO</span>
-			<br>
-			<br>
-			<table>
-				<tr>
-					<td class="rowfirm"></td>
-					<td class="rowfirm"></td>
-					<td class="rowfirm"></td>
-					<td class="fingerprint"></td>
-				</tr>
-				<tr>
-					<td class="rowfirmlabel">F. Préstamos</td>
-					<td class="rowfirmlabel">F. Encargada de grupo</td>
-					<td class="rowfirmlabel">F. Cliente</td>
-					<td class="rowfirmlabel">Huella</td>
-				</tr>
-			
-			</table>
-		</div>
 
 	</body>
