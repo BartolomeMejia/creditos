@@ -3,7 +3,12 @@
         <?php 	include( public_path() . '/css/fonts-roboto.css' );?>
     </style>
 	<style type="text/css">
-		
+		html {
+			margin: 0;
+		}
+		body {
+			margin: 2mm 8mm 2mm 8mm;
+		}
 		.body-width {
 			width: 50%;
 		}
@@ -23,16 +28,16 @@
 			font-family: 'Roboto', sans-serif;
 			text-align: center;
 			height: 18px;
-			font-size: 15px;
+			font-size: 12px;
 			color: black;
 		}
 		table{
 			width: 100%;
 			font-family: 'Roboto', sans-serif;
-			font-size: 10px;
+			font-size: 9px;
 		}
 		span.note{
-			font-size:10px;
+			font-size:8px;
 			font-family: 'Roboto', sans-serif;
 		}
 		td.firstcolumninfo{
@@ -65,28 +70,27 @@
 			border: 1px solid black;
 		}
 		td.columnapago{
-			height: 14px;
+			height: 10px;
 			border: 1px solid black;
-			font-size: 10px;
+			font-size: 8.5px;
 			text-align: center;	
 		}
 		td.rowfirm{
-			height: 80px;
+			height: 70px;
 			border-bottom: 1px solid black;
 		}
 		td.fingerprint{
-			height: 80px;
+			height: 70px;
 			border: 2px solid black;
 		}
 		td.rowfirmlabel{
-			font-size: 10px;
+			font-size: 8px;
 			text-align: center;	
 		}
 
 	</style>
 
 	<body class="body-width">	
-		<div class="title">BOLETA DE CONTROL DE PAGO</div>
 		<table>
 			<tr>
 				<td class="firstcolumnlabel">Nombre Cliente:</td>
@@ -130,12 +134,11 @@
 			</tr>
 		
 		</table>
-		<br>
 		<?php 
 
 			$totaldias = (strtotime($data->fecha_inicio)-strtotime($data->fecha_fin))/86400;
 			$totaldias = abs($totaldias); 
-			$totaldias = floor($totaldias);		
+			$totaldias = floor($totaldias + 1 );		
 
 			$dias = intval(($totaldias / 2));
 			$residuo = ($totaldias % 2);
@@ -183,16 +186,11 @@
 				@for ($i = 0; $i < $dias; $i++)
 					<?php
 				
-						$segundos = $segundos + 86400;  
 						$caduca = date("D", $timestamp+$segundos);  
 
 						if ($caduca == "Sun")  {  
 							$i--;
 						} else {
-							
-							$cant1 = $i+1;
-							$cant2 = $i+1+$dias+($residuo);
-
 							$fecha1 = strtotime ( '+'.$cant1.' day' , strtotime ( $data->fecha_inicio) ) ;
 							$fecha1 = date ( 'd-m-Y' , $fecha1 );
 							$date1 = new \DateTime($fecha1);
@@ -210,22 +208,30 @@
 									<td class="columnapago">Q. {!!number_format((float)($data->deudatotal-($data->cuota_diaria * ($count1-1))), 2, '.', '')!!}</td>
 									<td class="columnapago">{!! $fecha1 !!}</td>
 								@else
-									<td class="columnapago"></td>
-									<td class="columnapago"></td>
-									<td class="columnapago"></td>
+									<td class="columnapago" colspan="3"><strong>DOMINGO</strong></td>									
 								@endif
 								@if($sunday2 != "Sun")
 									<?php $count2++; ?>
-									<td class="columnapago">{!! $count2 !!}</td>
-									<td class="columnapago">Q. {!!number_format((float)($data->deudatotal-($data->cuota_diaria * ($count2-1))), 2, '.', '')!!}</td>
-									<td class="columnapago">{!! $fecha2 !!}</td>
+									@if($count2 <= $data->planes->dias)
+										<td class="columnapago">{!! $count2 !!}</td>
+										<td class="columnapago">Q. {!!number_format((float)($data->deudatotal-($data->cuota_diaria * ($count2-1))), 2, '.', '')!!}</td>
+										<td class="columnapago">{!! $fecha2 !!}</td>
+									@else
+										<td class="columnapago"></td>
+										<td class="columnapago"></td>
+										<td class="columnapago"></td>
+								@endif
 								@else
-									<td class="columnapago"></td>
-									<td class="columnapago"></td>
-									<td class="columnapago"></td>
+									<td class="columnapago" colspan="3"><strong>DOMINGO</strong></td>		
 								@endif
 							</tr>
-						<?php }; ?>
+						<?php }; 
+						$segundos = $segundos + 86400;  
+						
+						$cant1 = $i+1;
+						$cant2 = $i+1+$dias+($residuo);
+						
+						?>
 				@endfor
 				@if ($residuo>0)
 					<?php 
@@ -242,16 +248,12 @@
 						<td class="columnapago">{!! $count3 !!}</td>
 						<td class="columnapago">Q. {!!number_format((float)($data->deudatotal-($data->cuota_diaria * ($count3-1))), 2, '.', '')!!}</td>
 						<td class="columnapago">{!! $fecha3 !!}</td>
-						<td class="columnapago"></td>
-						<td class="columnapago"></td>
-						<td class="columnapago"></td>
+						<td class="columnapago" colspan="3"><strong>DOMINGO</strong></td>		
 					</tr>
 				@endif
 			</tbody>
 		</table>
 		<span class="note"><strong>Nota: </strong>SE COBRARÁ MORA POR DÍA ATRASADO</span>
-		<br>
-		<br>
 		<table>
 			<tr>
 				<td class="rowfirm"></td>
