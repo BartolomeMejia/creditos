@@ -114,22 +114,25 @@
           $scope.totalCobrar = response.data.records.total_cobrar;
           $scope.totalMinimoCobrar = response.data.records.total_minimo;
 
+          var collectionofday = 0;
           response.data.records.registros.forEach(function (element) {
             const recordDate = new Date(element.updated_at)
             const currentDate = new Date()
-
+        
             const recorDateParsed = recordDate.getDate() + '-' + recordDate.getMonth() + '-' + recordDate.getFullYear()
             const currentDateParsed = currentDate.getDate() + '-' + currentDate.getMonth() + '-' + currentDate.getFullYear()
 
             if (recorDateParsed === currentDateParsed) {
               element.updated_at = 1
+              collectionofday = collectionofday + element.cuota_diaria
             } else {
               element.updated_at = 0
             }
-
             $scope.totalCartera = $scope.totalCartera + element.deudatotal
           });
 
+          $scope.collectionofday = collectionofday
+          
           pivotStructure = $scope.datas;
           $scope.datas = [];
           $scope.datas = response.data.records.registros;

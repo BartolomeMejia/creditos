@@ -1,4 +1,4 @@
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<style>
         <?php 	include( public_path() . '/css/fonts-roboto.css' );?>
     </style>
@@ -28,16 +28,16 @@
 			font-family: 'Roboto', sans-serif;
 			text-align: center;
 			height: 18px;
-			font-size: 12px;
+			font-size: 15px;
 			color: black;
 		}
 		table{
 			width: 100%;
 			font-family: 'Roboto', sans-serif;
-			font-size: 9px;
+			font-size: 11px;
 		}
 		span.note{
-			font-size:8px;
+			font-size:12px;
 			font-family: 'Roboto', sans-serif;
 		}
 		td.firstcolumninfo{
@@ -70,9 +70,9 @@
 			border: 1px solid black;
 		}
 		td.columnapago{
-			height: 10px;
+			height: 15px;
 			border: 1px solid black;
-			font-size: 8.5px;
+			font-size: 11px;
 			text-align: center;	
 		}
 		td.rowfirm{
@@ -84,13 +84,15 @@
 			border: 2px solid black;
 		}
 		td.rowfirmlabel{
-			font-size: 8px;
+			font-size: 12px;
 			text-align: center;	
 		}
 
 	</style>
 
 	<body class="body-width">	
+	<div class="title">BOLETA DE CONTROL DE PAGO</div>
+	<br>
 		<table>
 			<tr>
 				<td class="firstcolumnlabel">Nombre Cliente:</td>
@@ -134,6 +136,7 @@
 			</tr>
 		
 		</table>
+		<br>
 		<?php 
 
 			$totaldias = (strtotime($data->fecha_inicio)-strtotime($data->fecha_fin))/86400;

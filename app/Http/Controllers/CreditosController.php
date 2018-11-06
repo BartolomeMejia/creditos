@@ -11,6 +11,7 @@ use App\CreditosDetalle;
 use App\CuotasClientes;
 use App\Planes;
 use Session;
+use DB;
 use App\Http\Traits\DatesTrait;
 
 class CreditosController extends Controller
@@ -372,6 +373,49 @@ class CreditosController extends Controller
         }
     }
 
+    public function paymentHistory(Request $request){
+        try {
+            $today = date('Y-m-d');
+        
+            if($request->input('idcobrador') == 0){
+                $records = Creditos::select(DB::raw('sum(credito_detalle.abono) as sum_abono'))
+                            ->join('credito_detalle', 'creditos.id','=','credito_detalle.creditos_id')
+                            ->where('credito_detalle.fecha_pago', $today)
+                            ->with('cliente')                        
+                            ->get();  
+            } else {
+                $records = Creditos::select('creditos.*',DB::raw('sum(credito_detalle.abono) as sum_abono'))
+                            ->join('credito_detalle', 'creditos.id','=','credito_detalle.creditos_id')
+                            ->where('credito_detalle.fecha_pago', $today)
+                            ->where('creditos.usuarios_cobrador', $request->input('idcobrador'))
+                            ->groupBy('creditos.id')
+                            ->with('cliente')                        
+                            ->get();  
+            }
+
+            if($records){
+                $this->statusCode   = 200;
+                $this->result       = true;
+                $this->message      = "Registros consultados exitosamente";
+                $this->records      = $records;
+            } 
+
+        } catch (\Exception $e) {
+            $this->statusCode   = 200;
+            $this->result       = false;
+            $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al consultar los registros";
+        }
+        finally{
+            $response = [
+                'result'    => $this->result,
+                'message'   => $this->message,
+                'records'   => $this->records,
+            ];
+
+            return response()->json($response, $this->statusCode);
+        }
+    }
+
     public function boletaPDF(Request $request){
 
         $registro = Creditos::with('cliente','planes','montos')->find( $request->input('credito_id') );
@@ -380,10 +424,21 @@ class CreditosController extends Controller
 
             $pdf = \App::make('dompdf');
             if($registro->planes->domingo == "1"){
-                $pdf = \PDF::loadView('pdf.boleta', ['data' => $registro])->setPaper('letter')->setOrientation('landscape');
-            } else {
-                $pdf = \PDF::loadView('pdf.boletawithsunday', ['data' => $registro])->setPaper('letter')->setOrientation('landscape');
+                if($registro->planes->dias >= 50){
+                    $pdf = \PDF::loadView('pdf.ticketwithoutsundayplan75', ['data' => $registro])->setPaper('letter')->setOrientation('landscape');
+                }
+                else{
+                    $pdf = \PDF::loadView('pdf.ticketwithoutsunday', ['data' => $registro])->setPaper('letter')->setOrientation('landscape');
+                }
+            } else{
+                if($registro->planes->dias >= 50){
+                    $pdf = \PDF::loadView('pdf.ticketwithsundayplan75', ['data' => $registro])->setPaper('letter')->setOrientation('landscape');
+                }
+                else{
+                    $pdf = \PDF::loadView('pdf.ticketwithsunday', ['data' => $registro])->setPaper('letter')->setOrientation('landscape');
+                }
             }
+    
             $nameBoleta = $registro->cliente->nombre." " .$registro->cliente->apellido;
             
             return $pdf->download($nameBoleta.'.pdf');

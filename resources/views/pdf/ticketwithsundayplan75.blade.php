@@ -3,7 +3,12 @@
         <?php 	include( public_path() . '/css/fonts-roboto.css' );?>
     </style>
 	<style type="text/css">
-		
+		html {
+			margin: 0;
+		}
+		body {
+			margin: 2mm 8mm 2mm 8mm;
+		}
 		.body-width {
 			width: 50%;
 		}
@@ -29,10 +34,10 @@
 		table{
 			width: 100%;
 			font-family: 'Roboto', sans-serif;
-			font-size: 10px;
+			font-size: 11px;
 		}
 		span.note{
-			font-size:10px;
+			font-size:12px;
 			font-family: 'Roboto', sans-serif;
 		}
 		td.firstcolumninfo{
@@ -65,9 +70,9 @@
 			border: 1px solid black;
 		}
 		td.columnapago{
-			height: 14px;
+			height: 11px;
 			border: 1px solid black;
-			font-size: 10px;
+			font-size: 9px;
 			text-align: center;	
 		}
 		td.rowfirm{
@@ -79,7 +84,7 @@
 			border: 2px solid black;
 		}
 		td.rowfirmlabel{
-			font-size: 10px;
+			font-size: 12px;
 			text-align: center;	
 		}
 
@@ -130,7 +135,6 @@
 			</tr>
 		
 		</table>
-		<br>
 		<?php 
 
 			$totaldias = (strtotime($data->fecha_inicio)-strtotime($data->fecha_fin))/86400;
@@ -193,8 +197,6 @@
 			</tbody>
 		</table>
 		<span class="note"><strong>Nota: </strong>SE COBRARÁ MORA POR DÍA ATRASADO</span>
-		<br>
-		<br>
 		<table>
 			<tr>
 				<td class="rowfirm"></td>
