@@ -111,7 +111,7 @@
             idcredito: $scope.detalle_cliente.creditos.id,
             abono: cantidadAbonada
           };
-
+          console.log(datos);
           $http({
             method: 'POST',
             url: API_URL + 'registrarabonos',
