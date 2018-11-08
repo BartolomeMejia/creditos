@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Creditos;
 use App\CreditosDetalle;
 use App\CuotasClientes;
+use App\HistorialPagos;
 use App\Planes;
 use Session;
 use DB;
@@ -198,6 +199,15 @@ class CreditosController extends Controller
                 $abonoRestante = 0;
 
                 if ($cantidadPendiente) {
+                    
+                    $newHistory = new HistorialPagos;
+                    $newHistory->credito_id = $request->input('idcredito');
+                    $newHistory->detalle_id = $cantidadPendiente->id;
+                    $newHistory->monto = $cantidadPendiente->abono;
+                    $newHistory->fecha_pago = \Carbon\Carbon::parse(date('Y-m-d'));
+                    $newHistory->tipo = 2;
+                    $newHistory->estado = 1;
+                    $newHistory->save();
 
                     $faltanteCuota = $creditos->cuota_diaria - $cantidadPendiente->abono;
 
@@ -282,11 +292,19 @@ class CreditosController extends Controller
 
                 if ($saldo == 0) {
                     $creditos->saldo = $saldo;
-                    $creditos->estado = 0;
-                    $creditos->save();
+                    $creditos->estado = 0;                
                 } else {
                     $creditos->saldo = $saldo;
-                    $creditos->save();
+                }
+
+                if($creditos->save()){
+                    $newHistory = new HistorialPagos;
+                    $newHistory->credito_id = $creditos->id;
+                    $newHistory->monto = $request->input('abono');
+                    $newHistory->fecha_pago = \Carbon\Carbon::parse(date('Y-m-d'));
+                    $newHistory->tipo = 1;
+                    $newHistory->estado = 1;
+                    $newHistory->save();
                 }
 
                 $this->statusCode = 200;
@@ -357,49 +375,6 @@ class CreditosController extends Controller
             else
                 throw new \Exception("No se encontraron registros");
                 
-        } catch (\Exception $e) {
-            $this->statusCode   = 200;
-            $this->result       = false;
-            $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al consultar los registros";
-        }
-        finally{
-            $response = [
-                'result'    => $this->result,
-                'message'   => $this->message,
-                'records'   => $this->records,
-            ];
-
-            return response()->json($response, $this->statusCode);
-        }
-    }
-
-    public function paymentHistory(Request $request){
-        try {
-            $today = date('Y-m-d');
-        
-            if($request->input('idcobrador') == 0){
-                $records = Creditos::select(DB::raw('sum(credito_detalle.abono) as sum_abono'))
-                            ->join('credito_detalle', 'creditos.id','=','credito_detalle.creditos_id')
-                            ->where('credito_detalle.fecha_pago', $today)
-                            ->with('cliente')                        
-                            ->get();  
-            } else {
-                $records = Creditos::select('creditos.*',DB::raw('sum(credito_detalle.abono) as sum_abono'))
-                            ->join('credito_detalle', 'creditos.id','=','credito_detalle.creditos_id')
-                            ->where('credito_detalle.fecha_pago', $today)
-                            ->where('creditos.usuarios_cobrador', $request->input('idcobrador'))
-                            ->groupBy('creditos.id')
-                            ->with('cliente')                        
-                            ->get();  
-            }
-
-            if($records){
-                $this->statusCode   = 200;
-                $this->result       = true;
-                $this->message      = "Registros consultados exitosamente";
-                $this->records      = $records;
-            } 
-
         } catch (\Exception $e) {
             $this->statusCode   = 200;
             $this->result       = false;

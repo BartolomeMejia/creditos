@@ -69,12 +69,16 @@ class CobradorMovilController extends Controller
                 $totalacobrar = 0;
                 $totalminimocobrar = 0;
                 $cantidadclientes = 0;
-
+                $pagohoy = false;
+                $hoy = date('Y-m-d');
                 foreach ($registros as $item) {
                     $detalleCreditos    = CreditosDetalle::where('creditos_id', $item->id)->get();
 
                     if( $detalleCreditos ){
                         
+                        $colletion = collect($detalleCreditos);                        
+                        $pagohoy = $colletion->contains('fecha_pago', $hoy);
+
                         $cantidadCuotasPagadas = 0;
                         $montoAbono = 0;
                         
@@ -94,6 +98,7 @@ class CobradorMovilController extends Controller
 
                     $item['fecha_inicio'] = \Carbon\Carbon::parse($item->fecha_inicio)->format('d-m-Y');
                     $item['fecha_limite'] = \Carbon\Carbon::parse($item->fecha_limite)->format('d-m-Y');
+                    $item['pago_hoy'] = $pagohoy;                    
                     $totalacobrar = $totalacobrar + $item->cuota_diaria;
                     $totalminimocobrar = $totalminimocobrar + $item->cuota_minima;
                     $cantidadclientes = $cantidadclientes + 1;
@@ -101,8 +106,9 @@ class CobradorMovilController extends Controller
 
                 $datos = [];
                 $datos['total_cobrar'] = $totalacobrar;
-                $datos['total_minimo'] = $totalminimocobrar;
+                $datos['total_minimo'] = $totalminimocobrar;                
                 $datos['registros'] = $registros;
+                
 
                 $this->statusCode   = 200;
                 $this->result       = true;

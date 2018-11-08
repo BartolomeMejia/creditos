@@ -46,7 +46,8 @@ Route::group(['prefix' => 'ws'], function() {
 	Route::get('branch/customers',			'ClientesController@customersByBranch');	
 	Route::get('boletapdf',					'CreditosController@boletaPDF');
 	Route::get('dashboard',					'DashboardController@dashboard');
-	Route::get('paymenthistory',			'CreditosController@paymentHistory');
+	Route::get('paymenthistory',			'HistorialPagosController@paymentHistory');
+	Route::get('deletepayment',				'HistorialPagosController@deletePayment');
 });
 
 Route::group(['prefix' => 'ws/movil'], function()

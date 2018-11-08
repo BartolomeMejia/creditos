@@ -36,4 +36,5 @@ class Creditos extends Model
 	{
 		return $this->hasMany('App\CreditosDetalle','creditos_id','id');
 	}
+	
 }

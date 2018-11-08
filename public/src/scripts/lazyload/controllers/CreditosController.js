@@ -146,8 +146,6 @@
           fecha_limite: detalleCredito.fecha_fin
         }
 
-        console.log(datos)
-
         $http({
           method: 'POST',
           url: API_URL + 'creditos',

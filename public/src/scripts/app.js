@@ -113,6 +113,10 @@
 				{
                     name: "app.service.pdfs",
                     files: ["scripts/lazyload/services/pdfs.js"]
+                },
+				{
+                    name: "app.service.historypayment",
+                    files: ["scripts/lazyload/services/historypayment.js"]
                 }
 			]
 		})
@@ -259,6 +263,19 @@
 					return a.load({
 						name: "app.collector",
 						files: ["scripts/lazyload/controllers/collector.js"]
+					})
+				}]
+			}
+		});
+
+		$routeProvider.when("/historypayment", {
+			templateUrl: "views/historypayment/historypayment.html",
+			controller: "HistoryPaymentController",
+			resolve: {
+				deps: ["$ocLazyLoad", function(a) {
+					return a.load({
+						name: "app.historypayment",
+						files: ["scripts/lazyload/controllers/historypayment.js"]
 					})
 				}]
 			}
