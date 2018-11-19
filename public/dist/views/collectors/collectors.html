@@ -97,7 +97,7 @@
   <!-- #end page-wrap -->
   <div class="page-wrap" ng-show="!showCollectorTable">
     <div class="row">
-      <div class="col-md-8">
+      <div class="col-md-9">
         <div class="panel panel-default table-responsive panel-hovered mb20">
           <div class="panel-heading">
             <h4>Lista de clientes de: {{ collectorSelected }}</h4>
@@ -174,14 +174,14 @@
             <tbody>
               <tr ng-repeat="data in currentPageStores track by $index">
                 <td>{{ $index + 1 }}</td>
-                <td>{{ data.cliente.nombre + data.cliente.apellido }}</td>
+                <td>{{ data.cliente.nombre +" "+ data.cliente.apellido }}</td>
                 <td>Q. {{ data.cuota_diaria | number: "2"}}</td>
                 <td>Q. {{ data.cuota_minima | number: "2" }}</td>
                 <td>{{ data.cantidad_cuotas_pagadas }}</td>
                 <td>Q. {{ data.deudatotal | number: "2" }}</td>
                 <td>
-                  <label ng-if="data.updated_at == 1" class="label label-success mr5">Pagado</label>
-									<label ng-if="data.updated_at == 0" class="label label-danger mr5">No pagado</label>
+                  <label ng-if="data.pago_hoy == 1" class="label label-success mr5">Pagado</label>
+									<label ng-if="data.pago_hoy == 0" class="label label-danger mr5">No pagado</label>
                 </td>
                 <td>
                   <div class="btn-group">
@@ -209,7 +209,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-3">
         <div class="panel panel-default table-responsive panel-hovered mb20">
           <div class="panel-heading">
             <h4>Resumen general</h4>

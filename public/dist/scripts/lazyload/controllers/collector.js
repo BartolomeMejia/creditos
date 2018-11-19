@@ -106,8 +106,18 @@
         loadData(branch_id);
       }
 
+      function totalCollection(cobradorId, date){
+        collectorService.totalColletion(cobradorId, date)
+          .then(function successCallback(response){     
+            $scope.collectionofday = response.data.records;       					          
+          },
+          function errorCallback(response) {
+            $scope.collectionofday = 0;						
+					});
+      }
+
       $scope.showCustomerView = function(data){
-        collectorService.detail(data.id).then(function(response){
+        collectorService.detail(data.id).then(function(response){          
           $scope.collectorSelected = data.nombre;
           $scope.showCollectorTable = false;
 
@@ -116,7 +126,7 @@
 
           var collectionofday = 0;
           response.data.records.registros.forEach(function (element) {
-            const recordDate = new Date(element.updated_at)
+            /*const recordDate = new Date(element.updated_at)
             const currentDate = new Date()
         
             const recorDateParsed = recordDate.getDate() + '-' + recordDate.getMonth() + '-' + recordDate.getFullYear()
@@ -127,11 +137,13 @@
               collectionofday = collectionofday + element.cuota_diaria
             } else {
               element.updated_at = 0
-            }
+            }*/
             $scope.totalCartera = $scope.totalCartera + element.deudatotal
           });
 
-          $scope.collectionofday = collectionofday
+//          var selectedDate = $("#fechainicio").val()
+          
+          totalCollection(data.id, "")
           
           pivotStructure = $scope.datas;
           $scope.datas = [];

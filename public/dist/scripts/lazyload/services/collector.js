@@ -10,4 +10,8 @@ collector_service.service('collectorService', ['$http', 'API_URL', function($htt
     this.detail = function (id) {
         return $http.get(API_URL+'movil/listaclientes?idusuario=' + id);
     };
+
+    this.totalColletion = function (id, date) {
+        return $http.get(API_URL+'totalcolletion?cobrador_id=' + id + '&fecha_pago='+date);
+    };
 }]);

@@ -44,8 +44,7 @@
 
 		function loadPayments(collectorId, selectedDate) {
 			historyPaymentService.historylist(collectorId, selectedDate)
-				.then(function successCallback(response){
-					console.log(response.data);					
+				.then(function successCallback(response){									
 					$scope.datas = response.data.records;
 					$scope.search();
 					$scope.select($scope.currentPage);
@@ -66,8 +65,9 @@
 		}
 
 		$scope.saveData = function( record ) {
+			console.log(record)
 			if ($scope.accion == 'eliminar') {	
-				historyPaymentService.deleteHistory(record.id, record.fecha_pago)			
+				historyPaymentService.deleteHistory(record.id)			
 					.then(function successCallback(response) {
 						if( response.data.result ) {
 							

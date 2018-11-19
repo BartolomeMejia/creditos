@@ -125,7 +125,7 @@
                               				ng-class="{active: row == '-sexo'}"></i>
 									</div>
 								</th>
-								<th>
+								<!--<th>
 									Categoría
 									<div class="th">
 										<i class="fa fa-caret-up icon-up"
@@ -135,7 +135,7 @@
 											ng-click=" order('-categoria') "
                               				ng-class="{active: row == '-categoria'}"></i>
 									</div>
-								</th>
+								</th> -->
 								<th>
 									Color
 									<div class="th">
@@ -161,12 +161,12 @@
 								<td ng-if="data.estado_civil == 2">Casado (a)</td>
 								<td ng-if="data.sexo == 1">Masculino</td>
 								<td ng-if="data.sexo == 2">Femenino</td>
-								<td>
+								<!--<td>
 									<label ng-if="data.categoria == 'A'" class="label label-success mr5">A</label>
 									<label ng-if="data.categoria == 'B'" class="label label-info mr5">B</label>
 									<label ng-if="data.categoria == 'C'" class="label label-warning mr5">C</label>
 									<label ng-if="data.categoria == 'D'" class="label label-danger mr5">D</label>
-								</td>
+								</td>-->
 								<td>
 									<label ng-if="data.color == 'verde'" class="label label-success mr5">Verde</label>
 									<label ng-if="data.color == 'amarillo'" class="label label-warning mr5">Amarillo</label>
