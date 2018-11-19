@@ -8,7 +8,8 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Clientes;
 use App\Creditos;
-use App\CreditosDetalle;
+use App\DetallePagos;
+use App\Http\Traits\detailsPaymentsTrait;
 
 class ClientesController extends Controller {
     public $statusCode  = 200;
@@ -16,6 +17,7 @@ class ClientesController extends Controller {
     public $message     = "";
     public $records     = [];
     protected $sessionKey = 'usuario';
+    use detailsPaymentsTrait;
 
     public function index() {
         try {
@@ -38,20 +40,13 @@ class ClientesController extends Controller {
                 'message'   => $this->message,
                 'records'   => $this->records,
             ];
-
             return response()->json($response, $this->statusCode);
         }
     }
 
+    public function create(){}
     
-    public function create()
-    {
-        //
-    }
-
-    
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         try {
             $nuevoRegistro = \DB::transaction( function() use ($request) {
                                 $nuevoRegistro = Clientes::create([
@@ -83,20 +78,17 @@ class ClientesController extends Controller {
             $this->result       = false;
             $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al crear el registro";
         }
-        finally
-        {
+        finally{
             $response = [
                 'result'    => $this->result,
                 'message'   => $this->message,
                 'records'   => $this->records,
             ];
-
             return response()->json($response, $this->statusCode);
         }
     }
 
-    public function show($id)
-    {
+    public function show($id){
         try {
             $registro = Clientes::find( $id );
 
@@ -126,12 +118,7 @@ class ClientesController extends Controller {
         }
     }
 
-    
-    public function edit($id)
-    {
-        //
-    }
-
+    public function edit($id){}
     
     public function update(Request $request, $id)
     {
@@ -242,68 +229,52 @@ class ClientesController extends Controller {
     }
 
     public function buscarCreditoCliente(Request $request){
-            try{
-            
-                $creditoCliente = Clientes::where('nombre', $request->input('name'))->where('apellido', $request->input('lastname'))->where('sucursal_id', $request->session()->get('usuario')->sucursales_id)->with('creditos')->first();
-            
-                if($creditoCliente){
-                    
-                    if($creditoCliente->creditos){        
-                        $ultimoAbono = CreditosDetalle::where('creditos_id', $creditoCliente->creditos->id)->orderBy('id', 'desc')->first();
-                        $abono = 0;
-
-                        if( $ultimoAbono ){
-                            if($ultimoAbono->estado == 0)
-                                $abono = $ultimoAbono->abono; 
-                        }
-
-                        $creditoCliente->creditos->saldo_abonado = $abono;
-                        $this->statusCode   = 200;
-                        $this->result       = true;
-                        $this->message      = "Registro consultado exitosamente";
-                        $this->records      = $creditoCliente;
-                    }
-                    else{
-                        throw new \Exception("Cliente no cuenta con crédito");      
-                    }
+        try{            
+            $creditoCliente = Clientes::where('nombre', $request->input('name'))
+                                        ->where('apellido', $request->input('lastname'))                                        
+                                        ->where('sucursal_id', $request->session()->get('usuario')->sucursales_id)
+                                        ->with('creditos')
+                                        ->first();
+        
+            if($creditoCliente){
+                if($creditoCliente->creditos && $creditoCliente->creditos->estado == 1){        
+                    $detailsPayments = $this->getDetailsPayments($creditoCliente->creditos->id);                                    
+                    $creditoCliente->creditos->saldo_abonado = $detailsPayments->paymentPaid;
+                    $creditoCliente->creditos->cuotas_pagados = $detailsPayments->totalFees;
+                    $creditoCliente->creditos->total_cancelado = $detailsPayments->totalPayment;
+                    $this->statusCode   = 200;
+                    $this->result       = true;
+                    $this->message      = "Registro consultado exitosamente";
+                    $this->records      = $creditoCliente;
+                } else{
+                    throw new \Exception("Cliente no cuenta con crédito");      
                 }
-                else{
-                    throw new \Exception("Cliente ingresado no cuenta con crédito");  
-                }
+            } else{
+                throw new \Exception("No cliente ingresado no existe");  
             }
-            catch (\Exception $e){
-                $this->statusCode   = 200;
-                $this->result       = false;
-                $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al consultar el registro";
-            }
-            finally{
-                $response = [
-                    'result'    => $this->result,
-                    'message'   => $this->message,
-                    'records'   => $this->records,
-                ];
-    
-                return response()->json($response, $this->statusCode);
-            }
+        }
+        catch (\Exception $e){
+            $this->statusCode   = 200;
+            $this->result       = false;
+            $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al consultar el registro";
+        }
+        finally{
+            $response = [
+                'result'    => $this->result,
+                'message'   => $this->message,
+                'records'   => $this->records,
+            ];
+
+            return response()->json($response, $this->statusCode);
+        }
     }
 
     public function detalleCreditoCliente(Request $request){
         try {
-            $registro = Creditos::where('clientes_id', $request->input('cliente_id'))->with('cliente','planes','montos','usuariocobrador','detalleCreditos')->first();
+            $registro = Creditos::where('clientes_id', $request->input('cliente_id'))->with('cliente','planes','montos','usuariocobrador')->first();
+            
             if ( $registro ) {
-                $cuotas = 0;
-
-                foreach ($registro->detalleCreditos as $valRegistro) {
-
-                    if( $valRegistro['estado'] == 1 )
-                    {
-                        $cuotas = $cuotas + 1;
-                    }
-                }
-                $registro->cuotasPagadas = $cuotas;
-                $registro->cuotasPendientes = $registro->planes->dias - $registro->cuotas;
-
-
+                $registro->porcentaje_pago = $this->getDetailsPayments($registro->id)->paymentPercentage;
                 $this->statusCode   = 200;
                 $this->result       = true;
                 $this->message      = "Registro consultado exitosamente";

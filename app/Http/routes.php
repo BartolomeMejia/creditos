@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return redirect('dist');
+    return redirect('src');
 });
 
 Route::get('/boletaview', function(){
@@ -28,7 +28,6 @@ Route::group(['prefix' => 'ws'], function() {
 	Route::resource('referenciasclientes',	'ReferenciasPersonalesClientesController');
 	Route::resource('creditos',				'CreditosController');
 	Route::resource('usuarios',				'UsuariosController');
-	Route::any('insertar/envases',			'EnvasesController@insertarEnvaseNuevo');
 	Route::post('login',					'UsuariosController@login');
 
 	Route::get('logout',function() {
@@ -48,6 +47,8 @@ Route::group(['prefix' => 'ws'], function() {
 	Route::get('dashboard',					'DashboardController@dashboard');
 	Route::get('paymenthistory',			'HistorialPagosController@paymentHistory');
 	Route::get('deletepayment',				'HistorialPagosController@deletePayment');
+	Route::get('totalcolletion',			'HistorialPagosController@totalColletion');
+	Route::post('payments',					'CreditosController@payments');
 });
 
 Route::group(['prefix' => 'ws/movil'], function()

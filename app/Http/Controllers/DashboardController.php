@@ -41,11 +41,12 @@ class DashboardController extends Controller
                 $customersWithCreditToDay = $this->getCustomersWithCreditToDay()->filter(function ($item) use ($branchId){ return $item->sucursal_id == $branchId;});
                 $collectors = Usuarios::where("tipo_usuarios_id", 4)->where("estado", 1)->where("sucursales_id", $branchId)->count();
             }
-
+            
             $resumenDashboard->customers = $customers;
             $resumenDashboard->customersWithCreditToDay = $customersWithCreditToDay->count();
             $resumenDashboard->customersWithCreditNoToDay = intval($customers) - intval($customersWithCreditToDay->count());
             $resumenDashboard->collectors = $collectors;
+            
 
             $this->statusCode   = 200;
             $this->result       = true;

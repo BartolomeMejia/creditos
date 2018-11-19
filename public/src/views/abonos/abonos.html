@@ -5,7 +5,7 @@
 				<div class="panel panel-default panel-hovered panel-stacked mb20">
 					<div class="panel-heading"><h4>Abonar a crédito</h4></div>
 					<div class="panel-body">
-						<form role="form" class="form-horizontal" ng-submit="validarCliente(search_client)">
+						<form role="form" class="form-horizontal" ng-submit="validarCliente()">
 							<div class="form-group">
 								<label class="col-sm-2 control-label">Nombre de cliente:</label>
 								<div class="col-md-6">
@@ -38,46 +38,60 @@
 							</div>
 						</div>
 						<div class="row" style="margin-left: 18%;">
-							<div class="col-md-3">
+							<div class="col-md-2">
 								<div class="panel panel-default mb20 mini-box panel-hovered">
 									<div class="panel-body">
 										<div class="clearfix">
 											<div class="info left">
-												<h2 class="mt0 text-primary text-bold">{{credito.total}}</h2>
+												<h3 class="mt0 text-danger text-bold">{{credito.total}}</h3>
 											</div>
 										</div>
 									</div>
-									<div class="panel-footer clearfix panel-footer-sm panel-footer-primary">
-										<p class="mt0 mb0 left">Monto del préstamo</p>
+									<div class="panel-footer clearfix panel-footer-sm panel-footer-danger">
+										<p class="mt0 mb0 left">Monto total del préstamo</p>
 									</div>
 								</div>
 							</div>
 
-							<div class="col-sm-3">
+							<div class="col-sm-2">
 								<div class="panel panel-default mb20 mini-box panel-hovered">
 									<div class="panel-body">
 										<div class="clearfix">
 											<div class="info left">
-												<h2 class="mt0 text-success text-bold">{{credito.saldo}}</h2>
+												<h3 class="mt0 text-success text-bold">{{credito.saldo}}</h3>
 											</div>
 										</div>
 									</div>
 									<div class="panel-footer clearfix panel-footer-sm panel-footer-success">
-										<p class="mt0 mb0 left">Saldo Cancelado</p>
+										<p class="mt0 mb0 left">Total cancelado</p>
 									</div>
 								</div>
 							</div>
-							<div class="col-sm-3">
+							<div class="col-sm-2">
 								<div class="panel panel-default mb20 mini-box panel-hovered">
 									<div class="panel-body">
 										<div class="clearfix">
 											<div class="info left">
-												<h2 class="mt0 text-success text-bold">{{credito.saldo_abonado}}</h2>
+												<h3 class="mt0 text-info text-bold">{{credito.cuotas_pagados}}</h3>
 											</div>
 										</div>
 									</div>
-									<div class="panel-footer clearfix panel-footer-sm panel-footer-success">
-										<p class="mt0 mb0 left">Saldo Abonado</p>
+									<div class="panel-footer clearfix panel-footer-sm panel-footer-info">
+										<p class="mt0 mb0 left">Cuota completadas</p>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="panel panel-default mb20 mini-box panel-hovered">
+									<div class="panel-body">
+										<div class="clearfix">
+											<div class="info left">
+												<h3 class="mt0 text-warning text-bold">{{credito.saldo_abonado}}</h3>
+											</div>
+										</div>
+									</div>
+									<div class="panel-footer clearfix panel-footer-sm panel-footer-warning">
+										<p class="mt0 mb0 left">Saldo Abonado a cuota</p>
 									</div>
 								</div>
 							</div>

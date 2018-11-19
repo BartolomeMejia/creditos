@@ -7,13 +7,13 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Creditos;
-use App\CreditosDetalle;
-use App\CuotasClientes;
 use App\HistorialPagos;
+use App\DetallePagos;
 use App\Planes;
 use Session;
 use DB;
 use App\Http\Traits\DatesTrait;
+use App\Http\Traits\detailsPaymentsTrait;
 
 class CreditosController extends Controller
 {
@@ -23,11 +23,12 @@ class CreditosController extends Controller
     public $records     = [];
 
     use DatesTrait;
+    use detailsPaymentsTrait;
 
     public function index()
     {
         try {
-            $registros = Creditos::with('cliente','planes','montos','usuariocobrador','detalleCreditos')->get();
+            $registros = Creditos::with('cliente','planes','montos','usuariocobrador','detallePagos')->get();
             
             if( $registros ) {
                 $this->statusCode   = 200;
@@ -94,13 +95,6 @@ class CreditosController extends Controller
                                 if( !$nuevoRegistro )
                                     throw new \Exception("Error al crear el registro");
                                 else{
-                                    /*$detalleCredito = new CreditosDetalle;
-                                    $detalleCredito->creditos_id    = $nuevoRegistro->id;
-                                    $detalleCredito->fecha_pago     = \Carbon\Carbon::parse($request->input('fecha_inicio'))->format('Y-m-d');
-                                    $detalleCredito->abono          = $request->input('cuota_diaria');
-                                    $detalleCredito->estado         = 1;
-                                    $detalleCredito->save();*/
-
                                     return $nuevoRegistro;
                                 }
                             });
@@ -132,7 +126,7 @@ class CreditosController extends Controller
     public function show($id)
     {
         try {
-            $registro = Creditos::with('cliente','planes','montos','usuariocobrador','detalleCreditos')->find( $id );
+            $registro = Creditos::with('cliente','planes','montos','usuariocobrador','detallePagos')->find( $id );
         
             if ( $registro ) {
                 $cuotas = 0;
@@ -187,147 +181,62 @@ class CreditosController extends Controller
         //
     }
 
-    public function registrarAbono(Request $request)
-    {
+    public function payments(Request $request){
         try {
-            $creditos = Creditos::where('id', $request->input('idcredito'))->with('planes','montos')->first();
-            $cantidadPendiente = CreditosDetalle::where('creditos_id', $creditos->id)->where('estado',0)->first();
-            $saldototal = CuotasClientes::where('creditos_id',$request->input('idcredito'))->first();
+            $credito = Creditos::where('id', $request->input('idcredito'))->with('planes','montos')->first();
+            
+            if($credito){
+                $detallePagos = DetallePagos::where('credito_id', $credito->id)->where('estado', 1)->get();
 
-            if(intval($creditos->saldo) > intval($request->input('abono'))) {
-                $faltanteCuota = 0;
-                $abonoRestante = 0;
-
-                if ($cantidadPendiente) {
-                    
-                    $newHistory = new HistorialPagos;
-                    $newHistory->credito_id = $request->input('idcredito');
-                    $newHistory->detalle_id = $cantidadPendiente->id;
-                    $newHistory->monto = $cantidadPendiente->abono;
-                    $newHistory->fecha_pago = \Carbon\Carbon::parse(date('Y-m-d'));
-                    $newHistory->tipo = 2;
-                    $newHistory->estado = 1;
-                    $newHistory->save();
-
-                    $faltanteCuota = $creditos->cuota_diaria - $cantidadPendiente->abono;
-
-                    if ($request->input('abono') < $faltanteCuota) {
-                        $cantidadPendiente->abono = $cantidadPendiente->abono + $request->input('abono');
-                        $cantidadPendiente->estado = 0;
-                        $cantidadPendiente->save();
-                    } elseif ($request->input('abono') >= $faltanteCuota) {
-                        $cantidadPendiente->abono = $cantidadPendiente->abono + $faltanteCuota;
-                        $cantidadPendiente->estado = 1;
-                        $cantidadPendiente->save();
-
-                        $abonoRestante = $request->input('abono') - $faltanteCuota;
-
-                        if ($abonoRestante >= $creditos->cuota_diaria) {
-                            while ($abonoRestante > 0) {
-                                if ($abonoRestante >= $creditos->cuota_diaria) {
-                                    $abonoRestante = $abonoRestante - $creditos->cuota_diaria;
-                                    $detalleCredito = new CreditosDetalle;
-                                    $detalleCredito->creditos_id = $request->input('idcredito');
-                                    $detalleCredito->fecha_pago = \Carbon\Carbon::parse(date('Y-m-d'));
-                                    $detalleCredito->abono = $creditos->cuota_diaria;
-                                    $detalleCredito->estado = 1;
-                                    $detalleCredito->save();
-
-                                } else {
-                                    $detalleCredito = new CreditosDetalle;
-                                    $detalleCredito->creditos_id = $request->input('idcredito');
-                                    $detalleCredito->fecha_pago = \Carbon\Carbon::parse(date('Y-m-d'));
-                                    $detalleCredito->abono = $abonoRestante;
-                                    $detalleCredito->estado = 0;
-                                    $detalleCredito->save();
-                                    $abonoRestante = $abonoRestante - $creditos->cuota_diaria;
-                                }
-                            }
-                        } elseif ($abonoRestante != 0) {
-                            $detalleCredito = new CreditosDetalle;
-                            $detalleCredito->creditos_id = $request->input('idcredito');
-                            $detalleCredito->fecha_pago = \Carbon\Carbon::parse(date('Y-m-d'));
-                            $detalleCredito->abono = $abonoRestante;
-                            $detalleCredito->estado = 0;
-                            $detalleCredito->save();
-                        }
-                    }
-                } else {
-                    $montoAbono = $request->input('abono');
-
-                    if ($montoAbono >= $creditos->cuota_diaria) {
-                        while ($montoAbono > 0) {
-                            if ($montoAbono >= $creditos->cuota_diaria) {
-                                $montoAbono = $montoAbono - $creditos->cuota_diaria;
-                                $detalleCredito = new CreditosDetalle;
-                                $detalleCredito->creditos_id = $request->input('idcredito');
-                                $detalleCredito->fecha_pago = \Carbon\Carbon::parse(date('Y-m-d'));
-                                $detalleCredito->abono = $creditos->cuota_diaria;
-                                $detalleCredito->estado = 1;
-                                $detalleCredito->save();
-
-                            } else {
-                                $detalleCredito = new CreditosDetalle;
-                                $detalleCredito->creditos_id = $request->input('idcredito');
-                                $detalleCredito->fecha_pago = \Carbon\Carbon::parse(date('Y-m-d'));
-                                $detalleCredito->abono = $montoAbono;
-                                $detalleCredito->estado = 0;
-                                $detalleCredito->save();
-                                $montoAbono = $montoAbono - $creditos->cuota_diaria;
-                            }
-                        }
+                if($detallePagos->count() > 0){
+                    $totalPayment = $detallePagos->sum('abono') + $request->input('abono');
+                    if($totalPayment > $credito->deudatotal){
+                        throw new \Exception("El monto ingresado es mayor al saldo pendiente de pago");
                     } else {
-                        $detalleCredito = new CreditosDetalle;
-                        $detalleCredito->creditos_id = $request->input('idcredito');
-                        $detalleCredito->fecha_pago = \Carbon\Carbon::parse(date('Y-m-d'));
-                        $detalleCredito->abono = $request->input('abono');
-                        $detalleCredito->estado = 0;
-                        $detalleCredito->save();
+                        $detallePagos = new DetallePagos;
+                        $detallePagos->credito_id = $credito->id;
+                        $detallePagos->fecha_pago = \Carbon\Carbon::parse(date('Y-m-d'));
+                        $detallePagos->abono = $request->input('abono');
+                        $detallePagos->estado = 1;                        
                     }
-                }
-
-                $registroCuotas = CuotasClientes::where('creditos_id', $request->input('idcredito'))->first();
-
-                $saldo = $creditos->deudatotal - $registroCuotas->totalabono;
-
-                if ($saldo == 0) {
-                    $creditos->saldo = $saldo;
-                    $creditos->estado = 0;                
                 } else {
-                    $creditos->saldo = $saldo;
+                    $detallePagos = new DetallePagos;
+                    $detallePagos->credito_id = $credito->id;
+                    $detallePagos->fecha_pago = \Carbon\Carbon::parse(date('Y-m-d'));
+                    $detallePagos->abono = $request->input('abono');
+                    $detallePagos->estado = 1;
                 }
 
-                if($creditos->save()){
-                    $newHistory = new HistorialPagos;
-                    $newHistory->credito_id = $creditos->id;
-                    $newHistory->monto = $request->input('abono');
-                    $newHistory->fecha_pago = \Carbon\Carbon::parse(date('Y-m-d'));
-                    $newHistory->tipo = 1;
-                    $newHistory->estado = 1;
-                    $newHistory->save();
+                if($detallePagos->save()){
+                    $detailPayment = $this->getDetailsPayments($credito->id);     
+                    $balance = $credito->deudatotal - $detailPayment->totalPayment;           
+                    
+                    if($balance == 0){
+                        $credito->saldo = $balance;
+                        $credito->estado = 0;
+                    } else {
+                        $credito->saldo = $balance;
+                    }
+                    
+                    $credito->save();
+                    $this->statusCode = 200;
+                    $this->result = true;
+                    $this->message = "Pago realizado con éxito";                    
+                } else {
+                    throw new \Exception("Ocurrió un error al ingresar el pago");
                 }
-
-                $this->statusCode = 200;
-                $this->result = true;
-                $this->message = "Registro creado exitosamente";
-                $this->records = $registroCuotas;
-            }
-            else
-                throw new \Exception("La cantidad ingresada es mayor al saldo pendiente");
-
+            }            
         } catch (\Exception $e) {
             $this->statusCode   = 200;
             $this->result       = false;
-            $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al registrar el abono";
+            $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un error al ingresar el pago";
         }
-        finally
-        {
+        finally{
             $response = [
                 'result'    => $this->result,
                 'message'   => $this->message,
                 'records'   => $this->records,
             ];
-
             return response()->json($response, $this->statusCode);
         }
     }

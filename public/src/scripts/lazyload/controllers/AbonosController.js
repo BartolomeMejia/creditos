@@ -32,7 +32,7 @@
 
       })
 
-      $scope.validarCliente = function (search_client) {
+      $scope.validarCliente = function () {
         if (nameCustomer != "" && lastNameCustomer != "") {
           $http({
             method: 'GET',
@@ -45,8 +45,9 @@
               $scope.detalle_cliente.nombre = response.data.records.nombre + ' ' + response.data.records.apellido;
               $scope.detalle_cliente.cuota_diaria = "Q. " + parseFloat(response.data.records.creditos.cuota_diaria).toFixed(2);
               $scope.credito.total = "Q. " + parseFloat(response.data.records.creditos.deudatotal).toFixed(2);
-              $scope.credito.saldo = "Q. " + parseFloat(response.data.records.creditos.saldo).toFixed(2);
+              $scope.credito.saldo = "Q. " + parseFloat(response.data.records.creditos.total_cancelado).toFixed(2);
               $scope.credito.saldo_abonado = "Q. " + parseFloat(response.data.records.creditos.saldo_abonado).toFixed(2);
+              $scope.credito.cuotas_pagados = response.data.records.creditos.cuotas_pagados;              
               $scope.dailyFee = response.data.records.creditos.cuota_diaria;
 
               $scope.createToast("success", "<strong>Éxito: </strong>" + response.data.message);
@@ -65,9 +66,13 @@
         }
       };
 
-      if ($routeParams.id) {
-        $scope.search_client.dpi = parseInt($routeParams.id);
-        $scope.validarCliente($scope.search_client);
+      if ($routeParams) {  
+        if($routeParams.name!=null && $routeParams.lastname != null){      
+          $scope.search_client.nameCustomer = $routeParams.name + " " + $routeParams.lastname
+          nameCustomer = $routeParams.name
+          lastNameCustomer = $routeParams.lastname
+          $scope.validarCliente();
+        }
       }
 
       $scope.createToast = function (tipo, mensaje) {
@@ -111,16 +116,15 @@
             idcredito: $scope.detalle_cliente.creditos.id,
             abono: cantidadAbonada
           };
-          console.log(datos);
           $http({
             method: 'POST',
-            url: API_URL + 'registrarabonos',
+            url: API_URL + 'payments',
             data: datos
           }).then(function successCallback(response) {
             if (response.data.result) {
               modal.close();
               $scope.createToast("success", "<strong>Éxito: </strong>" + response.data.message);
-              window.location = "#/abonos";
+              location.reload();
             } else {
               modal.close();
               $scope.createToast("danger", "<strong>Error: </strong>" + response.data.message);

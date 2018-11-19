@@ -54,12 +54,12 @@
 									<div class="panel-body">
 										<div class="clearfix">
 											<div class="info left">
-												<h2 class="mt0 text-primary text-bold">{{cliente.saldo}}</h2>
+												<h2 class="mt0 text-primary text-bold">{{cliente.total}}</h2>
 											</div>
 										</div>
 									</div>
 									<div class="panel-footer clearfix panel-footer-sm panel-footer-primary">
-										<p class="mt0 mb0 left">Saldo actual</p>
+										<p class="mt0 mb0 left">Monto total del crédito</p>
 									</div>
 								</div>
 							</div>
@@ -69,12 +69,12 @@
 									<div class="panel-body">
 										<div class="clearfix">
 											<div class="info left">
-												<h2 class="mt0 text-success text-bold">{{cliente.total}}</h2>
+												<h2 class="mt0 text-success text-bold">{{cliente.saldo}}</h2>
 											</div>
 										</div>
 									</div>
 									<div class="panel-footer clearfix panel-footer-sm panel-footer-success">
-										<p class="mt0 mb0 left">Total de crédito</p>
+										<p class="mt0 mb0 left">Total pagado</p>
 									</div>
 								</div>
 							</div>
@@ -94,7 +94,7 @@
 							<div class="col-sm-3"></div>
 							<div class="col-sm-5">
 								<a type="button" class="btn btn-success btn-rounded" href="#/clientes">Imprimir estado de cuenta</a>
-								<a type="button" class="btn btn-success btn-rounded" href="#/abonos/{{ cliente.cliente.dpi }}">Abonar cuotas</a>
+								<a type="button" class="btn btn-success btn-rounded" href="#/abonos?name={{cliente.cliente.nombre}}&lastname={{cliente.cliente.apellido}}">Abonar cuotas</a>
 								<a type="button" class="btn btn-success btn-rounded" href="#/clientes">Renovar crédito</a>
 							</div>
 						</div>

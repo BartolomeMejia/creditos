@@ -39,6 +39,7 @@
             url: API_URL + 'creditocliente',
             params: { name: nameCustomer, lastname: lastNameCustomer }
           }).then(function successCallback(response) {
+            console.log(response);
             if (response.data.result) {
               $('.row-detalle').removeClass('hidden');
               $scope.detalle_cliente = response.data.records;

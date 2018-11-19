@@ -8,11 +8,11 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Usuarios;
 use App\Creditos;
-use App\CuotasClientes;
-use App\CreditosDetalle;
+use App\DetallePagos;
 use Auth;
 use DB;
 use Session;
+use App\Http\Traits\detailsPaymentsTrait;
 
 //revisar el usuario que no sea repedito
 //validar el password que vaya vacio
@@ -24,6 +24,8 @@ class CobradorMovilController extends Controller
     public $message     = "";
     public $records     = [];
     
+    use detailsPaymentsTrait;
+
     public function loginMovil (Request $request)
     {
         try{
@@ -72,33 +74,13 @@ class CobradorMovilController extends Controller
                 $pagohoy = false;
                 $hoy = date('Y-m-d');
                 foreach ($registros as $item) {
-                    $detalleCreditos    = CreditosDetalle::where('creditos_id', $item->id)->get();
-
-                    if( $detalleCreditos ){
-                        
-                        $colletion = collect($detalleCreditos);                        
-                        $pagohoy = $colletion->contains('fecha_pago', $hoy);
-
-                        $cantidadCuotasPagadas = 0;
-                        $montoAbono = 0;
-                        
-                        foreach ($detalleCreditos as $detalle) {   
-                            if ($detalle->estado == 1)
-                                $cantidadCuotasPagadas = $cantidadCuotasPagadas + 1;
-                            else
-                                $montoAbono = $detalle->abono;
-                        }
-                        $item['cantidad_cuotas_pagadas'] =  $cantidadCuotasPagadas ;
-                        $item['monto_abonado'] = $montoAbono;
-                    }
-                    else{
-                        $item['cantidad_abonos_realizados'] = 0;
-                        $item['monto_abonado'] = 0;
-                    }
-
+                    $detailsPayments = $this->getDetailsPayments($item->id);   
+                    $item['cantidad_cuotas_pagadas'] = $detailsPayments->totalFees;
+                    $item['monto_abonado'] = $detailsPayments->paymentPaid;
                     $item['fecha_inicio'] = \Carbon\Carbon::parse($item->fecha_inicio)->format('d-m-Y');
                     $item['fecha_limite'] = \Carbon\Carbon::parse($item->fecha_limite)->format('d-m-Y');
-                    $item['pago_hoy'] = $pagohoy;                    
+                    $item['pago_hoy'] = DetallePagos::where('credito_id', $item->id)->where('estado',1)->get()->contains('fecha_pago', $hoy);                    
+
                     $totalacobrar = $totalacobrar + $item->cuota_diaria;
                     $totalminimocobrar = $totalminimocobrar + $item->cuota_minima;
                     $cantidadclientes = $cantidadclientes + 1;
@@ -106,7 +88,7 @@ class CobradorMovilController extends Controller
 
                 $datos = [];
                 $datos['total_cobrar'] = $totalacobrar;
-                $datos['total_minimo'] = $totalminimocobrar;                
+                $datos['total_minimo'] = $totalminimocobrar;                             
                 $datos['registros'] = $registros;
                 
 

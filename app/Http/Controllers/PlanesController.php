@@ -22,6 +22,14 @@ class PlanesController extends Controller
             $plans = Planes::with('sucursal')->get();            
             
             if ($plans){
+
+                $colletion = collect($plans);
+                $colletion->map(function ($item, $key){
+                    if($item->domingo == "1")
+                        $item->descripcion = $item->descripcion." - No cobrar domingo";
+                    return $item;
+                });
+
                 $this->statusCode = 200;
                 $this->result     = true;
                 $this->message    = "Registros consultados exitosamente";

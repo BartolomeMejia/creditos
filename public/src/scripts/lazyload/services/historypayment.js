@@ -11,7 +11,7 @@ history_payment_service.service('historyPaymentService', ['$http', 'API_URL', fu
         return $http.get(API_URL+'listacobradores');
     };
 
-    this.deleteHistory = function(id, datePayment){
-        return $http.get(API_URL+'deletepayment?credito_id='+id+'&fecha_pago='+datePayment);
+    this.deleteHistory = function(id){
+        return $http.get(API_URL+'deletepayment?detalle_id='+id);
     }
 }]);

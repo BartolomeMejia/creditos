@@ -32,9 +32,9 @@ class Creditos extends Model
 	{
 		return $this->hasOne('App\Clientes','id','clientes_id');
 	}
-	public function detalleCreditos()
+	public function detallePagos()
 	{
-		return $this->hasMany('App\CreditosDetalle','creditos_id','id');
+		return $this->hasMany('App\DetallePagos','credito_id','id');
 	}
 	
 }

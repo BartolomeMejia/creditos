@@ -3,7 +3,6 @@
 namespace App\Http\Traits;
 
 use App\Creditos;
-use App\CuotasClientes;
 
 trait DatesTrait {
     public function getLastDayWithoutSunday($dateInitial, $days){

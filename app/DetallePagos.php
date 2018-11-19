@@ -4,8 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CreditosDetalle extends Model
+class DetallePagos extends Model
 {
-    protected $table = 'credito_detalle';
+    protected $table = 'detalle_pagos';
 	protected $fillable = ['creditos_id','fecha_pago','abono','estado'];
 }
