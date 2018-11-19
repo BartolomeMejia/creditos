@@ -84,7 +84,7 @@
             dtInicial = new Date(dtInicial.getTime()+86400000);// se agrega un dia
           }
 
-          for (var i=0; i < parseInt(plan.dias); i++) {        
+          for (var i=0; i < parseInt(plan.dias-1); i++) {        
             if(dtInicial.getDay()===0){
               i = i - 1;
             }
@@ -145,8 +145,6 @@
           fecha_inicio: detalleCredito.fecha_inicio,
           fecha_limite: detalleCredito.fecha_fin
         }
-
-        console.log(datos)
 
         $http({
           method: 'POST',

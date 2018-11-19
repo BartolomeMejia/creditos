@@ -155,7 +155,7 @@
                   </div>
                 </th>
                 <th>
-                  Total
+                  Total deuda
                   <div class="th">
                     <i class="fa fa-caret-up icon-up" ng-click=" order('nombre') " ng-class="{active: row == 'nombre'}"></i>
                     <i class="fa fa-caret-down icon-down" ng-click=" order('-nombre') " ng-class="{active: row == '-nombre'}"></i>
@@ -262,6 +262,23 @@
                     </div>
                   </div>
                   <div class="panel-footer clearfix panel-footer-sm panel-footer-danger">
+                    <p class="mt0 mb0 left"></p>
+                    <span sparkline class="right" type="bar" bar-color="#fff" width="1.15em" height="1.15em"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 col-sm-12">
+                <div class="panel panel-default mb20 mini-box panel-hovered">
+                  <div class="panel-body">
+                    <div class="clearfix">
+                      <div class="info left">
+                        <h4 class="mt0 text-danger text-bold">Cobro del día</h4>
+                        <h2 class="text-light mb0">Q. {{ collectionofday | number: "2"}}</h2>
+                      </div>
+                      <div class="right ion ion-cash icon"></div>
+                    </div>
+                  </div>
+                  <div class="panel-footer clearfix panel-footer-sm panel-footer-warning">
                     <p class="mt0 mb0 left"></p>
                     <span sparkline class="right" type="bar" bar-color="#fff" width="1.15em" height="1.15em"></span>
                   </div>
