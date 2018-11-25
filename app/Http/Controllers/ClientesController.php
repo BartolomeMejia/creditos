@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Clientes;
 use App\Creditos;
 use App\DetallePagos;
+use App\Usuarios;
 use App\Http\Traits\detailsPaymentsTrait;
 
 class ClientesController extends Controller {
@@ -21,9 +22,14 @@ class ClientesController extends Controller {
 
     public function index() {
         try {
-            $registros = Clientes::with('referenciasPersonales','creditos')->get();
+            $registros = Clientes::with('creditos')->get();
 
             if ($registros) {
+                $registros->map(function ($item, $key){
+                    $item->cobrador = Usuarios::find($item->creditos->usuarios_cobrador)->id;
+                    $item->credito = $item->creditos->id;
+                    return $item;
+                });
                 $this->statusCode   = 200;
                 $this->result       = true;
                 $this->message      = "Registros consultados exitosamente";
@@ -134,13 +140,24 @@ class ClientesController extends Controller {
             $registro->sexo         = $request->input('sexo', $registro->sexo);
             $registro->categoria    = $request->input('categoria', $registro->categoria);
             $registro->color        = $request->input('color', $registro->color);
-            $registro->save();
+            
+            $credit = Creditos::find($request->input('credito'));
+            if($credit){
+                $credit->usuarios_cobrador = $request->input('cobrador', $credit->usuarios_cobrador);
+                $credit->save();
+            } else {
+                throw new \Exception("Error al editar el cliente");
+            }
 
-            \DB::commit();
-            $this->statusCode   = 200;
-            $this->result       = true;
-            $this->message      = "Registro editado exitosamente";
-            $this->records      = $registro;
+            if($registro->save()){
+                \DB::commit();
+                $this->statusCode   = 200;
+                $this->result       = true;
+                $this->message      = "Registro editado exitosamente";
+                $this->records      = $registro;
+            } else {
+                throw new \Exception("Error al editar el cliente");
+            }
                 
         } catch (\Exception $e) {
             \DB::rollback();

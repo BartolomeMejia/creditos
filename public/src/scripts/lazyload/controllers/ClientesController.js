@@ -27,6 +27,21 @@
           });
       }
 
+      $scope.cargarUsuariosCobrador = function () {
+        
+        $scope.usuarios_cobrador = [];
+
+        $http.get(API_URL + 'listacobradores', {}).then(function (response) {
+          if (response.data.result){
+            response.data.records.forEach(function (item) {
+              if (item.sucursales_id == $scope.usuario.sucursales_id) {
+                $scope.usuarios_cobrador.push(item)
+              }
+            })
+          }
+        })
+      }
+
       $scope.LlenarTabla = function (branch_id) {
 
         var branch_selectd = branch_id != null ? branch_id : $scope.usuario.sucursales_id;
@@ -90,6 +105,7 @@
 
       loadBranches()
       $scope.LlenarTabla();
+      $scope.cargarUsuariosCobrador()
 
       // Función para Toast
       $scope.createToast = function (tipo, mensaje) {
@@ -128,6 +144,7 @@
             console.log(response.data.message);
           });
         } else if ($scope.accion == 'editar') {
+          console.log(cliente)
           $http({
             method: 'PUT',
             url: API_URL + 'clientes/' + cliente.id,
