@@ -14,6 +14,7 @@ use Session;
 use DB;
 use App\Http\Traits\DatesTrait;
 use App\Http\Traits\detailsPaymentsTrait;
+use App\Http\Traits\generateArrayForTicketTrait;
 
 class CreditosController extends Controller
 {
@@ -24,6 +25,7 @@ class CreditosController extends Controller
 
     use DatesTrait;
     use detailsPaymentsTrait;
+    use generateArrayForTicketTrait;
 
     public function index()
     {
@@ -200,11 +202,15 @@ class CreditosController extends Controller
                         $detallePagos->estado = 1;                        
                     }
                 } else {
-                    $detallePagos = new DetallePagos;
-                    $detallePagos->credito_id = $credito->id;
-                    $detallePagos->fecha_pago = \Carbon\Carbon::parse(date('Y-m-d'));
-                    $detallePagos->abono = $request->input('abono');
-                    $detallePagos->estado = 1;
+                    if($request->input('abono') > $credito->deudatotal){
+                        throw new \Exception("El monto ingresado es mayor al saldo pendiente de pago");
+                    } else {
+                        $detallePagos = new DetallePagos;
+                        $detallePagos->credito_id = $credito->id;
+                        $detallePagos->fecha_pago = \Carbon\Carbon::parse(date('Y-m-d'));
+                        $detallePagos->abono = $request->input('abono');
+                        $detallePagos->estado = 1;
+                    }
                 }
 
                 if($detallePagos->save()){
@@ -305,17 +311,16 @@ class CreditosController extends Controller
         $registro = Creditos::with('cliente','planes','montos')->find( $request->input('credito_id') );
         
         if ( $registro ) {
-
             $pdf = \App::make('dompdf');
             if($registro->planes->domingo == "1"){
-                if($registro->planes->dias >= 50){
-                    $pdf = \PDF::loadView('pdf.ticketwithoutsundayplan75', ['data' => $registro])->setPaper('letter')->setOrientation('landscape');
+                if($registro->planes->dias >= 45){
+                    $pdf = \PDF::loadView('pdf.ticketwithoutsundayplan75', ['data' => $this->getArray($registro)])->setPaper('letter')->setOrientation('landscape');
                 }
                 else{
-                    $pdf = \PDF::loadView('pdf.ticketwithoutsunday', ['data' => $registro])->setPaper('letter')->setOrientation('landscape');
+                    $pdf = \PDF::loadView('pdf.ticketwithoutsunday', ['data' => $this->getArray($registro)])->setPaper('letter')->setOrientation('landscape');
                 }
             } else{
-                if($registro->planes->dias >= 50){
+                if($registro->planes->dias >= 45){
                     $pdf = \PDF::loadView('pdf.ticketwithsundayplan75', ['data' => $registro])->setPaper('letter')->setOrientation('landscape');
                 }
                 else{

@@ -10,7 +10,7 @@
 			margin: 2mm 8mm 2mm 8mm;
 		}
 		.body-width {
-			width: 50%;
+			width: 48%;
 		}
 		div.top-bar {
 			height: 2px;
@@ -41,16 +41,16 @@
 			font-family: 'Roboto', sans-serif;
 		}
 		td.firstcolumninfo{
-			width: 48%;
+			width: 45%;
 		}
 		td.secundcolumninfo{
 			width: 18%;
 		}
 		td.firstcolumnlabel{
-			width: 16%;
+			width: 18%;
 		}
 		td.secundcolumnlabel{
-			width: 18%;
+			width: 20%;
 		}
 		table.tablapago{
 			width: 100%;

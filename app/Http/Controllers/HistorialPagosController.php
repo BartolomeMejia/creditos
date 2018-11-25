@@ -22,7 +22,7 @@ class HistorialPagosController extends Controller
     public function paymentHistory(Request $request)
     {
         try {
-            $items = DB::table('detalle_pagos')
+            $items = DB::table('detalle_pagos')->select("detalle_pagos.*", "creditos.clientes_id")
                         ->join('creditos', 'detalle_pagos.credito_id','=','creditos.id')
                         ->where('creditos.usuarios_cobrador',$request->input('cobrador_id'))
                         ->where('detalle_pagos.fecha_pago',$request->input('fecha_pago'))                        
