@@ -10,6 +10,7 @@
 			<h3>¿Realmente desea eliminar este cliente?</h3>
 		</div>
 		<form class="form-horizontal" name="form" ng-if="accion == 'crear' || accion == 'editar'" action="javascript:;" novalidate>
+			<input type="hidden" class="form-control"  ng-model="cliente.credito">
 			<div class="row form-group">
 				<div class="col-sm-12">
 					<label>DPI</label>
@@ -52,6 +53,12 @@
 						<option value="1">Soltero (a)</option>
 						<option value="2">Casado (a)</option>
 					</select>
+				</div>
+			</div>
+			<div class="row form-group">
+				<div class="col-sm-12">
+					<label>Cobrador:</label>
+					<select class="form-control" ng-model="cliente.cobrador" ng-options="item.id as item.nombre for item in usuarios_cobrador" required></select>
 				</div>
 			</div>
 			<div class="row form-group" ng-if="accion == 'crear' || accion == 'editar'">
