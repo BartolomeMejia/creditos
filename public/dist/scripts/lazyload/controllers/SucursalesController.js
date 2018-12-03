@@ -21,6 +21,7 @@
 
 		$scope.LlenarTabla = function()
 		{
+			$scope.datas = [];
 			$http({
 				method: 'GET',
 			  	url: 	API_URL+'sucursales'

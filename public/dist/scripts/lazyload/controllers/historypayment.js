@@ -145,7 +145,7 @@
 			$scope.record = data;
 
 			modal = $modal.open({
-				templateUrl: "views/sucursales/modal.html",
+				templateUrl: "views/historypayment/modal.html",
 				scope: $scope,
 				size: "md",
 				resolve: function() {},
