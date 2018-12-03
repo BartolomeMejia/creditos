@@ -102,6 +102,25 @@
           <div class="panel-heading">
             <h4>Lista de clientes de: {{ collectorSelected }}</h4>
           </div>
+
+          <div class="panel-heading">
+            <br>
+            <form class="form-inline">
+              <div class="form-group">								
+                <label>Fecha de cobro: </label>
+                <div class="input-group date" >
+                  <input  type="text" id="fechapago" class="form-control">
+                  <div class="input-group-addon" >
+                    <span class="glyphicon glyphicon-th"></span>
+                  </div>
+                </div>						
+                <label>&nbsp &nbsp &nbsp</label>	
+                <button align="center" type="button" class="btn btn-success btn-rounded" ng-click="findCustomers()" ng-disabled="form.$invalid">Buscar</button>									
+              </div>	
+            </form>
+            <br>
+          </div>
+
           <div class="panel-body">
             <div class="row">
               <div class="small text-bold left mt5">
@@ -134,14 +153,14 @@
                   </div>
                 </th>
                 <th>
-                  Cuota diaria
+                  Deuda total
                   <div class="th">
                     <i class="fa fa-caret-up icon-up" ng-click=" order('nombre') " ng-class="{active: row == 'nombre'}"></i>
                     <i class="fa fa-caret-down icon-down" ng-click=" order('-nombre') " ng-class="{active: row == '-nombre'}"></i>
                   </div>
                 </th>
                 <th>
-                  Cuota mínima
+                  Cuota diaria
                   <div class="th">
                     <i class="fa fa-caret-up icon-up" ng-click=" order('nombre') " ng-class="{active: row == 'nombre'}"></i>
                     <i class="fa fa-caret-down icon-down" ng-click=" order('-nombre') " ng-class="{active: row == '-nombre'}"></i>
@@ -155,7 +174,7 @@
                   </div>
                 </th>
                 <th>
-                  Total deuda
+                  Monto pagado 
                   <div class="th">
                     <i class="fa fa-caret-up icon-up" ng-click=" order('nombre') " ng-class="{active: row == 'nombre'}"></i>
                     <i class="fa fa-caret-down icon-down" ng-click=" order('-nombre') " ng-class="{active: row == '-nombre'}"></i>
@@ -175,10 +194,10 @@
               <tr ng-repeat="data in currentPageStores track by $index">
                 <td>{{ $index + 1 }}</td>
                 <td>{{ data.cliente.nombre +" "+ data.cliente.apellido }}</td>
+                <td>Q. {{ data.deudatotal | number: "2"}}</td>
                 <td>Q. {{ data.cuota_diaria | number: "2"}}</td>
-                <td>Q. {{ data.cuota_minima | number: "2" }}</td>
                 <td>{{ data.cantidad_cuotas_pagadas }}</td>
-                <td>Q. {{ data.deudatotal | number: "2" }}</td>
+                <td>Q. {{ data.monto_pagado | number: "2" }}</td>
                 <td>
                   <label ng-if="data.pago_hoy == 1" class="label label-success mr5">Pagado</label>
 									<label ng-if="data.pago_hoy == 0" class="label label-danger mr5">No pagado</label>
@@ -283,6 +302,10 @@
                     <span sparkline class="right" type="bar" bar-color="#fff" width="1.15em" height="1.15em"></span>
                   </div>
                 </div>
+                <br>
+                <div class="col-sm-12 text-center">
+                  <button class="btn btn-info btn-rounded" ng-click="printResume()">Imprimir resumen</button>
+                </div>
               </div>
             </div>
           </div>
@@ -292,3 +315,7 @@
   </div>
   <!-- #end page-wrap -->
 </div>
+
+<script>
+  $('.input-group.date').datepicker({format: "yyyy-mm-dd"}); 
+</script>

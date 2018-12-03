@@ -11,6 +11,7 @@ use App\Creditos;
 use App\DetallePagos;
 use App\Usuarios;
 use App\Http\Traits\detailsPaymentsTrait;
+use App\Http\Traits\detailsCreditsTrait;
 
 class ClientesController extends Controller {
     public $statusCode  = 200;
@@ -18,18 +19,29 @@ class ClientesController extends Controller {
     public $message     = "";
     public $records     = [];
     protected $sessionKey = 'usuario';
+    
     use detailsPaymentsTrait;
+    use detailsCreditsTrait;
 
     public function index() {
         try {
-            $registros = Clientes::with('creditos')->get();
-
+            $registros = Clientes::all();
+            
             if ($registros) {
-                $registros->map(function ($item, $key){
-                    $item->cobrador = Usuarios::find($item->creditos->usuarios_cobrador)->id;
-                    $item->credito = $item->creditos->id;
+                $registros->map(function ($item, $key){   
+                    if($item->status == 1){
+                        $detailCredits = $this->getStatusCredits($item->id);
+                        $item->statusCredit = $detailCredits->status;
+                        $item->totalCredits = $detailCredits->total;
+                        $item->collector = $detailCredits->collector;
+                    } else {
+                        $item->statusCredit = 4;
+                        $item->totalCredits = 0;
+                        $item->collector = 0;
+                    }
                     return $item;
                 });
+
                 $this->statusCode   = 200;
                 $this->result       = true;
                 $this->message      = "Registros consultados exitosamente";
@@ -141,10 +153,14 @@ class ClientesController extends Controller {
             $registro->categoria    = $request->input('categoria', $registro->categoria);
             $registro->color        = $request->input('color', $registro->color);
             
-            $credit = Creditos::find($request->input('credito'));
-            if($credit){
-                $credit->usuarios_cobrador = $request->input('cobrador', $credit->usuarios_cobrador);
-                $credit->save();
+            $credit = Creditos::where("clientes_id", $id)->get();
+            
+            if($credit->count() > 0){
+                $credit->map(function ($item, $key) use ($request){   
+                    $item->usuarios_cobrador = $request->input('collector', $item->usuarios_cobrador);
+                    $item->save();
+                    return $item;
+                });
             } else {
                 throw new \Exception("Error al editar el cliente");
             }
@@ -181,9 +197,23 @@ class ClientesController extends Controller {
     public function destroy($id)
     {
         try {
+            $credit = Creditos::where("clientes_id", $id)->get();
+
             $deleteRegistro = \DB::transaction( function() use ( $id ){
+                                $credit = Creditos::where('clientes_id', $id)->where('estado', 1)->get();
+
+                                if($credit->count() > 0){
+                                    $credit->map(function ($item, $key){   
+                                        $item->estado = 2;
+                                        $item->save();
+                                        return $item;
+                                    });
+                                }
+
                                 $registro = Clientes::find( $id );
-                                $registro->delete();
+                                $registro->status = 2;
+                                $registro->save();
+
                             });
 
             $this->statusCode   = 200;
@@ -319,7 +349,12 @@ class ClientesController extends Controller {
 
     public function customersByBranch(Request $request){
         try{
-            $customers = Clientes::where('sucursal_id',$request->session()->get('usuario')->sucursales_id)->get();
+            $customers = Clientes::with('creditos')   
+                                ->whereHas('creditos', function($credit){
+                                    $credit->where('estado', 1);
+                                })
+                                ->where('sucursal_id',$request->session()->get('usuario')->sucursales_id)
+                                ->get();
 
             if($customers){
                 $this->statusCode   = 200;

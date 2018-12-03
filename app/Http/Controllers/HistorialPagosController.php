@@ -10,7 +10,7 @@ use Session;
 use App\DetallePagos;
 use App\Clientes;
 use App\Creditos;
-use DB;
+use App\Http\Traits\detailsPaymentsTrait;
 
 class HistorialPagosController extends Controller
 {
@@ -18,6 +18,8 @@ class HistorialPagosController extends Controller
     public $result = false;
     public $message = '';
     public $records = [];
+
+    use detailsPaymentsTrait;
 
     public function paymentHistory(Request $request)
     {
@@ -105,26 +107,11 @@ class HistorialPagosController extends Controller
     }
 
     public function totalColletion(Request $request){
-        try {            
-            $items = DB::table('detalle_pagos')
-                        ->join('creditos', 'detalle_pagos.credito_id','=','creditos.id')
-                        ->where('creditos.usuarios_cobrador',$request->input('cobrador_id'))
-                        //->where('historial_pagos.fecha_pago',$request->input('fecha_pago'))
-                        ->where('detalle_pagos.fecha_pago',date('Y-m-d'))                        
-                        ->where('detalle_pagos.estado', 1)
-                        ->get();
-            
-            if($items){
-                $colletion = collect($items);            
-
-                $this->statusCode   = 200;
-                $this->result       = true;
-                $this->message      = "Registro consultados exitosamente";
-                $this->records      = $colletion->sum('abono');
-            }
-            else
-                throw new \Exception("No se encontraron registros");
-                
+        try {                    
+            $this->statusCode   = 200;
+            $this->result       = true;
+            $this->message      = "Registro consultados exitosamente";
+            $this->records      = $this->getTotalPaymentCollector($request->input('cobrador_id'), $request->input('fecha'));   
         } 
         catch (\Exception $e) {
             $this->statusCode = 200;

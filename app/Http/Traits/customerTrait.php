@@ -48,4 +48,17 @@ trait customerTrait {
         }
         return $totalDays;
     }
+
+    public function getStatusCredits($customerId){
+        $detailCredits = new \stdClass();
+        $credits = Creditos::where('clientes_id', $customerId)->get();
+        if($credits->count() > 0){
+            $complete = $credits->where('estado', 0)->count();
+            $detailCredits = $complete == $credits->count() ? 3 : 2;
+        } else {
+            $detailCredits->status = 1;
+        }
+
+        return $detailCredits;
+    }
 }

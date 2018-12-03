@@ -1,9 +1,9 @@
 ; (function () {
   "use strict";
 
-  angular.module("app.collector", ["app.constants", 'app.service.collector'])
+  angular.module("app.collector", ["app.constants", 'app.service.collector', 'app.service.pdfs'])
 
-    .controller("CollectorController", ["$scope", "$filter", "$http", "$modal", "$interval", 'collectorService', 'API_URL', function ($scope, $filter, $http, $modal, $timeout, collectorService, API_URL) {
+    .controller("CollectorController", ["$scope", "$filter", "$http", "$modal", "$interval", 'collectorService', 'pdfsService', 'API_URL', function ($scope, $filter, $http, $modal, $timeout, collectorService, pdfsService, API_URL) {
 
       // general vars
       $scope.loadBranches = [];
@@ -24,13 +24,16 @@
       $scope.totalMinimoCobrar = 0;
       $scope.totalCartera = 0;
       var modal;
-      var pivotStructure = [];
+      var pivotStructure = []
+      var collectorSelected = {}
 
+      var dateToday =  $filter('date')(new Date(), 'yyyy-MM-dd')
+      $("#fechapago").val(dateToday);
+      loadBranches();
+      loadData($("branch_id").val());
 
       function loadBranches() {
-
         $scope.sucursales = [];
-
         $http.get(API_URL + 'sucursales', {})
           .then(function successCallback(response) {
             if (response.data.result) {
@@ -48,7 +51,6 @@
       }
 
       function loadData(branch_id) {
-
         var branch_selectd = branch_id != null ? branch_id : $scope.usuario.sucursales_id;
         $scope.datas = [];
         collectorService.index().then(function (response) {
@@ -57,9 +59,81 @@
               $scope.datas.push(item)
             }
           })
+          pivotStructure = $scope.datas;
           $scope.search();
           $scope.select($scope.currentPage);
         });
+      }
+
+      function totalCollection(cobradorId, date){
+        collectorService.totalColletion(cobradorId, date)
+          .then(function successCallback(response){     
+            $scope.collectionofday = response.data.records;       					          
+          },
+          function errorCallback(response) {
+            $scope.collectionofday = 0;						
+					});
+      }
+
+      function showCustomer(data){
+        var date = $("#fechapago").val()
+        collectorService.detail(data.id, date).then(function(response){          
+          $scope.collectorSelected = data.nombre          
+          $scope.showCollectorTable = false
+
+          $scope.totalCobrar = response.data.records.total_cobrar;
+          $scope.totalMinimoCobrar = response.data.records.total_minimo;
+
+          var collectionofday = 0;
+          response.data.records.registros.forEach(function (element) {
+            $scope.totalCartera = $scope.totalCartera + element.deudatotal
+          });
+
+          totalCollection(data.id, date)
+          
+          $scope.datas = [];
+          $scope.datas = response.data.records.registros;
+          $scope.searchKeywords = '';
+          $scope.search();
+          $scope.select($scope.currentPage);
+        });
+      }
+
+      $scope.changeDataBranch = function(branch_id){
+        loadData(branch_id);
+      }
+
+      $scope.findCustomers = function(){
+        if($("#fechapago").val() != ""){
+          var selectedDate = $("#fechapago").val()
+          var collectorId = collectorSelected
+          $scope.totalCartera = 0;
+          showCustomer(collectorId)
+        }
+      }
+      
+      $scope.showCustomerView = function(data){
+        showCustomer(data);
+        collectorSelected = data;
+        pivotStructure = $scope.datas;
+      }
+
+      $scope.closeCustomerView = function(){
+        $scope.showCollectorTable = true;
+        $scope.datas = [];
+        $scope.datas = pivotStructure;
+        $scope.searchKeywords = '';
+        $scope.search();
+        $scope.select($scope.currentPage);
+        $scope.totalCobrar = 0;
+        $scope.totalMinimoCobrar = 0;
+        $scope.totalCartera = 0;
+      }
+
+      $scope.printResume = function(){
+        if($("#fechapago").val() != ""){
+          pdfsService.resumenPaymentCollector(collectorSelected.id, $("#fechapago").val())
+        }
       }
 
       // datatable collector functions
@@ -97,73 +171,6 @@
         $scope.row = rowName;
         $scope.filteredData = $filter('orderBy')($scope.datas, rowName);
         $scope.onOrderChange();
-      }
-
-      loadBranches();
-      loadData($("branch_id").val());
-
-      $scope.changeDataBranch = function(branch_id){
-        loadData(branch_id);
-      }
-
-      function totalCollection(cobradorId, date){
-        collectorService.totalColletion(cobradorId, date)
-          .then(function successCallback(response){     
-            $scope.collectionofday = response.data.records;       					          
-          },
-          function errorCallback(response) {
-            $scope.collectionofday = 0;						
-					});
-      }
-
-      $scope.showCustomerView = function(data){
-        collectorService.detail(data.id).then(function(response){          
-          $scope.collectorSelected = data.nombre;
-          $scope.showCollectorTable = false;
-
-          $scope.totalCobrar = response.data.records.total_cobrar;
-          $scope.totalMinimoCobrar = response.data.records.total_minimo;
-
-          var collectionofday = 0;
-          response.data.records.registros.forEach(function (element) {
-            /*const recordDate = new Date(element.updated_at)
-            const currentDate = new Date()
-        
-            const recorDateParsed = recordDate.getDate() + '-' + recordDate.getMonth() + '-' + recordDate.getFullYear()
-            const currentDateParsed = currentDate.getDate() + '-' + currentDate.getMonth() + '-' + currentDate.getFullYear()
-
-            if (recorDateParsed === currentDateParsed) {
-              element.updated_at = 1
-              collectionofday = collectionofday + element.cuota_diaria
-            } else {
-              element.updated_at = 0
-            }*/
-            $scope.totalCartera = $scope.totalCartera + element.deudatotal
-          });
-
-//          var selectedDate = $("#fechainicio").val()
-          
-          totalCollection(data.id, "")
-          
-          pivotStructure = $scope.datas;
-          $scope.datas = [];
-          $scope.datas = response.data.records.registros;
-          $scope.searchKeywords = '';
-          $scope.search();
-          $scope.select($scope.currentPage);
-        });
-      }
-
-      $scope.closeCustomerView = function(){
-        $scope.showCollectorTable = true;
-        $scope.datas = [];
-        $scope.datas = pivotStructure;
-        $scope.searchKeywords = '';
-        $scope.search();
-        $scope.select($scope.currentPage);
-        $scope.totalCobrar = 0;
-        $scope.totalMinimoCobrar = 0;
-        $scope.totalCartera = 0;
       }
 
       // modals function

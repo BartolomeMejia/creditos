@@ -12,11 +12,11 @@
 */
 
 Route::get('/', function () {
-    return redirect('dist');
+    return redirect('src');
 });
 
 Route::get('/boletaview', function(){
-	return view('pdf.boleta');
+	return view('pdf.resumentodaycollector');
 });
 
 Route::group(['prefix' => 'ws'], function() {
@@ -49,6 +49,8 @@ Route::group(['prefix' => 'ws'], function() {
 	Route::get('deletepayment',				'HistorialPagosController@deletePayment');
 	Route::get('totalcolletion',			'HistorialPagosController@totalColletion');
 	Route::post('payments',					'CreditosController@payments');
+	Route::get('listcustomers',				'CobradorController@listCustomers');
+	Route::get('collectorpdf',				'CobradorController@generatePdf');
 });
 
 Route::group(['prefix' => 'ws/movil'], function()

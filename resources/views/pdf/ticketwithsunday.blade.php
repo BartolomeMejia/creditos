@@ -10,7 +10,7 @@
 			margin: 2mm 8mm 2mm 8mm;
 		}
 		.body-width {
-			width: 48%;
+			width: 45%;
 		}
 		div.top-bar {
 			height: 2px;
