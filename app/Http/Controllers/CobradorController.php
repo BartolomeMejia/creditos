@@ -146,8 +146,6 @@ class CobradorController extends Controller
             
         }
         
-        //return response()->json($datos);
-
         $pdf = \App::make('dompdf');        
         $pdf = \PDF::loadView('pdf.resumentodaycollector', ['data' => $datos])->setPaper('Legal')->setOrientation('portrait');
         return $pdf->download($collector->nombre.'.pdf');
