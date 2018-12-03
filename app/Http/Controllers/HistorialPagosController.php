@@ -10,6 +10,7 @@ use Session;
 use App\DetallePagos;
 use App\Clientes;
 use App\Creditos;
+use DB;
 use App\Http\Traits\detailsPaymentsTrait;
 
 class HistorialPagosController extends Controller
