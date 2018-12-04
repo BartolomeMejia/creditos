@@ -211,7 +211,6 @@
 
       $scope.modalDeleteOpen = function (data) {
         $scope.accion = 'eliminar';
-
         $scope.cliente = data;
         modal = $modal.open({
           templateUrl: "views/clientes/modal.html",

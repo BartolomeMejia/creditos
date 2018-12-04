@@ -4,7 +4,10 @@ pdfs_service.service('pdfsService', ['$window','$http', 'API_URL', function($win
     delete $http.defaults.headers.common['X-Requested-With'];
     
     this.ticketcredit = function (id) {
-        console.log(API_URL+'boletapdf?credito_id=' + id);
         $window.location.href = API_URL+'boletapdf?credito_id=' + id;
     };
+
+    this.resumenPaymentCollector = function(cobradorId, date){
+        $window.location.href = API_URL+'collectorpdf?idusuario='+cobradorId+'&fecha='+date;
+    }
 }]);
