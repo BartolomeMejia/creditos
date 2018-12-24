@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return redirect('dist');
+    return redirect('src');
 });
 
 Route::get('/boletaview', function(){

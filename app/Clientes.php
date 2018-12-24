@@ -11,7 +11,7 @@ class Clientes extends Model
 
 	public function creditos()
 	{
-		return $this->hasOne('App\Creditos', 'clientes_id', 'id')->with('planes','montos','usuariocreador','usuariocobrador');
+		return $this->hasMany('App\Creditos', 'clientes_id', 'id')->with('planes','montos','usuariocreador','usuariocobrador');
 	}
 
 	public function referenciasPersonales()
