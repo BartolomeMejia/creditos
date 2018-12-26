@@ -121,10 +121,13 @@ class CobradorController extends Controller
             $pagohoy = false;
             
             foreach ($registros as $item) {                
-                $detailsPayments = $this->getDetailsForCollector($item->id, $request->input('fecha'));   
-                $item['cantidad_cuotas_pagadas'] = $detailsPayments->totalFees;
-                $item['monto_abonado'] = $detailsPayments->paymentPaid;
-                $item['monto_pagado'] = $detailsPayments->totalPayment;
+                $detailsPaymentsForDay = $this->getDetailsForCollector($item->id, $request->input('fecha'));
+                $detailsPaymentsGeneral = $this->getDetailsPayments($item->id);   
+                $item['cantidad_cuotas_pagadas'] = $detailsPaymentsForDay->totalFees;
+                $item['total_cuotas'] = $item->planes->dias;
+                $item['cantidad_cuotas_pendientes'] = $item->planes->dias - $detailsPaymentsGeneral->totalFees;
+                $item['monto_abonado'] = $detailsPaymentsForDay->paymentPaid;
+                $item['monto_pagado'] = $detailsPaymentsForDay->totalPayment;
                 $item['fecha_inicio'] = \Carbon\Carbon::parse($item->fecha_inicio)->format('d-m-Y');
                 $item['fecha_limite'] = \Carbon\Carbon::parse($item->fecha_limite)->format('d-m-Y');
                 $item['pago_hoy'] = DetallePagos::where('credito_id', $item->id)->where('estado',1)->get()->contains('fecha_pago', $request->input('fecha'));                    

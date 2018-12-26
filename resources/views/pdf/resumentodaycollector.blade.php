@@ -73,12 +73,14 @@
 		<table class="table-payment">
 			<thead class="head-payment">
 				<tr class="tr-payment">
-                    <td class="head-column" width="10%">No.</td>
+                    <td class="head-column" width="5%">No.</td>
 					<td class="head-column" width="30%">Nombre cliente</td>
-					<td class="head-column" width="15%">Deuda total</td>
-					<td class="head-column" width="15%">Cuota diaria</td>
-					<td class="head-column" width="15%">Cuotas pagadas</td>
-					<td class="head-column" width="15%">Monto pagado</td>				
+					<td class="head-column" width="10%">Deuda total</td>
+					<td class="head-column" width="10%">Cuota diaria</td>
+					<td class="head-column" width="10%">Total cuotas</td>
+					<td class="head-column" width="10%">Cuota pendientes</td>
+					<td class="head-column" width="10%">Cuotas pagadas</td>
+					<td class="head-column" width="10%">Monto pagado</td>				
 				</tr>
 			</thead>
 			<tbody class="body-payment">    
@@ -88,7 +90,9 @@
                     <td class="td-payment">{!! ++$count !!}</td>
                     <td class="td-name-customer">{!! $item->cliente->nombre." ".$item->cliente->apellido !!}</td>
                     <td class="td-payment">Q. {!! number_format((float)($item->deudatotal), 2, '.', '') !!}</td>
-                    <td class="td-payment">Q. {!! number_format((float)($item->cuota_diaria), 2, '.', '') !!}</td>
+					<td class="td-payment">Q. {!! number_format((float)($item->cuota_diaria), 2, '.', '') !!}</td>
+					<td class="td-payment">{!! $item->total_cuotas !!}</td>
+					<td class="td-payment">{!! $item->cantidad_cuotas_pendientes !!}</td>
                     <td class="td-payment">{!! $item->cantidad_cuotas_pagadas !!}</td>
                     <td class="td-payment">Q. {!! number_format((float)($item->monto_pagado), 2, '.', '') !!}</td>
                 </tr>	

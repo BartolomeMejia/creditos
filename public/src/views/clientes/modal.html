@@ -59,10 +59,10 @@
 					</select>
 				</div>
 			</div>
-			<div class="row form-group">
+			<div class="row form-group" ng-if="accion == 'editar'">
 				<div class="col-sm-12">
 					<label>Cobrador:</label>
-					<select class="form-control" ng-model="cliente.collector" ng-options="item.id as item.nombre for item in usuarios_cobrador" required></select>
+					<select class="form-control" ng-model="cliente.collector" ng-options="item.id as item.nombre for item in usuarios_cobrador"></select>
 				</div>
 			</div>
 			<div class="row form-group" ng-if="accion == 'crear' || accion == 'editar'">

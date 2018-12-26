@@ -107,7 +107,7 @@
         if (cantidadAbonada != '' && parseFloat(cantidadAbonada) > 0) {
           $scope.resumen.cantidadabonada = $scope.cantidad_ingresada;
           $scope.resumen.cantidadcuotas = parseInt($scope.cantidad_ingresada / $scope.dailyFee);
-          $scope.resumen.abonocapital = $scope.cantidad_ingresada - ($scope.resumen.cantidadcuotas * $scope.dailyFee);        
+          $scope.resumen.abonocapital = parseFloat($scope.cantidad_ingresada - ($scope.resumen.cantidadcuotas * $scope.dailyFee)).toFixed(2);        
           modal = $modal.open({
             templateUrl: "views/abonos/modal.html",
             scope: $scope,

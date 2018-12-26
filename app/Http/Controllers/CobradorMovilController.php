@@ -63,8 +63,12 @@ class CobradorMovilController extends Controller
     public function listadoClientesCobrador(Request $request)
     {
         try {
-
-            $registros = Creditos::where("usuarios_cobrador", $request->input("idusuario"))->where("estado",1)->with("cliente")->get();
+            $hoy = date('Y-m-d');
+            $registros = Creditos::where("usuarios_cobrador", $request->input("idusuario"))
+                                    ->where("estado",1)
+                                    ->where("fecha_inicio", "<=", $hoy)
+                                    ->with("cliente")
+                                    ->get();
 
             if( $registros ){
 
@@ -72,18 +76,19 @@ class CobradorMovilController extends Controller
                 $totalminimocobrar = 0;
                 $cantidadclientes = 0;
                 $pagohoy = false;
-                $hoy = date('Y-m-d');
                 foreach ($registros as $item) {
-                    $detailsPayments = $this->getDetailsPayments($item->id);   
-                    $item['cantidad_cuotas_pagadas'] = $detailsPayments->totalFees;
-                    $item['monto_abonado'] = $detailsPayments->paymentPaid;
-                    $item['fecha_inicio'] = \Carbon\Carbon::parse($item->fecha_inicio)->format('d-m-Y');
-                    $item['fecha_limite'] = \Carbon\Carbon::parse($item->fecha_limite)->format('d-m-Y');
-                    $item['pago_hoy'] = DetallePagos::where('credito_id', $item->id)->where('estado',1)->get()->contains('fecha_pago', $hoy);                    
+                    
+                        $detailsPayments = $this->getDetailsPayments($item->id);   
+                        $item['cantidad_cuotas_pagadas'] = $detailsPayments->totalFees;
+                        $item['monto_abonado'] = $detailsPayments->paymentPaid;                    
+                        $item['fecha_inicio'] = \Carbon\Carbon::parse($item->fecha_inicio)->format('d-m-Y');
+                        $item['fecha_limite'] = \Carbon\Carbon::parse($item->fecha_limite)->format('d-m-Y');
+                        $item['pago_hoy'] = DetallePagos::where('credito_id', $item->id)->where('estado',1)->get()->contains('fecha_pago', $hoy);                    
 
-                    $totalacobrar = $totalacobrar + $item->cuota_diaria;
-                    $totalminimocobrar = $totalminimocobrar + $item->cuota_minima;
-                    $cantidadclientes = $cantidadclientes + 1;
+                        $totalacobrar = $totalacobrar + $item->cuota_diaria;
+                        $totalminimocobrar = $totalminimocobrar + $item->cuota_minima;
+                        $cantidadclientes = $cantidadclientes + 1;
+                    
                 }
 
                 $datos = [];

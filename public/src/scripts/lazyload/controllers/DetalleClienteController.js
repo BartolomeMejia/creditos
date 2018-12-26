@@ -19,14 +19,13 @@
 			  	params: {cliente_id:id}
 			})
 			.then(function successCallback(response)  {		
-				
+				console.log(response.data.records)
 				customer =  response.data.records
 
 				if (customer.creditos.length > 1){
 					$scope.showInputSelect = true
 					arrayCredits(customer.creditos)
 				}
-
 				showData(customer.creditos[0])
 			}, 
 			function errorCallback(response)  {			

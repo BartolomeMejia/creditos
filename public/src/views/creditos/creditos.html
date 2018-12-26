@@ -82,7 +82,7 @@
 								<div ng-if="detalle_cliente.credito == 1">
 									<input type="text" class="form-control" ng-model="detalle_cliente.usuarios_cobrador.nombre" disabled>									
 								</div>
-								<div ng-if="detalle_cliente.credito == 0">
+								<div ng-if="detalle_cliente.credito == 1">
 									<select class="form-control"  ng-model="detalle_cliente.usuarios_cobrador"  ng-options="item as item.nombre for item in usuarios_cobrador" required></select>
 								</div>
 							</div>

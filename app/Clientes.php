@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Clientes extends Model
 {
 	protected $table = 'clientes';
-	protected $fillable = ['sucursal_id','nombre','apellido','dpi','telefono','direccion','estado_civil','sexo','categoria','color'];
+	protected $fillable = ['sucursal_id','nombre','apellido','dpi','telefono','direccion','estado_civil','sexo','categoria','color','status'];
 
 	public function creditos()
 	{

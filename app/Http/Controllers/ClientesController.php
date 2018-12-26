@@ -334,14 +334,17 @@ class ClientesController extends Controller {
     public function detalleCreditoCliente(Request $request){
         
         try{            
-            $creditoCliente = Clientes::where('id', $request->input('cliente_id'))                                     
+            
+            $creditoCliente = Clientes::with(['creditos' => function($item){
+                                            $item->where('estado', 1);
+                                        }])                                
                                         ->where('sucursal_id', $request->session()->get('usuario')->sucursales_id)
-                                        ->with('creditos')
+                                        ->where('id', $request->input('cliente_id'))                                        
                                         ->first();
             
             if($creditoCliente){
                 
-                if($creditoCliente->creditos->count() > 0){
+                if($creditoCliente->creditos->count() > 0){                                                                                
                     $creditoCliente->creditos = $creditoCliente->creditos->map(function($item,$key){
                                                     if($item->estado == 1){        
                                                         $detailsPayments = $this->getDetailsPayments($item->id);                                    
