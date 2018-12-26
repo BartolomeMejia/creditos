@@ -1,60 +1,65 @@
 <div class="modal-style">
 	<div class="modal-header clearfix">
 		<h4 ng-if="accion == 'crear'" class="modal-title">Nuevo cliente</h4>
+		<h4 ng-if="accion == 'info'" class="modal-title">Crédito</h4>
 		<span class="close ion ion-android-close" ng-click="modalClose()"></span>
 	</div>
 	<div class="modal-body">
-		<div class="row form-group" ng-if="accion == 'eliminar'">
-			<h3>¿Realmente desea eliminar este cliente?</h3>
+		<div class="row form-group" ng-if="accion == 'info'">
+			<h3>El cliente ingresado cuenta actualmente con crédito. ¿Desea agregar otro crédito?</h3>
 		</div>
-		<form class="form-horizontal" name="form" ng-if="accion == 'crear' || accion == 'editar'" action="javascript:;" novalidate>
-			<div class="row form-group">
-				<div class="col-sm-12">
-					<label>DPI</label>
-					<input type="text" class="form-control" ng-model="cliente.dpi" required>
+		<form class="form-horizontal" name="form" ng-if="accion == 'crear' || accion == 'info'" action="javascript:;" novalidate>
+			<div ng-if="accion == 'crear'">
+				<div class="row form-group">
+					<div class="col-sm-12">
+						<label>DPI</label>
+						<input type="text" class="form-control" ng-model="cliente.dpi" required>
+					</div>
 				</div>
-			</div>
-			<div class="row form-group">
-				<div class="col-sm-12">
-					<label>Nombre</label>
-					<input type="text" class="form-control" ng-model="cliente.nombre" required>
+				<div class="row form-group">
+					<div class="col-sm-12">
+						<label>Nombre</label>
+						<input type="text" class="form-control" ng-model="cliente.nombre" required>
+					</div>
+					<div class="col-sm-12">
+						<label>Apellido</label>
+						<input type="text" class="form-control" ng-model="cliente.apellido" required>
+					</div>
 				</div>
-				<div class="col-sm-12">
-					<label>Apellido</label>
-					<input type="text" class="form-control" ng-model="cliente.apellido" required>
+				<div class="row form-group">
+					<div class="col-sm-12">
+						<label>Dirección</label>
+						<input type="text" class="form-control" ng-model="cliente.direccion" required>
+					</div>
 				</div>
-			</div>
-			<div class="row form-group">
-				<div class="col-sm-12">
-					<label>Dirección</label>
-					<input type="text" class="form-control" ng-model="cliente.direccion" required>
+				<div class="row form-group">
+					<div class="col-sm-6">
+						<label>Teléfono</label>
+						<input type="text" class="form-control" ng-model="cliente.telefono" required>
+					</div>
+					<div class="col-sm-6">
+						<label class="control-label">Género</label>
+						<select class="form-control" ng-model="cliente.sexo" required>
+							<option value="1">Masculino</option>
+							<option value="2">Femenino</option>
+						</select>
+					</div>
 				</div>
-			</div>
-			<div class="row form-group">
-				<div class="col-sm-6">
-					<label>Teléfono</label>
-					<input type="text" class="form-control" ng-model="cliente.telefono" required>
-				</div>
-				<div class="col-sm-6">
-					<label class="control-label">Género</label>
-					<select class="form-control" ng-model="cliente.sexo" required>
-						<option value="1">Masculino</option>
-						<option value="2">Femenino</option>
-					</select>
-				</div>
-			</div>
-			<div class="row form-group">
-				<div class="col-sm-6">
-					<label class="control-label">Estado civil</label>
-					<select class="form-control" ng-model="cliente.estado_civil" required>
-						<option value="1">Soltero (a)</option>
-						<option value="2">Casado (a)</option>
-					</select>
+				<div class="row form-group">
+					<div class="col-sm-6">
+						<label class="control-label">Estado civil</label>
+						<select class="form-control" ng-model="cliente.estado_civil" required>
+							<option value="1">Soltero (a)</option>
+							<option value="2">Casado (a)</option>
+						</select>
+					</div>
 				</div>
 			</div>
 			<div class="row form-group">
 				<div class="col-sm-12 text-right">
 					<button class="btn btn-success" ng-if="accion == 'crear'" ng-click="saveDataNewClient(cliente)" ng-disabled="form.$invalid">Registrar</button>
+					<button class="btn btn-success" ng-if="accion == 'info'" ng-click="addNewCredit(cliente)">Confirmar</button>
+					<button class="btn btn-danger" ng-if="accion == 'info'" ng-click="modalClose()">Cancelar</button>
 				</div>
 			</div>
 		</form>

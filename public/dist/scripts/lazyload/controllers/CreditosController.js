@@ -114,13 +114,19 @@
           params: search_client
         })
           .then(function successCallback(response) {
-            if (response.data.result) {
-              $('#row-detalle').removeClass('hidden')
+            if (response.data.result) {              
               $scope.detalle_cliente = response.data.records
               $scope.detalle_cliente.nombre = response.data.records.nombre + ' ' + response.data.records.apellido
-
-              $scope.createToast("success", "<strong>Éxito: </strong>" + response.data.message)
-              $timeout(function () { $scope.closeAlert(0) }, 5000)
+              
+              if(response.data.records.credito == 1){
+                $scope.modalInfo();
+                $scope.detalle_cliente.usuarios_cobrador = response.data.records.cobrador
+              } else {
+                $('#row-detalle').removeClass('hidden')
+        
+                $scope.createToast("success", "<strong>Éxito: </strong>" + response.data.message)
+                $timeout(function () { $scope.closeAlert(0) }, 5000)
+              }
             }
             else {
               $scope.createToast("danger", "<strong>Error: </strong>" + response.data.message)
@@ -205,10 +211,28 @@
         }
       }
 
+      $scope.addNewCredit = function (cliente){
+        $('#row-detalle').removeClass('hidden')
+        modal.close()
+      }
+
       // Funciones para Modales
       $scope.modalCreateOpen = function () {
         $scope.cliente = {}
         $scope.accion = 'crear'
+
+        modal = $modal.open({
+          templateUrl: "views/creditos/modal.html",
+          scope: $scope,
+          size: "md",
+          resolve: function () { },
+          windowClass: "default"
+        })
+      }
+
+      $scope.modalInfo = function () {
+        $scope.cliente = {}
+        $scope.accion = 'info'
 
         modal = $modal.open({
           templateUrl: "views/creditos/modal.html",

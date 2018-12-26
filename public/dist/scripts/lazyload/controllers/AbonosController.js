@@ -15,6 +15,8 @@
       var modal;
       var nameCustomer = "";
       var lastNameCustomer = "";
+      var data = {}
+      var modalOpen = false
 
       $("#customerName").focus();
       loadCustomers()
@@ -40,16 +42,14 @@
             params: { name: nameCustomer, lastname: lastNameCustomer }
           }).then(function successCallback(response) {
             if (response.data.result) {
-              $('.row-detalle').removeClass('hidden');
-              $scope.detalle_cliente = response.data.records;
-              $scope.detalle_cliente.nombre = response.data.records.nombre + ' ' + response.data.records.apellido;
-              $scope.detalle_cliente.cuota_diaria = "Q. " + parseFloat(response.data.records.creditos.cuota_diaria).toFixed(2);
-              $scope.credito.total = "Q. " + parseFloat(response.data.records.creditos.deudatotal).toFixed(2);
-              $scope.credito.saldo = "Q. " + parseFloat(response.data.records.creditos.total_cancelado).toFixed(2);
-              $scope.credito.saldo_abonado = "Q. " + parseFloat(response.data.records.creditos.saldo_abonado).toFixed(2);
-              $scope.credito.cuotas_pagados = response.data.records.creditos.cuotas_pagados;              
-              $scope.dailyFee = response.data.records.creditos.cuota_diaria;
-
+              if (response.data.records.creditos.length > 1) {
+                $scope.modalcreditos(response.data.records)
+              }
+              else if(response.data.records.creditos.length == 1){   
+                var nameCustomer = response.data.records.nombre + " " + response.data.records.apellido           
+                $scope.showCredit(response.data.records.creditos[0], nameCustomer)
+              }
+             
               $scope.createToast("success", "<strong>Éxito: </strong>" + response.data.message);
               $timeout(function () { $scope.closeAlert(0); }, 5000);
             }
@@ -65,6 +65,22 @@
           $timeout(function () { $scope.closeAlert(0); }, 5000);
         }
       };
+
+      $scope.showCredit = function(credit, nameCustomer){
+        
+        if(modalOpen)
+          modal.close()
+
+        $('.row-detalle').removeClass('hidden');
+        $scope.detalle_cliente.credit_id = credit.id
+        $scope.detalle_cliente.nombre = nameCustomer
+        $scope.detalle_cliente.cuota_diaria = "Q. " + parseFloat(credit.cuota_diaria).toFixed(2);
+        $scope.credito.total = "Q. " + parseFloat(credit.deudatotal).toFixed(2);
+        $scope.credito.saldo = "Q. " + parseFloat(credit.total_cancelado).toFixed(2);
+        $scope.credito.saldo_abonado = "Q. " + parseFloat(credit.saldo_abonado).toFixed(2); 
+        $scope.credito.cuotas_pagados = credit.cuotas_pagados;              
+        $scope.dailyFee = credit.cuota_diaria;
+      }
 
       if ($routeParams) {  
         if($routeParams.name!=null && $routeParams.lastname != null){      
@@ -88,12 +104,10 @@
       };
 
       $scope.modalcuotas = function (cantidadAbonada) {
-
         if (cantidadAbonada != '' && parseFloat(cantidadAbonada) > 0) {
           $scope.resumen.cantidadabonada = $scope.cantidad_ingresada;
           $scope.resumen.cantidadcuotas = parseInt($scope.cantidad_ingresada / $scope.dailyFee);
-          $scope.resumen.abonocapital = parseFloat($scope.cantidad_ingresada - ($scope.resumen.cantidadcuotas * $scope.dailyFee)).toFixed(2);
-          console.log('abono ', $scope.detalle_cliente);
+          $scope.resumen.abonocapital = parseFloat($scope.cantidad_ingresada - ($scope.resumen.cantidadcuotas * $scope.dailyFee)).toFixed(2);        
           modal = $modal.open({
             templateUrl: "views/abonos/modal.html",
             scope: $scope,
@@ -106,6 +120,19 @@
         }
       }
 
+      $scope.modalcreditos = function (infoCredit){
+        $scope.name_customer = infoCredit.nombre + ' ' + infoCredit.apellido;
+        $scope.credits = infoCredit.creditos
+        modal = $modal.open({
+          templateUrl: "views/abonos/modalCredito.html",
+          scope: $scope,
+          size: "lg",
+          resolve: function () {},
+          windowClass: "default"
+        });
+        modalOpen = true
+      }
+
       $scope.modalClose = function () {
         modal.close();
       }
@@ -113,7 +140,7 @@
       $scope.registrarAbono = function (cantidadAbonada) {
         if (cantidadAbonada != '' && parseFloat(cantidadAbonada) > 0) {
           var datos = {
-            idcredito: $scope.detalle_cliente.creditos.id,
+            idcredito: $scope.detalle_cliente.credit_id,
             abono: cantidadAbonada
           };
           $http({
@@ -136,6 +163,10 @@
         } else {
           $scope.createToast("danger", "<strong>Error: </strong>" + 'Debe ingresar una cantidad válida');
         }
+      }
+
+      $scope.cancel = function(){
+        modal.close()
       }
     }])
 }())
