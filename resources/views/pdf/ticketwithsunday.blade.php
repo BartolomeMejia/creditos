@@ -139,11 +139,11 @@
 		<?php 
 
 			$totaldias = (strtotime($data->fecha_inicio)-strtotime($data->fecha_fin))/86400;
-			$totaldias = abs($totaldias); 
-			$totaldias = floor($totaldias);		
+			$totaldias1 = abs($totaldias); 
+			$totaldias2 = floor($totaldias1 + 1);		
 
-			$dias = intval(($totaldias / 2));
-			$residuo = ($totaldias % 2);
+			$dias = intval(($totaldias2 / 2));
+			$residuo = ($totaldias2 % 2);
 
 		?>
 		<table class="tablapago">
@@ -158,16 +158,16 @@
 				</tr>
 			</thead>
 			<tbody>
-				@for ($i = 0; $i < $dias; $i++)
+				@for ($i = 0; $i < $dias + 1; $i++)
 					<?php
 					
 						$cant1 = $i+1;
 						$cant2 = $i+1+$dias+($residuo);
 						
-						$fecha1 = strtotime ( '+'.$cant1.' day' , strtotime ( $data->fecha_inicio) ) ;
+						$fecha1 = strtotime ( '+'.($cant1 - 1).' day' , strtotime ( $data->fecha_inicio) ) ;
 						$fecha1 = date ( 'd-m-Y' , $fecha1 );
 
-						$fecha2 = strtotime ( '+'.$cant2.' day' , strtotime ( $data->fecha_inicio ) ) ;
+						$fecha2 = strtotime ( '+'.($cant2 - 1).' day' , strtotime ( $data->fecha_inicio ) ) ;
 						$fecha2 = date ( 'd-m-Y' , $fecha2 );
 					?>
 					<tr class="primeracolumna">

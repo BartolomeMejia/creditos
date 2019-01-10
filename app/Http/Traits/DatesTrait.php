@@ -34,7 +34,7 @@ trait DatesTrait {
     }
 
     public function getLastDay($firstDate, $days){
-        $lastDate = strtotime ( '+'.$days.' day', strtotime ( $firstDate ));
+        $lastDate = strtotime ( '+'.($days - 1).' day', strtotime ( $firstDate ));
         $lastDate = date ( 'j-m-Y' , $lastDate );
         return $lastDate;
     }

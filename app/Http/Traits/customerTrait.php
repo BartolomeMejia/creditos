@@ -30,7 +30,7 @@ trait customerTrait {
         return $countCredits->filter(function ($item){ return $item != null;});
     }
 
-    public function getDayOverdueCustomer($creditId, $customerId){
+    public function getDayOverdueCustomer($creditId){
         $totalDays = 0;
         $credit = Creditos::where("estado",1)
                     ->where('id', $creditId)

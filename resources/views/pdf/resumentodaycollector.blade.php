@@ -13,20 +13,21 @@
 
         table.table-head{			
 			font-family: 'Roboto', sans-serif;
-			font-size: 12px;
+			font-size: 11px;
 		}
         table.table-payment{
             width: 100%;
 			font-family: 'Roboto', sans-serif;
-			font-size: 12px;
+			font-size: 11px;
             border-collapse: collapse;
         }
         thead.head-payment{
 			background: #134794;            
             border: 1px solid black;
 		}
-        td.head-column{			
+        th.head-column{			
 			text-align: center;
+			font-size: 10px;
 			color: #ffffff;
 		}
         body.body-payment{            
@@ -45,7 +46,7 @@
         }
         table.table-resumen{
 			font-family: 'Roboto', sans-serif;
-			font-size: 12px;
+			font-size: 11px;
 		}
 	</style>
 	<body class="body-width">
@@ -73,14 +74,20 @@
 		<table class="table-payment">
 			<thead class="head-payment">
 				<tr class="tr-payment">
-                    <td class="head-column" width="5%">No.</td>
-					<td class="head-column" width="30%">Nombre cliente</td>
-					<td class="head-column" width="10%">Deuda total</td>
-					<td class="head-column" width="10%">Cuota diaria</td>
-					<td class="head-column" width="10%">Total cuotas</td>
-					<td class="head-column" width="10%">Cuota pendientes</td>
-					<td class="head-column" width="10%">Cuotas pagadas</td>
-					<td class="head-column" width="10%">Monto pagado</td>				
+					<th class="head-column" colspan="4"></th>
+					<th class="head-column" colspan="4">Cuotas</th>
+					<th class="head-column" colspan="1"></th>
+				</tr>
+				<tr class="tr-payment">
+                    <th class="head-column" width="4%">No.</th>
+					<th class="head-column" width="34%">Nombre cliente</th>
+					<th class="head-column" width="12%">Deuda total</th>
+					<th class="head-column" width="10%">Cuota diaria</th>
+					<th class="head-column" width="7%">Total</th>
+					<th class="head-column" width="7%">Pendientes</th>
+					<th class="head-column" width="7%">Atrasadas</th>
+					<th class="head-column" width="7%">Pagadas</th>
+					<th class="head-column" width="12%">Monto pagado</th>				
 				</tr>
 			</thead>
 			<tbody class="body-payment">    
@@ -93,6 +100,7 @@
 					<td class="td-payment">Q. {!! number_format((float)($item->cuota_diaria), 2, '.', '') !!}</td>
 					<td class="td-payment">{!! $item->total_cuotas !!}</td>
 					<td class="td-payment">{!! $item->cantidad_cuotas_pendientes !!}</td>
+					<td class="td-payment">{!! $item->cuotas_atrasadas !!}</td>
                     <td class="td-payment">{!! $item->cantidad_cuotas_pagadas !!}</td>
                     <td class="td-payment">Q. {!! number_format((float)($item->monto_pagado), 2, '.', '') !!}</td>
                 </tr>	

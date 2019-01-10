@@ -11,6 +11,7 @@ use App\Creditos;
 use App\Sucursales;
 use App\DetallePagos;
 use App\Http\Traits\detailsPaymentsTrait;
+use App\Http\Traits\detailsCustomerTrait;
 
 class CobradorController extends Controller
 {
@@ -20,14 +21,16 @@ class CobradorController extends Controller
     public $records     = [];
     
     use detailsPaymentsTrait;
+    use detailsCustomerTrait;
 
     public function listCustomers(Request $request)
     {
         try {
-
+            $hoy = date('Y-m-d');
             $registros = Creditos::with("cliente")
                                 ->where("usuarios_cobrador", $request->input("idusuario"))
                                 ->where('estado', 1)
+                                ->where("fecha_inicio", "<=", $hoy)
                                 ->get();
 
             $registroextra = Creditos::with(["cliente","detallePagos"])
@@ -125,6 +128,7 @@ class CobradorController extends Controller
                 $detailsPaymentsGeneral = $this->getDetailsPayments($item->id);   
                 $item['cantidad_cuotas_pagadas'] = $detailsPaymentsForDay->totalFees;
                 $item['total_cuotas'] = $item->planes->dias;
+                $item['cuotas_atrasadas'] = $this->getDayOverdueCustomer($item->id, $detailsPaymentsForDay->totalFees);
                 $item['cantidad_cuotas_pendientes'] = $item->planes->dias - $detailsPaymentsGeneral->totalFees;
                 $item['monto_abonado'] = $detailsPaymentsForDay->paymentPaid;
                 $item['monto_pagado'] = $detailsPaymentsForDay->totalPayment;
