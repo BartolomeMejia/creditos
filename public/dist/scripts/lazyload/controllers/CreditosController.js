@@ -71,7 +71,7 @@
       function getEndDate (plan) {
         var startDate = $("#fechainicio").val().split("-")
         var endDate = new Date(startDate[2], startDate[1] - 1, startDate[0])
-        endDate.setDate(endDate.getDate() + plan.dias)
+        endDate.setDate(endDate.getDate() + plan.dias - 1)
         return $filter('date')(endDate, 'dd-MM-yyyy')
       }
 
@@ -114,7 +114,8 @@
           params: search_client
         })
           .then(function successCallback(response) {
-            if (response.data.result) {              
+            if (response.data.result) {    
+              console.log(response.data.records)          
               $scope.detalle_cliente = response.data.records
               $scope.detalle_cliente.nombre = response.data.records.nombre + ' ' + response.data.records.apellido
               
@@ -122,14 +123,13 @@
                 $scope.modalInfo();
                 $scope.detalle_cliente.usuarios_cobrador = response.data.records.cobrador
               } else {
-                $('#row-detalle').removeClass('hidden')
-        
+                $('#row-detalle').removeClass('hidden')        
                 $scope.createToast("success", "<strong>Éxito: </strong>" + response.data.message)
                 $timeout(function () { $scope.closeAlert(0) }, 5000)
               }
             }
             else {
-              $scope.createToast("danger", "<strong>Error: </strong>" + response.data.message)
+              $scope.createToast("danger", "<strong>Error: Recargue la página y vuelva a intentarlo</strong>")
               $timeout(function () { $scope.closeAlert(0) }, 5000)
             }
           },
@@ -189,8 +189,9 @@
               if (response.data.result) {
 
                 $('#row-detalle').removeClass('hidden')
-
+                
                 $scope.detalle_cliente = response.data.records
+                $scope.detalle_cliente.credito = 0;
                 $scope.detalle_cliente.nombre = response.data.records.nombre + ' ' + response.data.records.apellido
 
                 modal.close()
