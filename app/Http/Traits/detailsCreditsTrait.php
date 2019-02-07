@@ -8,12 +8,12 @@ use App\CuotasClientes;
 trait detailsCreditsTrait {
     public function getStatusCredits($customerId){
         $detailCredits = new \stdClass();
-        $credits = Creditos::where('clientes_id', $customerId)->get();
+        $credits = Creditos::where('clientes_id', $customerId)->where('estado','!=',2)->get();
         $totalCredits = $credits->count();
         if($totalCredits > 0){
             $complete = $credits->where('estado', 0)->count();
             $detailCredits->status = $complete == $totalCredits ? 3 : 2;
-            $detailCredits->total =  $totalCredits;
+            $detailCredits->total =  $totalCredits - $complete;
             $detailCredits->collector = $credits[0]->usuarios_cobrador;
         } else {
             $detailCredits->status = 1;

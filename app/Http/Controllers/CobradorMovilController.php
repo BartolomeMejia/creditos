@@ -26,30 +26,22 @@ class CobradorMovilController extends Controller
     
     use detailsPaymentsTrait;
 
-    public function loginMovil (Request $request)
-    {
-        try{
-            
+    public function loginMovil (Request $request) {
+        try {
             $usuario = Usuarios::where("user", $request->input("user"))->first();
-            if( $usuario ){
+            if ( $usuario ) {
                 if( \Hash::check($request->input("password"),  $usuario->password)){
                     $this->result   = true;
                     $this->message  = "Bienvenido";
                     $this->records  = $usuario;
-                }
-                else
+                } else
                     throw new \Exception("Datos incorrectos, intenta de nuevo"); 
-            }
-            else
+            } else
                 throw new \Exception("El email ingresado no esta registrado"); 
-
-        } 
-        catch (\Exception $e) 
-        {
+        } catch (\Exception $e) {
             $this->result       =   false;
             $this->message      =  env('APP_DEBUG')?$e->getMessage():'Ocurrio un problema al procesar la solicitud';
-        }
-        finally{
+        } finally {
             $response = 
             [
                 'message'   =>  $this->message,

@@ -153,18 +153,19 @@ class ClientesController extends Controller {
             $registro->sexo         = $request->input('sexo', $registro->sexo);
             $registro->categoria    = $request->input('categoria', $registro->categoria);
             $registro->color        = $request->input('color', $registro->color);
-            $registro->estado       = $request->input('status', 1);
+            $registro->status       = $request->input('status', 1);
             
-            $credit = Creditos::where("clientes_id", $id)->get();
+            $credit = Creditos::where("clientes_id", $id)->where("estado","!=",2)->get();
             
             if($credit->count() > 0){
                 $credit->map(function ($item, $key) use ($request){   
-                    $item->usuarios_cobrador = $request->input('collector', $item->usuarios_cobrador);
+                    if ($request->input('collector') != 0)
+                        $item->usuarios_cobrador = $request->input('collector', $item->usuarios_cobrador);
+                    else
+                        $item->usuarios_cobrador = $item->usuarios_cobrador;
                     $item->save();
                     return $item;
                 });
-            } else {
-                throw new \Exception("Error al editar el cliente");
             }
 
             if($registro->save()){
@@ -245,15 +246,17 @@ class ClientesController extends Controller {
             
             if($cliente){
 
-                $credito = Creditos::where("clientes_id", $cliente->id)->get();
-
-                if($credito->count() > 0){
-                    $cobrador = Usuarios::find($credito[0]->usuarios_cobrador);
-                    $cliente->cobrador = $cobrador;
-                    $cliente->credito = 1;
+                if($cliente->status == 1){
+                    $detailCredits = $this->getStatusCredits($cliente->id);
+                    $cliente->statusCredit = $detailCredits->status;
+                    $cliente->totalCredits = $detailCredits->total;
+                    $cliente->collector = $detailCredits->collector;
+                    $cliente->cobrador = Usuarios::find($detailCredits->collector);
                 } else {
+                    $cliente->statusCredit = 4;
+                    $cliente->totalCredits = 0;
+                    $cliente->collector = 0;
                     $cliente->cobrador = "";
-                    $cliente->credito = 0;
                 }
                 
                 $this->statusCode   = 200;
@@ -263,7 +266,7 @@ class ClientesController extends Controller {
                 
             }
             else {
-                throw new \Exception("Cliente no encontrado");
+                throw new \Exception("El cliente ingresado no se encuentra en el sistema, revise los datos y vuelva a intentarlo. ");
             }   
         } catch (\Exception $e) {
             $this->statusCode   = 200;
