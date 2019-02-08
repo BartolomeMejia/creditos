@@ -321,10 +321,10 @@ class CreditosController extends Controller
                 }
             } else{
                 if($registro->planes->dias >= 45){
-                    $pdf = \PDF::loadView('pdf.ticketwithsundayplan75', ['data' => $registro])->setPaper('letter')->setOrientation('landscape');
+                    $pdf = \PDF::loadView('pdf.ticketwithsundayplan75', ['data' => $this->getArrayWithSunday($registro)])->setPaper('letter')->setOrientation('landscape');
                 }
                 else{
-                    $pdf = \PDF::loadView('pdf.ticketwithsunday', ['data' => $registro])->setPaper('letter')->setOrientation('landscape');
+                    $pdf = \PDF::loadView('pdf.ticketwithsunday', ['data' => $this->getArrayWithSunday($registro)])->setPaper('letter')->setOrientation('landscape');
                 }
             }
     

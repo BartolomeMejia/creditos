@@ -288,29 +288,31 @@ class ClientesController extends Controller {
     public function buscarCreditoCliente(Request $request){
 
         try{            
-            $creditoCliente = Clientes::where('nombre', $request->input('name'))
+            $creditoCliente = Clientes::with(['creditos' => function($item){
+                                            $item->where('estado', 1);
+                                        }])
+                                        ->where('nombre', $request->input('name'))
                                         ->where('apellido', $request->input('lastname'))                                        
-                                        ->where('sucursal_id', $request->session()->get('usuario')->sucursales_id)
-                                        ->with('creditos')
+                                        ->where('sucursal_id', $request->session()->get('usuario')->sucursales_id)                                    
                                         ->first();
             
             if($creditoCliente){
-                
+                $creditos = [];
                 if($creditoCliente->creditos->count() > 0){
+                    
                     $creditoCliente->creditos = $creditoCliente->creditos->map(function($item,$key){
-                                                    if($item->estado == 1){        
+                                                    if ($item->estado == 1) {
                                                         $detailsPayments = $this->getDetailsPayments($item->id);                                    
                                                         $item->saldo_abonado = $detailsPayments->paymentPaid;
                                                         $item->cuotas_pagados = $detailsPayments->totalFees;
                                                         $item->total_cancelado = $detailsPayments->totalPayment;
                                                     }
                                                     return $item;
-                                                });
-                   
+                                                });                                                        
                     $this->statusCode   = 200;
                     $this->result       = true;
                     $this->message      = "Registro consultado exitosamente";
-                    $this->records      = $creditoCliente;
+                    $this->records      =  $creditoCliente;
                 } else{
                     throw new \Exception("Cliente no cuenta con crédito");      
                 }

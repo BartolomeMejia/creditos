@@ -30,7 +30,7 @@ class CobradorController extends Controller
             $registros = Creditos::with("cliente")
                                 ->where("usuarios_cobrador", $request->input("idusuario"))
                                 ->where('estado', 1)
-                                ->where("fecha_inicio", "<=", $hoy)
+                                ->where("fecha_inicio", "<=", $request->input('fecha'))
                                 ->get();
 
             $registroextra = Creditos::with(["cliente","detallePagos"])
@@ -100,9 +100,11 @@ class CobradorController extends Controller
         $collector = Usuarios::find($request->input("idusuario"));
         $branch = Sucursales::find($collector->sucursales_id);
 
+        $hoy = date('Y-m-d');
         $registros = Creditos::with("cliente")
                                 ->where("usuarios_cobrador", $request->input("idusuario"))
                                 ->where('estado', 1)
+                                ->where("fecha_inicio", "<=", $request->input('fecha'))
                                 ->get();
 
         $registroextra = Creditos::with(["cliente","detallePagos"])
@@ -125,7 +127,7 @@ class CobradorController extends Controller
             
             foreach ($registros as $item) {                
                 $detailsPaymentsForDay = $this->getDetailsForCollector($item->id, $request->input('fecha'));
-                $detailsPaymentsGeneral = $this->getDetailsPayments($item->id);   
+                $detailsPaymentsGeneral = $this->getDetailsPaymentsForReportCollector($item->id);   
                 $item['cantidad_cuotas_pagadas'] = $detailsPaymentsForDay->totalFees;
                 $item['total_cuotas'] = $item->planes->dias;
                 $item['cuotas_atrasadas'] = $this->getDayOverdueCustomer($item->id, $detailsPaymentsForDay->totalFees);
@@ -149,6 +151,7 @@ class CobradorController extends Controller
             $datos->total_minimo = $totalminimocobrar;                             
             $datos->total_cobrado = $this->getTotalPaymentCollector($request->input('idusuario'), $request->input('fecha'));   
             $datos->total_catera = $registros->sum('deudatotal');
+            $datos->total_pendiente = $registros->sum('saldo');
             $datos->registros = $registros;
             
         }

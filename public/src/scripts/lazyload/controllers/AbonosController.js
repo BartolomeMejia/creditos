@@ -44,16 +44,14 @@
             if (response.data.result) {
               if (response.data.records.creditos.length > 1) {
                 $scope.modalcreditos(response.data.records)
-              }
-              else if(response.data.records.creditos.length == 1){   
+              } else if(response.data.records.creditos.length == 1){   
                 var nameCustomer = response.data.records.nombre + " " + response.data.records.apellido           
                 $scope.showCredit(response.data.records.creditos[0], nameCustomer)
               }
              
               $scope.createToast("success", "<strong>Éxito: </strong>" + response.data.message);
               $timeout(function () { $scope.closeAlert(0); }, 5000);
-            }
-            else {
+            } else {
               $scope.createToast("danger", "<strong>Error: </strong>" + response.data.message);
               $timeout(function () { $scope.closeAlert(0); }, 5000);
             }
@@ -123,6 +121,7 @@
       $scope.modalcreditos = function (infoCredit){
         $scope.name_customer = infoCredit.nombre + ' ' + infoCredit.apellido;
         $scope.credits = infoCredit.creditos
+        console.log(infoCredit.creditos)
         modal = $modal.open({
           templateUrl: "views/abonos/modalCredito.html",
           scope: $scope,

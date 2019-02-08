@@ -110,13 +110,13 @@
 		<br>
 		<table class="table-resumen">
 			<tr>
-				<td>Total cobrado:</td>
+				<td>Total COBRADO del día:</td>
 				<td>
 					<span><strong>Q. {!!number_format((float)($data->total_cobrado), 2, '.', '') !!}</strong></span>
                 </td>            
             </tr>
             <tr>
-				<td>Total a cobrar:</td>
+				<td>Total a COBRAR del día:</td>
 				<td>
 					<span><strong>Q. {!!number_format((float)($data->total_cobrar), 2, '.', '') !!}</strong></span>
                 </td>
@@ -131,6 +131,12 @@
                 <td>Total de cartera:</td>
 				<td>
 					<span><strong>Q. {!!number_format((float)($data->total_catera), 2, '.', '') !!}</strong></span>
+				</td>
+			</tr>
+			<tr>
+                <td>Total de pendiente a cobrar:</td>
+				<td>
+					<span><strong>Q. {!!number_format((float)($data->total_pendiente), 2, '.', '') !!}</strong></span>
 				</td>
 			</tr>		
 		</table>

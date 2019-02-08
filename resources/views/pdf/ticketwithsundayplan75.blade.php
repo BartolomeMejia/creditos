@@ -96,55 +96,44 @@
 			<tr>
 				<td class="firstcolumnlabel">Nombre Cliente:</td>
 				<td class="firstcolumninfo">
-					<span><strong>{!! $data->cliente->nombre.' '.$data->cliente->apellido !!}</strong></span>
+					<span><strong>{!! $data->name !!}</strong></span>
 				</td>
 				<td class="secundcolumnlabel">DPI:</td>
 				<td class="secundcolumninfo">
-					<span><strong>{!! $data->cliente->dpi !!}</strong></span>
+					<span><strong>{!! $data->dpi !!}</strong></span>
 				</td>
 			</tr>
 			<tr>
 				<td class="firstcolumnlabel">Dirección:</td>
 				<td class="firstcolumninfo">
-					<span><strong>{!! $data->cliente->direccion!!}</strong></span>
+					<span><strong>{!! $data->address!!}</strong></span>
 				</td>
 				<td class="secundcolumnlabel">Teléfono:</td>
 				<td class="secundcolumninfo">
-					<span><strong>{!! $data->cliente->telefono!!}</strong></span>
+					<span><strong>{!! $data->numberPhone!!}</strong></span>
 				</td>
 			</tr>
 			<tr>
 				<td class="firstcolumnlabel">Plan:</td>
 				<td class="firstcolumninfo">
-					<span><strong>{!! $data->planes->descripcion!!}</strong></span>
+					<span><strong>{!! $data->plan!!}</strong></span>
 				</td>
 				<td class="secundcolumnlabel">Fecha de entrega:</td>
 				<td class="secundcolumninfo">
-					<span><strong>{!! $data->fecha_inicio!!}</strong></span>
+					<span><strong>{!! $data->date!!}</strong></span>
 				</td>
 			</tr>
 			<tr>
 				<td class="firstcolumnlabel">Monto:</td>
 				<td class="firstcolumninfo">
-					<span><strong>Q. {!!number_format((float)$data->montos->monto, 2, '.', '')!!}</strong></span>
+					<span><strong>Q. {!!number_format((float)$data->amount, 2, '.', '')!!}</strong></span>
 				</td>
 				<td class="secundcolumnlabel">Cuota diaria:</td>
 				<td class="secundcolumninfo">
-					<span><strong>Q. {!!number_format((float)$data->cuota_diaria, 2, '.', '')!!}</strong></span>
+					<span><strong>Q. {!!number_format((float)$data->fees, 2, '.', '')!!}</strong></span>
 				</td>
-			</tr>
-		
+			</tr>			
 		</table>
-		<?php 
-
-			$totaldias = (strtotime($data->fecha_inicio)-strtotime($data->fecha_fin))/86400;
-			$totaldias = abs($totaldias); 
-			$totaldias = floor($totaldias);		
-
-			$dias = intval(($totaldias / 2));
-			$residuo = ($totaldias % 2);
-
-		?>
 		<table class="tablapago">
 			<thead class="pago">
 				<tr>
@@ -157,45 +146,26 @@
 				</tr>
 			</thead>
 			<tbody>
-				@for ($i = 0; $i < $dias; $i++)
-					<?php
+				@foreach($data->arrayQuota as $quota)
+				<tr class="primeracolumna">
 					
-						$cant1 = $i+1;
-						$cant2 = $i+1+$dias+($residuo);
+						<td class="columnapago">{!!$quota->indexFirst!!}</td>
+						<td class="columnapago">Q. {!!number_format((float)($quota->amountFirst), 2, '.', '')!!}</td>
+						<td class="columnapago">{!!$quota->dateFirst!!}</td>
+					
+					@if($quota->indexSecond <= $data->days)
 						
-						$fecha1 = strtotime ( '+'.$cant1.' day' , strtotime ( $data->fecha_inicio) ) ;
-						$fecha1 = date ( 'd-m-Y' , $fecha1 );
-
-						$fecha2 = strtotime ( '+'.$cant2.' day' , strtotime ( $data->fecha_inicio ) ) ;
-						$fecha2 = date ( 'd-m-Y' , $fecha2 );
-					?>
-					<tr class="primeracolumna">
-						<td class="columnapago">{!! $cant1 !!}</td>
-						<td class="columnapago">Q. {!!number_format((float)($data->deudatotal-($data->cuota_diaria * ($cant1-1))), 2, '.', '')!!}</td>
-						<td class="columnapago">{!! $fecha1 !!}</td>
-						<td class="columnapago">{!! $cant2 !!}</td>
-						<td class="columnapago">Q. {!!number_format((float)($data->deudatotal-($data->cuota_diaria * ($cant2-1))), 2, '.', '')!!}</td>
-						<td class="columnapago">{!! $fecha2 !!}</td>
-					</tr>
-				@endfor
-				@if ($residuo>0)
-					<?php 
-						$cant3 = $dias+($residuo);
-					
-						$fecha3 = strtotime ( '+'.$cant3.' day' , strtotime ( $data->fecha_inicio ) );
-						$fecha3 = date ( 'j-m-Y' , $fecha3 );
-					?>
-					<tr class="primeracolumna">
-						<td class="columnapago">{!! $cant3 !!}</td>
-						<td class="columnapago">Q. {!!number_format((float)($data->deudatotal-($data->cuota_diaria * ($cant3-1))), 2, '.', '')!!}</td>
-						<td class="columnapago">{!! $fecha3 !!}</td>
-						<td class="columnapago"></td>
-						<td class="columnapago"></td>
-						<td class="columnapago"></td>
-					</tr>
-				@endif
+							<td class="columnapago">{!!$quota->indexSecond!!}</td>
+							<td class="columnapago">Q. {!!number_format((float)($quota->amountSecond), 2, '.', '')!!}</td>
+							<td class="columnapago">{!!$quota->dateSecond!!}</td>
+						
+					@else
+						<td class="columnapago" colspan="3"><strong></strong></td>		
+					@endif
+				</tr>
+				@endforeach	
 			</tbody>
-		</table>
+		</table>	
 		<span class="note"><strong>Nota: </strong>SE COBRARÁ MORA POR DÍA ATRASADO</span>
 		<table>
 			<tr>

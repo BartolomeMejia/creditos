@@ -240,8 +240,8 @@
                   <div class="panel-body">
                     <div class="clearfix">
                       <div class="info left">
-                        <h4 class="mt0 text-primary text-bold">Total a cobrar</h4>
-                        <h2 class="text-light mb0">Q. {{ totalCobrar | number: "2"}}</h2>
+                        <h4 class="mt0 text-primary text-bold">Total de cartera</h4>
+                        <h2 class="text-light mb0">Q. {{ totalCartera | number: "2"}}</h2>                        
                       </div>
                       <div class="right ion ion ion-cash icon"></div>
                     </div>
@@ -257,8 +257,8 @@
                   <div class="panel-body">
                     <div class="clearfix">
                       <div class="info left">
-                        <h4 class="mt0 text-success text-bold">Total mínimo a cobrar</h4>
-                        <h2 class="text-light mb0">Q. {{ totalMinimoCobrar | number: "2"}}</h2>
+                        <h4 class="mt0 text-success text-bold">Total pendiente a cobrar</h4>
+                        <h2 class="text-light mb0">Q. {{ totalPendientePago | number: "2"}}</h2>                        
                       </div>
                       <div class="right ion ion-cash icon"></div>
                     </div>
@@ -274,8 +274,8 @@
                   <div class="panel-body">
                     <div class="clearfix">
                       <div class="info left">
-                        <h4 class="mt0 text-danger text-bold">Total de cartera</h4>
-                        <h2 class="text-light mb0">Q. {{ totalCartera | number: "2"}}</h2>
+                        <h4 class="mt0 text-danger text-bold">Total a COBRAR del día</h4>
+                        <h2 class="text-light mb0">Q. {{ totalCobrar | number: "2"}}</h2>                        
                       </div>
                       <div class="right ion ion-cash icon"></div>
                     </div>
@@ -291,7 +291,7 @@
                   <div class="panel-body">
                     <div class="clearfix">
                       <div class="info left">
-                        <h4 class="mt0 text-danger text-bold">Cobro del día</h4>
+                        <h4 class="mt0 text-danger text-bold">Total COBRADO del día</h4>
                         <h2 class="text-light mb0">Q. {{ collectionofday | number: "2"}}</h2>
                       </div>
                       <div class="right ion ion-cash icon"></div>
