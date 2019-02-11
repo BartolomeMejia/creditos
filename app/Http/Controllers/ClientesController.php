@@ -296,10 +296,8 @@ class ClientesController extends Controller {
                                         ->where('sucursal_id', $request->session()->get('usuario')->sucursales_id)                                    
                                         ->first();
             
-            if($creditoCliente){
-                $creditos = [];
-                if($creditoCliente->creditos->count() > 0){
-                    
+            if ($creditoCliente) {
+                if ($creditoCliente->creditos->count() > 0) {
                     $creditoCliente->creditos = $creditoCliente->creditos->map(function($item,$key){
                                                     if ($item->estado == 1) {
                                                         $detailsPayments = $this->getDetailsPayments($item->id);                                    

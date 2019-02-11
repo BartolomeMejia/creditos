@@ -23,6 +23,7 @@
       $scope.totalCobrar = 0;
       $scope.totalMinimoCobrar = 0;
       $scope.totalCartera = 0;
+      $scope.totalPendientePago = 0;
       var modal;
       var pivotStructure = []
       var collectorSelected = {}
@@ -81,21 +82,22 @@
           $scope.collectorSelected = data.nombre          
           $scope.showCollectorTable = false
 
-          $scope.totalCobrar = response.data.records.total_cobrar;
-          $scope.totalMinimoCobrar = response.data.records.total_minimo;
+          $scope.totalCobrar = response.data.records.total_cobrar
+          $scope.totalMinimoCobrar = response.data.records.total_minimo
 
           var collectionofday = 0;
           response.data.records.registros.forEach(function (element) {
             $scope.totalCartera = $scope.totalCartera + element.deudatotal
+            $scope.totalPendientePago = $scope.totalPendientePago + element.saldo
           });
 
           totalCollection(data.id, date)
           
-          $scope.datas = [];
-          $scope.datas = response.data.records.registros;
-          $scope.searchKeywords = '';
-          $scope.search();
-          $scope.select($scope.currentPage);
+          $scope.datas = []
+          $scope.datas = response.data.records.registros
+          $scope.searchKeywords = ''
+          $scope.search()
+          $scope.select($scope.currentPage)
         });
       }
 
@@ -107,27 +109,29 @@
         if($("#fechapago").val() != ""){
           var selectedDate = $("#fechapago").val()
           var collectorId = collectorSelected
-          $scope.totalCartera = 0;
+          $scope.totalCartera = 0
+          $scope.totalPendientePago = 0
           showCustomer(collectorId)
         }
       }
       
       $scope.showCustomerView = function(data){
-        showCustomer(data);
-        collectorSelected = data;
-        pivotStructure = $scope.datas;
+        showCustomer(data)
+        collectorSelected = data
+        pivotStructure = $scope.datas
       }
 
       $scope.closeCustomerView = function(){
-        $scope.showCollectorTable = true;
-        $scope.datas = [];
-        $scope.datas = pivotStructure;
-        $scope.searchKeywords = '';
-        $scope.search();
-        $scope.select($scope.currentPage);
-        $scope.totalCobrar = 0;
-        $scope.totalMinimoCobrar = 0;
-        $scope.totalCartera = 0;
+        $scope.showCollectorTable = true
+        $scope.datas = []
+        $scope.datas = pivotStructure
+        $scope.searchKeywords = ''
+        $scope.search()
+        $scope.select($scope.currentPage)
+        $scope.totalCobrar = 0
+        $scope.totalMinimoCobrar = 0
+        $scope.totalCartera = 0
+        $scope.totalPendientePago = 0
       }
 
       $scope.printResume = function(){
