@@ -117,6 +117,10 @@
 				{
                     name: "app.service.historypayment",
                     files: ["scripts/lazyload/services/historypayment.js"]
+                },
+				{
+                    name: "app.service.plan",
+                    files: ["scripts/lazyload/services/plan.js"]
                 }
 			]
 		})
@@ -315,6 +319,32 @@
 					return a.load({
 						name: "app.detallecliente",
 						files: ["scripts/lazyload/controllers/DetalleClienteController.js"]
+					})
+				}]
+			}
+		});
+
+		$routeProvider.when("/reports/collectors", {
+			templateUrl: "views/reports/collectors.html",
+			controller: "ReportsController",
+			resolve: {
+				deps: ["$ocLazyLoad", function(a) {
+					return a.load({
+						name: "app.reports",
+						files: ["scripts/lazyload/controllers/reports.js"]
+					})
+				}]
+			}
+		});
+
+		$routeProvider.when("/reports/dates", {
+			templateUrl: "views/reports/dates.html",
+			controller: "ReportsController",
+			resolve: {
+				deps: ["$ocLazyLoad", function(a) {
+					return a.load({
+						name: "app.reports",
+						files: ["scripts/lazyload/controllers/reports.js"]
 					})
 				}]
 			}

@@ -1,0 +1,52 @@
+<div class="page">
+	<div class="page-wrap">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="panel panel-default panel-hovered panel-stacked mb20">
+					<div class="panel-heading"><h4>Reporte por cobradores</h4></div>
+					<div class="panel-body">
+						<form role="form" class="form-horizontal" ng-submit="validarCliente()">
+							<div class="form-group">
+								<label class="col-sm-1  col-md-offset-1 control-label">Nombre cobrador:</label>
+								<div class="col-md-5">
+									<select class="form-control" ng-model="cliente.collector" ng-options="item.id as item.nombre for item in collectors"></select>
+								</div>
+								<label class="col-sm-1 control-label">Plan de crédito:</label>
+								<div class="col-md-2">
+									<select class="form-control" ng-model="cliente.collector" ng-options="item.id as item.descripcion for item in plans"></select>
+								</div>
+							</div>							
+							<div class="form-group">
+								<label class="col-sm-1  col-md-offset-1 control-label">Fecha de inicio:</label>
+								<div class="col-md-2">
+									<div class="input-group date" >
+										<input  type="text" id="fechainicio" class="form-control" ng-model="detalle_cliente.fecha_inicio" ng-change="getEndDate(detalle_cliente.planes_id)" required>
+										<div class="input-group-addon" >
+											<span></span>
+										</div>
+									</div>	
+								</div>
+								<label class="col-sm-1 control-label">Fecha de Final:</label>
+								<div class="col-md-2">
+									<div class="input-group date" >
+										<input  type="text" id="fechainicio" class="form-control" ng-model="detalle_cliente.fecha_inicio" ng-change="getEndDate(detalle_cliente.planes_id)" required>
+										<div class="input-group-addon" >
+											<span></span>
+										</div>
+									</div>	
+								</div>
+								<div class="col-sm-3 text-center">
+									<button class="btn btn-success btn-rounded" ng-click="closeCustomerView()">Generar reporte</button>
+								</div>
+							</div>
+							
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div> <!-- #end page-wrap -->
+</div>
+<script>
+	$('.input-group.date').datepicker({format: "dd-mm-yyyy"}); 
+</script>
