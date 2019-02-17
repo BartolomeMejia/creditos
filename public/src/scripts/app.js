@@ -121,6 +121,10 @@
 				{
                     name: "app.service.plan",
                     files: ["scripts/lazyload/services/plan.js"]
+                },
+				{
+                    name: "app.service.report",
+                    files: ["scripts/lazyload/services/report.js"]
                 }
 			]
 		})

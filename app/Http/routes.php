@@ -51,6 +51,8 @@ Route::group(['prefix' => 'ws'], function() {
 	Route::post('payments',					'CreditosController@payments');
 	Route::get('listcustomers',				'CobradorController@listCustomers');
 	Route::get('collectorpdf',				'CobradorController@generatePdf');
+	Route::get('reportgeneral',				'ReportsController@general');
+	Route::get('reportcollector',			'ReportsController@collector');
 });
 
 Route::group(['prefix' => 'ws/movil'], function()
