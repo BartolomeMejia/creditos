@@ -39,16 +39,27 @@
 		}
 
 		function showData(infoCredit){
+			console.log(infoCredit)
+			$scope.dpi	= customer.dpi
 			$scope.nombre = customer.nombre
 			$scope.apellido = customer.apellido
-			$scope.dpi	= customer.dpi
-			$scope.plan = infoCredit.planes.descripcion
 			$scope.nombre_completo = customer.nombre+' '+customer.apellido
+			$scope.sexo = customer.sexo == 1 ? "Masculino" : "Femenino"
+			$scope.direccion = customer.direccion
+			$scope.estado_civil = customer.estado_civil == 1 ? "Soltero (a)" : "Casado (a)"
+			$scope.telefono = customer.telefono
+
+			$scope.plan = infoCredit.planes.descripcion
+			$scope.monto_total = "Q. "+parseFloat(infoCredit.deudatotal).toFixed(2);
 			$scope.fecha_inicio = infoCredit.fecha_inicio
+			$scope.fecha_fin = infoCredit.fecha_fin		
 			$scope.cobrador = infoCredit.usuariocobrador.nombre
-			$scope.fecha_fin = infoCredit.fecha_fin			
-			$scope.total = "Q. "+parseFloat(infoCredit.deudatotal).toFixed(2);
-			$scope.saldo = "Q. "+parseFloat(infoCredit.saldo).toFixed(2);
+			$scope.cuota_diaria = "Q. "+parseFloat(infoCredit.cuota_diaria).toFixed(2);
+				
+			$scope.saldo_pendiente = "Q. "+parseFloat(infoCredit.saldo).toFixed(2);
+			$scope.total_cancelado = "Q. "+parseFloat(infoCredit.total_cancelado).toFixed(2);
+			$scope.cuotas_pagadas = infoCredit.cuotas_pagados;
+
 			$scope.porcentaje = parseInt(infoCredit.porcentaje_pago);
 		}
 

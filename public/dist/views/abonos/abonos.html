@@ -25,7 +25,7 @@
 						<div class="row">
 							<div class="form-horizontal">
 								<div class="form-group">
-									<label class="col-md-1 control-label">Nombre:</label>
+									<label class="col-md-1 control-label">Nombre del cliente:</label>
 									<div class="col-md-5">
 										<input type="text" class="form-control" ng-model="detalle_cliente.nombre" disabled>
 									</div>
@@ -37,8 +37,35 @@
 								</div>
 							</div>
 						</div>
-						<div class="row" style="margin-left: 18%;">
-							<div class="col-md-2">
+						<div class="row">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-md-1 control-label">Cobrador asignado:</label>
+									<div class="col-md-5">
+										<input type="text" class="form-control" ng-model="detalle_cliente.cobrador" disabled>
+									</div>
+
+									<label class="col-md-2 control-label">Monto total del préstamo:</label>
+									<div class="col-md-2">
+										<input type="text" class="form-control" ng-model="detalle_cliente.monto_total" disabled>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+								<div class="form-horizontal">
+									<div class="form-group">
+										<label class="col-md-1 control-label">Plan de Préstamo:</label>
+										<div class="col-md-5">
+											<input type="text" class="form-control" ng-model="detalle_cliente.plan_prestamo" disabled>
+										</div>
+									</div>
+								</div>
+							</div>
+						<br>
+						<br>
+						<div class="row">
+							<div class="col-md-2  col-md-offset-2">
 								<div class="panel panel-default mb20 mini-box panel-hovered">
 									<div class="panel-body">
 										<div class="clearfix">
@@ -48,7 +75,7 @@
 										</div>
 									</div>
 									<div class="panel-footer clearfix panel-footer-sm panel-footer-danger">
-										<p class="mt0 mb0 left">Monto total del préstamo</p>
+										<p class="mt0 mb0 left">Total pendiente de deuda</p>
 									</div>
 								</div>
 							</div>
@@ -96,6 +123,8 @@
 								</div>
 							</div>
 						</div>
+						<br>
+						<br>
 					</div>
 				</div>
 			</div>
@@ -107,7 +136,7 @@
 					<div class="panel-body">
 						<div class="form-horizontal">
 							<div class="form-group">
-								<label class="col-md-4 control-label">Cantidad</label>
+								<label class="col-md-4 control-label">Cantidad a abonar</label>
 								<div class="col-md-4">
 									<div class="input-group">
 										<span class="input-group-addon">Q</span>

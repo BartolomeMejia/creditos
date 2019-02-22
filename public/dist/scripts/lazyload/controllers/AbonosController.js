@@ -72,12 +72,15 @@
         $('.row-detalle').removeClass('hidden');
         $scope.detalle_cliente.credit_id = credit.id
         $scope.detalle_cliente.nombre = nameCustomer
-        $scope.detalle_cliente.cuota_diaria = "Q. " + parseFloat(credit.cuota_diaria).toFixed(2);
-        $scope.credito.total = "Q. " + parseFloat(credit.deudatotal).toFixed(2);
-        $scope.credito.saldo = "Q. " + parseFloat(credit.total_cancelado).toFixed(2);
-        $scope.credito.saldo_abonado = "Q. " + parseFloat(credit.saldo_abonado).toFixed(2); 
-        $scope.credito.cuotas_pagados = credit.cuotas_pagados;              
-        $scope.dailyFee = credit.cuota_diaria;
+        $scope.detalle_cliente.cuota_diaria = "Q. " + parseFloat(credit.cuota_diaria).toFixed(2)
+        $scope.detalle_cliente.cobrador = credit.usuariocobrador.nombre
+        $scope.detalle_cliente.plan_prestamo = credit.planes.descripcion
+        $scope.detalle_cliente.monto_total = "Q. " + parseFloat(credit.deudatotal).toFixed(2)
+        $scope.credito.total = "Q. " + parseFloat(credit.saldo).toFixed(2)
+        $scope.credito.saldo = "Q. " + parseFloat(credit.total_cancelado).toFixed(2)
+        $scope.credito.saldo_abonado = "Q. " + parseFloat(credit.saldo_abonado).toFixed(2) 
+        $scope.credito.cuotas_pagados = credit.cuotas_pagados             
+        $scope.dailyFee = credit.cuota_diaria
       }
 
       if ($routeParams) {  

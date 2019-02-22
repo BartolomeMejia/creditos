@@ -152,7 +152,7 @@
 						</thead>
 						<tbody>
 							<tr ng-repeat="data in currentPageStores track by $index">
-								<td>{{ data.id }}</td>
+								<td>{{ $index + 1 }}</td>
 								<td>{{ data.nombre}} {{ data.apellido }}</td>
 								<td>{{ data.direccion }}</td>
 								<td>{{ data.dpi }}</td>
