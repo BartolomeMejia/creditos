@@ -11,10 +11,6 @@
         $scope.plans = []
         $scope.customer = {}
 
-        var dateToday =  $filter('date')(new Date(), 'yyyy-MM-dd')
-        $("#date_init").val(dateToday);
-        $("#date_fin").val(dateToday);
-
         loadCollectors()
         loadPlanes()        
         

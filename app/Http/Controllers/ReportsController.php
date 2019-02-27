@@ -50,8 +50,8 @@ class ReportsController extends Controller
     public function collector(Request $request){
         try {
             $collector = $request->input('collector');
-            $dateInit = $request->input('date-init');
-            $dateFinal = $request->input('date-final');
+            $dateInit = \Carbon\Carbon::parse($request->input('date-init'))->format('Y-m-d');
+            $dateFinal = \Carbon\Carbon::parse($request->input('date-final'))->format('Y-m-d');
             $plan = $request->input('plan');
             $branch = $request->input('branch');
 

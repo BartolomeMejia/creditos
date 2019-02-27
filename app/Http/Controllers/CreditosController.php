@@ -314,17 +314,17 @@ class CreditosController extends Controller
             $pdf = \App::make('dompdf');
             if($registro->planes->domingo == "1"){
                 if($registro->planes->dias >= 45){
-                    $pdf = \PDF::loadView('pdf.ticketwithoutsundayplan75', ['data' => $this->getArray($registro)])->setPaper('letter')->setOrientation('landscape');
+                    $pdf = \PDF::loadView('pdf.ticketwithoutsundayplan75', ['data' => $this->getArray($registro)])->setPaper('letter','landscape');
                 }
                 else{
-                    $pdf = \PDF::loadView('pdf.ticketwithoutsunday', ['data' => $this->getArray($registro)])->setPaper('letter')->setOrientation('landscape');
+                    $pdf = \PDF::loadView('pdf.ticketwithoutsunday', ['data' => $this->getArray($registro)])->setPaper('letter','landscape');
                 }
             } else{
                 if($registro->planes->dias >= 45){
-                    $pdf = \PDF::loadView('pdf.ticketwithsundayplan75', ['data' => $this->getArrayWithSunday($registro)])->setPaper('letter')->setOrientation('landscape');
+                    $pdf = \PDF::loadView('pdf.ticketwithsundayplan75', ['data' => $this->getArrayWithSunday($registro)])->setPaper('letter','landscape');
                 }
                 else{
-                    $pdf = \PDF::loadView('pdf.ticketwithsunday', ['data' => $this->getArrayWithSunday($registro)])->setPaper('letter')->setOrientation('landscape');
+                    $pdf = \PDF::loadView('pdf.ticketwithsunday', ['data' => $this->getArrayWithSunday($registro)])->setPaper('letter','landscape');
                 }
             }
     
