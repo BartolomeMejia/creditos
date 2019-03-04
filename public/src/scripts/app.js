@@ -353,5 +353,18 @@
 				}]
 			}
 		});
+
+		$routeProvider.when("/reports/general", {
+			templateUrl: "views/reports/general.html",
+			controller: "ReportsController",
+			resolve: {
+				deps: ["$ocLazyLoad", function(a) {
+					return a.load({
+						name: "app.reportsGeneral",
+						files: ["scripts/lazyload/controllers/reportsGeneral.js"]
+					})
+				}]
+			}
+		});
 	}])
 }())

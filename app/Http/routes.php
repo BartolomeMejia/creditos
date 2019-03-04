@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return redirect('dist');
+    return redirect('src');
 });
 
 Route::get('/boletaview', function(){
@@ -53,6 +53,7 @@ Route::group(['prefix' => 'ws'], function() {
 	Route::get('collectorpdf',				'CobradorController@generatePdf');
 	Route::get('reportgeneral',				'ReportsController@general');
 	Route::get('reportcollector',			'ReportsController@collector');
+	Route::get('reportdates',				'ReportsController@dates');
 });
 
 Route::group(['prefix' => 'ws/movil'], function()

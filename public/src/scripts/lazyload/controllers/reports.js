@@ -10,9 +10,10 @@
         $scope.collectors = []
         $scope.plans = []
         $scope.customer = {}
+        var typeView = "";
 
         loadCollectors()
-        loadPlanes()        
+        loadPlanes()    
         
         function loadCollectors(){
             collectorService.index().then(function (response) {
@@ -26,42 +27,69 @@
 
         function loadPlanes(){
             planService.plans().then(function (response) {
-                response.data.records.forEach(function (item) {
+                var itemAll = {}
+                itemAll.descripcion = "Todos";
+                itemAll.id = 0;
+                $scope.plans.push(itemAll)
+                response.data.records.forEach(function (item) {                    
                     if (item.sucursales_id == $scope.usuario.sucursales_id) {
                         $scope.plans.push(item)
-                    }
+                    }                                    
                 })        
             })
         }
 
-        $scope.generateReport = function() {
-            var $collector =  $scope.collector
-            var $dateInit = $("#date_init").val()
-            var $dateFinal = $("#date_fin").val()
-            var $plan = $scope.plan == undefined ? "" : $scope.plan;
-            var $branch = $scope.usuario.sucursales_id
-            console.log($collector)
-            console.log($dateInit)
-            console.log($dateFinal)
-            console.log($plan)
-            console.log($branch)
-            if ($collector != "" && $collector != undefined) {
-                reportService.collector($collector, $dateInit, $dateFinal, $plan, $branch)
-                    .then(function(response){
-                        if (response.data.result) {
-                            var info = response.data.records
-                            $scope.customer.total = info.customers.withCredit
-                            $scope.customer.today = info.customers.withCreditToDay
-                            $scope.customer.notoday = info.customers.withCreditNoToDay
-                            $scope.revenueTotals = info.revenueTotals
-                            $scope.totalPendingReceivable = info.totalPendingReceivable
-                            $scope.totalReceivable = info.totalReceivable
-                        }
-                    })
-            } else {
-                $scope.createToast("danger", "<strong>Error: Debe de seleccionar un cobrador. </strong>");
-                $timeout(function () { $scope.closeAlert(0); }, 5000);
+        function generateReport(typeView){              
+            var collector =  $scope.collector
+            var dateInit = $("#date_init").val()
+            var dateFinal = $("#date_fin").val()
+            var plan = $scope.plan == undefined ? "" : $scope.plan;
+            var branch = $scope.usuario.sucursales_id            
+
+            switch (typeView) {
+                case "dates" :                
+                    if(dateInit != "" && dateInit != undefined && dateFinal != "" && dateFinal != undefined){
+                        reportService.dates(dateInit, dateFinal, branch)
+                            .then(function(response){
+                                if (response.data.result) {
+                                    var info = response.data.records                                    
+                                    $scope.customer.total = info.customers.withCredit
+                                    $scope.customer.today = info.customers.withCreditToDay
+                                    $scope.customer.notoday = info.customers.withCreditNoToDay
+                                    $scope.revenueTotals = info.revenueTotals
+                                    $scope.totalPendingReceivable = info.totalPendingReceivable
+                                    $scope.totalReceivable = info.totalReceivable
+                                }
+                        })
+                    }
+                    break
+                case "collectors" :                    
+                    if (collector != "" && collector != undefined) {
+                        reportService.collector(collector, dateInit, dateFinal, plan, branch)
+                            .then(function(response){
+                                if (response.data.result) {
+                                    var info = response.data.records 
+                                    $scope.customer.total = info.customers.withCredit
+                                    $scope.customer.today = info.customers.withCreditToDay
+                                    $scope.customer.notoday = info.customers.withCreditNoToDay
+                                    $scope.revenueTotals = info.revenueTotals
+                                    $scope.totalPendingReceivable = info.totalPendingReceivable
+                                    $scope.totalReceivable = info.totalReceivable                           
+                                }
+                        })
+                    } else {
+                        $scope.createToast("danger", "<strong>Error: Debe de seleccionar un cobrador. </strong>");
+                        $timeout(function () { $scope.closeAlert(0); }, 5000);
+                    }
+                    break
+                default:
+                    break
             }
+        }
+
+        $scope.generateReport = function() {
+            typeView = $("#view").val()
+            generateReport(typeView)
         }
 
          // toast function
@@ -74,7 +102,7 @@
         }
 
         $scope.closeAlert = function (index) {
-            $scope.toasts.splice(index, 1);
+            $scope.toasts.splice(index, 1)
         }
 
     }])

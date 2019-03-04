@@ -19,14 +19,13 @@ class ReportsController extends Controller
     use reportsTrait;
 
     public function general(Request $request){
-        try {
-            $branch = $request->input('branch');
+        try {        
             $general = new \stdClass();          
-            $general->customers = $this->getCountCustomers("", "", "", "", $branch);
-            $general->revenueTotals =  $this->getRevenueTotals("", "", "", "", $branch);
-            $general->totalPendingReceivable =  $this->getPendingReceivable("", "", "", "", $branch);
-            $general->totalReceivable =  $this->getTotalReceivable("", "", "", "", $branch);
-            $general->totalGeneratedInterests = $this->getGeneratedInterests("", "", "", "", $branch);
+            $general->customers = $this->getCountCustomers($request);
+            $general->revenueTotals =  $this->getRevenueTotals($request);
+            $general->totalPendingReceivable =  $this->getPendingReceivable($request);
+            $general->totalReceivable =  $this->getTotalReceivable($request);
+            $general->totalGeneratedInterests = $this->getGeneratedInterests($request);
 
             $this->statusCode   = 200;
             $this->result       = true;
@@ -49,18 +48,40 @@ class ReportsController extends Controller
 
     public function collector(Request $request){
         try {
-            $collector = $request->input('collector');
-            $dateInit = \Carbon\Carbon::parse($request->input('date-init'))->format('Y-m-d');
-            $dateFinal = \Carbon\Carbon::parse($request->input('date-final'))->format('Y-m-d');
-            $plan = $request->input('plan');
-            $branch = $request->input('branch');
-
             $general = new \stdClass();          
-            $general->customers = $this->getCountCustomers($collector, $dateInit, $dateFinal, $plan, $branch);
-            $general->revenueTotals =  $this->getRevenueTotals($collector, $dateInit, $dateFinal, $plan, $branch);
-            $general->totalPendingReceivable =  $this->getPendingReceivable($collector, $dateInit, $dateFinal, $plan, $branch);
-            $general->totalReceivable =  $this->getTotalReceivable($collector, $dateInit, $dateFinal, $plan, $branch);
-            $general->totalGeneratedInterests = $this->getGeneratedInterests($collector, $dateInit, $dateFinal, $plan, $branch);
+            $general->customers = $this->getCountCustomers($request);
+            $general->revenueTotals =  $this->getRevenueTotals($request);
+            $general->totalPendingReceivable =  $this->getPendingReceivable($request);
+            $general->totalReceivable =  $this->getTotalReceivable($request);
+            $general->totalGeneratedInterests = $this->getGeneratedInterests($request);
+
+            $this->statusCode   = 200;
+            $this->result       = true;
+            $this->message      = "Registro consultado exitosamente";
+            $this->records      = $general;
+        } catch (\Exception $e) {
+            $this->statusCode = 200;
+            $this->result = false;
+            $this->message = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al consultar los datos";
+            
+        } finally {
+            $response = [
+                'result'    => $this->result,
+                'message'   => $this->message,
+                'records'   => $this->records,
+            ];
+            return response()->json($response, $this->statusCode);
+        }
+    }
+
+    public function dates(Request $request){
+        try {
+            $general = new \stdClass();          
+            $general->customers = $this->getCountCustomers($request);
+            $general->revenueTotals =  $this->getRevenueTotals($request);
+            $general->totalPendingReceivable =  $this->getPendingReceivable($request);
+            $general->totalReceivable =  $this->getTotalReceivable($request);
+            $general->totalGeneratedInterests = $this->getGeneratedInterests($request);
 
             $this->statusCode   = 200;
             $this->result       = true;

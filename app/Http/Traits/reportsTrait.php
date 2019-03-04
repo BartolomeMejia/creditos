@@ -2,6 +2,8 @@
 
 namespace App\Http\Traits;
 
+use Illuminate\Http\Request;
+
 use App\Creditos;
 use App\DetallePagos;
 use App\Http\Traits\detailsPaymentsTrait;
@@ -10,14 +12,10 @@ trait reportsTrait {
 
     use detailsPaymentsTrait;
 
-    public function getCountCustomers($collector, $dateInit, $dateFin, $plan, $branch){
+    public function getCountCustomers(Request $request){
+    
         $countCustomers = new \stdClass();        
-        $credits = $this->getCreditGroupCustomer($collector, $dateInit, $dateFin, $branch)
-                        ->filter(function ($item) use ($plan){ 
-                            if($plan != "")
-                                return $item->planes_id == $plan;
-                            else
-                                return $item;});                         
+        $credits = $this->getCreditWithPlansAmount($request);                
                              
         $countCustomers->withCredit = $credits->groupBy('clientes_id')->count();
         $countCustomers->withCreditToDay = $this->getCustomersWithCreditToDay($credits)->groupBy('clientes_id')->count();
@@ -26,16 +24,10 @@ trait reportsTrait {
         return $countCustomers;
     }
 
-    public function getRevenueTotals($collector, $dateInit, $dateFin, $plan, $branch) {
-        $totalCharged = new \stdClass();
-        
-        $credits = $this->getCreditWithPlansAmount($collector, $dateInit, $dateFin, $branch)
-                        ->filter(function ($item) use ($plan){ 
-                            if($plan != "")
-                                return $item->planes_id == $plan;
-                            else
-                                return $item;
-                        });
+    public function getRevenueTotals(Request $request) {
+
+        $totalCharged = new \stdClass();        
+        $credits = $this->getCreditWithPlansAmount($request);
 
         if ($credits->count() > 0) {            
             $totalCharged = 0;
@@ -48,41 +40,22 @@ trait reportsTrait {
         
         return $totalCharged;
     }
-    public function getPendingReceivable($collector, $dateInit, $dateFin, $plan, $branch) {
+
+    public function getPendingReceivable(Request $request) {        
         $totalPendingReceivable = 0;
-        $totalPendingReceivable = $this->getCreditWithPlansAmount($collector, $dateInit, $dateFin, $branch)
-                                        ->filter(function ($item) use ($plan){ 
-                                            if($plan != "")
-                                                return $item->planes_id == $plan;
-                                            else
-                                                return $item;
-                                        })
-                                        ->sum('saldo');
+        $totalPendingReceivable = $this->getCreditWithPlansAmount($request)->sum('saldo');
         return $totalPendingReceivable;
     }
 
-    public function getTotalReceivable($collector, $dateInit, $dateFin, $plan, $branch) {
+    public function getTotalReceivable(Request $request) {
         $totalReceivable = 0;
-        $totalReceivable = $this->getCreditWithPlansAmount($collector, $dateInit, $dateFin, $branch)
-                                ->filter(function ($item) use ($plan){ 
-                                    if($plan != "")
-                                        return $item->planes_id == $plan;
-                                    else
-                                        return $item;
-                                })
-                                ->sum('deudatotal');
+        $totalReceivable = $this->getCreditWithPlansAmount($request)->sum('deudatotal');
         return $totalReceivable;
     }
 
-    public function getGeneratedInterests($collector, $dateInit, $dateFin, $plan, $branch){
+    public function getGeneratedInterests(Request $request){
         $generatedInterests = 0;
-        $credits = $this->getCreditWithPlansAmount($collector, $dateInit, $dateFin, $branch)
-                        ->filter(function ($item) use ($plan){ 
-                            if($plan != "")
-                                return $item->planes_id == $plan;
-                            else
-                                return $item;
-                        });
+        $credits = $this->getCreditWithPlansAmount($request);
         if ($credits->count() > 0) {
             foreach ($credits as $credit) {
                 $generatedInterests += ($credit->montos->monto * $credit->planes->porcentaje) / 100;
@@ -107,49 +80,45 @@ trait reportsTrait {
         return $countCredits->filter(function ($item){ return $item != null;});
     }
 
-    private function getCreditGroupCustomer($collector, $dateInit, $dateFin, $branch) {               
-        if ( $collector != "" ) {
-            return Creditos::where('sucursal_id', $branch)
-                            ->where('usuarios_cobrador', $collector)
-                            ->where('fecha_inicio','<=',date($dateFin))
-                            ->where('estado', 1)
-                            ->with('planes')                            
-                            ->get();
-        } else if ($dateInit !=  "" && $dateFin != ""){
-            return Creditos::where('sucursal_id', $branch)
-                            ->whereDay('fecha_inicio','<=',$dateFin)
-                            ->where('estado', 1)
-                            ->with('planes')                            
-                            ->get();
+    private function getCreditWithPlansAmount(Request $request){        
+        
+        $collector = $request->input('collector');
+        if ($request->input('date-init') != null && $request->input('date-final') != null) {
+            $dateInit = \Carbon\Carbon::parse($request->input('date-init'))->format('Y-m-d');
+            $dateFin = \Carbon\Carbon::parse($request->input('date-final'))->format('Y-m-d');
         } else {
-            return Creditos::where('sucursal_id', $branch)
-                            ->whereDay('fecha_inicio','<=',$dateFin)
+            $dateInit = "";
+            $dateFin = "";
+        }
+        $plan = $request->input('plan');
+        $branch = $request->input('branch');
+        $credits = "";        
+        if ( $collector != "" ) {
+            $credits = Creditos::where('sucursal_id', $branch)
+                            ->where('usuarios_cobrador', $collector)
+                            ->whereBetween('fecha_inicio', [$dateInit, $dateFin])
                             ->where('estado', 1)
-                            ->with('planes')                            
+                            ->with('planes', 'montos')
+                            ->get();
+        } else if ($dateInit !=  "" && $dateFin != "") {
+            $credits = Creditos::where('sucursal_id', $branch)
+                            ->whereBetween('fecha_inicio', [$dateInit, $dateFin])
+                            ->where('estado', 1)
+                            ->with('planes', 'montos')
+                            ->get();
+        } else {            
+            $credits = Creditos::where('sucursal_id', $branch)                            
+                            ->where('estado', 1)
+                            ->with('planes', 'montos')
                             ->get();
         }
-    }
-
-    private function getCreditWithPlansAmount($collector, $dateInit, $dateFin, $branch){        
-        if ( $collector != "" ) {
-            return Creditos::where('sucursal_id', $branch)
-                            ->where('usuarios_cobrador', $collector)
-                            ->whereBetween('fecha_inicio', [$dateInit, $dateFin])
-                            ->where('estado', 1)
-                            ->with('planes', 'montos')
-                            ->get();
-        } else if ($dateInit !=  "" && $dateFin != ""){
-            return Creditos::where('sucursal_id', $branch)
-                            ->whereBetween('fecha_inicio', [$dateInit, $dateFin])
-                            ->where('estado', 1)
-                            ->with('planes', 'montos')
-                            ->get();
+        
+        if ($plan != "" && $plan != 0) {
+            return $credits->filter(function ($item) use ($plan){ 
+                    return $item->planes_id == $plan;        
+            });
         } else {
-            return Creditos::where('sucursal_id', $branch)
-                            ->whereBetween('fecha_inicio', [$dateInit, $dateFin])
-                            ->where('estado', 1)
-                            ->with('planes', 'montos')
-                            ->get();
+            return $credits;
         }
     }
 }
