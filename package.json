@@ -1,6 +1,8 @@
 {
   "private": true,
   "devDependencies": {
+    "grunt": "^1.0.3",
+    "grunt-contrib-concat": "^1.0.1",
     "gulp": "^3.8.8"
   },
   "dependencies": {
