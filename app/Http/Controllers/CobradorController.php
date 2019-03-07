@@ -157,7 +157,7 @@ class CobradorController extends Controller
         }
         
         $pdf = \App::make('dompdf');        
-        $pdf = \PDF::loadView('pdf.resumentodaycollector', ['data' => $datos])->setPaper('Legal')->setOrientation('portrait');
+        $pdf = \PDF::loadView('pdf.resumentodaycollector', ['data' => $datos])->setPaper('legal', 'portrait');
         return $pdf->download($collector->nombre.'.pdf');
     }
     
