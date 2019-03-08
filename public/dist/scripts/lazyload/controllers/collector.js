@@ -87,8 +87,10 @@
 
           var collectionofday = 0;
           response.data.records.registros.forEach(function (element) {
-            $scope.totalCartera = $scope.totalCartera + element.deudatotal
-            $scope.totalPendientePago = $scope.totalPendientePago + element.saldo
+            if (element.estado == 1) {
+              $scope.totalCartera = $scope.totalCartera + element.deudatotal
+              $scope.totalPendientePago = $scope.totalPendientePago + element.saldo
+            }
           });
 
           totalCollection(data.id, date)
