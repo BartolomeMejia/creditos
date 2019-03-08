@@ -59,7 +59,7 @@ class CobradorMovilController extends Controller
             $registros = Creditos::where("usuarios_cobrador", $request->input("idusuario"))
                                     ->where("estado",1)
                                     ->where("fecha_inicio", "<=", $hoy)
-                                    ->with("cliente")
+                                    ->with("cliente")                                    
                                     ->get();
 
             if( $registros ){
@@ -76,7 +76,7 @@ class CobradorMovilController extends Controller
                         $item['fecha_inicio'] = \Carbon\Carbon::parse($item->fecha_inicio)->format('d-m-Y');
                         $item['fecha_limite'] = \Carbon\Carbon::parse($item->fecha_limite)->format('d-m-Y');
                         $item['pago_hoy'] = DetallePagos::where('credito_id', $item->id)->where('estado',1)->get()->contains('fecha_pago', $hoy);                    
-
+                        $item['nombre_completo'] = $item->cliente->nombre.' '.$item->cliente->apellido;
                         $totalacobrar = $totalacobrar + $item->cuota_diaria;
                         $totalminimocobrar = $totalminimocobrar + $item->cuota_minima;
                         $cantidadclientes = $cantidadclientes + 1;
