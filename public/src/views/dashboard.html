@@ -16,76 +16,83 @@
 			</div>
 		</div> <!-- #end row -->
 		<!-- mini boxes -->
-		<div class="row">
-			<div class="col-md-3 col-sm-6">
-				<div class="panel panel-default mb20 mini-box panel-hovered">
-					<div class="panel-body">
-						<div class="clearfix">
-							<div class="info left">
-								<h4 class="mt0 text-primary text-bold">Total de clientes</h4>
-								<h2 class="text-light mb0">{{resumen.customers}}</h2>
+	
+		<div class="row" ng-repeat="sucursal in sucursales">
+			<div class="col-md-12">
+				<br>
+				<h2><strong>{{sucursal.descripcion}}</strong></h2>
+			</div>		
+			<div class="row">
+				<div class="col-md-3 col-sm-6">
+					<div class="panel panel-default mb20 mini-box panel-hovered">
+						<div class="panel-body">
+							<div class="clearfix">
+								<div class="info left">
+									<h4 class="mt0 text-primary text-bold">Total de clientes</h4>
+									<h2 class="text-light mb0">{{sucursal.customers}}</h2>
+								</div>
+								<div class="right ion ion ion-ios-people-outline icon"></div>
 							</div>
-							<div class="right ion ion ion-ios-people-outline icon"></div>
+						</div>
+						<div class="panel-footer clearfix panel-footer-sm panel-footer-primary">
+							<p class="mt0 mb0 left"></p>
+							<span sparkline class="right" type="bar" bar-color="#fff" width="1.15em" height="1.15em"></span>
 						</div>
 					</div>
-					<div class="panel-footer clearfix panel-footer-sm panel-footer-primary">
-						<p class="mt0 mb0 left"></p>
-						<span sparkline class="right" type="bar" bar-color="#fff" width="1.15em" height="1.15em"></span>
-					</div>
 				</div>
-			</div>
-			<div class="col-md-3 col-sm-6">
-				<div class="panel panel-default mb20 mini-box panel-hovered">
-					<div class="panel-body">
-						<div class="clearfix">
-							<div class="info left">
-								<h4 class="mt0 text-success text-bold">Créditos al día</h4>
-								<h2 class="text-light mb0">{{resumen.customersWithCreditToDay}}</h2>
+				<div class="col-md-3 col-sm-6">
+					<div class="panel panel-default mb20 mini-box panel-hovered">
+						<div class="panel-body">
+							<div class="clearfix">
+								<div class="info left">
+									<h4 class="mt0 text-success text-bold">Créditos al día</h4>
+									<h2 class="text-light mb0">{{sucursal.customersWithCreditToDay}}</h2>
+								</div>
+								<div class="right ion ion-cash icon"></div>
 							</div>
-							<div class="right ion ion-cash icon"></div>
+						</div>
+						<div class="panel-footer clearfix panel-footer-sm panel-footer-success">
+							<p class="mt0 mb0 left"></p>
+							<span sparkline class="right" type="bar" bar-color="#fff" width="1.15em" height="1.15em"></span>
 						</div>
 					</div>
-					<div class="panel-footer clearfix panel-footer-sm panel-footer-success">
-						<p class="mt0 mb0 left"></p>
-						<span sparkline class="right" type="bar" bar-color="#fff" width="1.15em" height="1.15em"></span>
-					</div>
 				</div>
-			</div>
-			<div class="col-md-3 col-sm-6">
-				<div class="panel panel-default mb20 mini-box panel-hovered">
-					<div class="panel-body">
-						<div class="clearfix">
-							<div class="info left">
-								<h4 class="mt0 text-info text-bold">Créditos atrasados</h4>
-								<h2 class="text-light mb0">{{resumen.customersWithCreditNoToDay}}</h2>
+				<div class="col-md-3 col-sm-6">
+					<div class="panel panel-default mb20 mini-box panel-hovered">
+						<div class="panel-body">
+							<div class="clearfix">
+								<div class="info left">
+									<h4 class="mt0 text-info text-bold">Créditos atrasados</h4>
+									<h2 class="text-light mb0">{{sucursal.customersWithCreditNoToDay}}</h2>
+								</div>
+								<div class="right ion ion-cash icon"></div>
 							</div>
-							<div class="right ion ion-cash icon"></div>
+						</div>
+						<div class="panel-footer clearfix panel-footer-sm panel-footer-danger">
+							<p class="mt0 mb0 left"></p>
+							<span sparkline class="right" type="bar" bar-color="#fff" width="1.15em" height="1.15em"></span>
 						</div>
 					</div>
-					<div class="panel-footer clearfix panel-footer-sm panel-footer-danger">
-						<p class="mt0 mb0 left"></p>
-						<span sparkline class="right" type="bar" bar-color="#fff" width="1.15em" height="1.15em"></span>
-					</div>
 				</div>
-			</div>
-			<div class="col-md-3 col-sm-6">
-				<div class="panel panel-default mb20 mini-box panel-hovered">
-					<div class="panel-body">
-						<div class="clearfix">
-							<div class="info left">
-								<h4 class="mt0 text-pink text-bold">Total de cobradores</h4>
-								<h2 class="text-light mb0">{{resumen.collectors}}</h2>
+				<div class="col-md-3 col-sm-6">
+					<div class="panel panel-default mb20 mini-box panel-hovered">
+						<div class="panel-body">
+							<div class="clearfix">
+								<div class="info left">
+									<h4 class="mt0 text-pink text-bold">Total de cobradores</h4>
+									<h2 class="text-light mb0">{{sucursal.collectors}}</h2>
+								</div>
+								<div class="right ion ion-android-bicycle icon"></div>
 							</div>
-							<div class="right ion ion-android-bicycle icon"></div>
+						</div>
+						<div class="panel-footer clearfix panel-footer-sm panel-footer-pink">
+							<p class="mt0 mb0 left"></p>
+							<span sparkline class="right" type="bar" bar-color="#fff" width="1.15em" height="1.15em"></span>
 						</div>
 					</div>
-					<div class="panel-footer clearfix panel-footer-sm panel-footer-pink">
-						<p class="mt0 mb0 left"></p>
-						<span sparkline class="right" type="bar" bar-color="#fff" width="1.15em" height="1.15em"></span>
-					</div>
 				</div>
-			</div>
-			<!-- #end mini boxes -->
-		</div> <!-- #end row -->
+				<!-- #end mini boxes -->
+			</div> <!-- #end row -->
+		</div>
 	</div> <!-- #end page-wrap -->
 </div>

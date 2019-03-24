@@ -10,6 +10,7 @@ use Session;
 use App\TipoUsuarios;
 use App\Creditos;
 use App\Usuarios;
+use App\Sucursales;
 use App\Http\Traits\customerTrait;
 
 class DashboardController extends Controller
@@ -29,29 +30,25 @@ class DashboardController extends Controller
             $customers = 0;
             $customersWithCreditToDay = [];
             $resumenDashboard = new \stdClass();
-            
+        
             $branchId = $request->session()->get('usuario')->tipo_usuarios_id == 1 ? 0 : $request->session()->get('usuario')->sucursales_id;
-
-            if($branchId == 0){
-                $customers = Creditos::where("estado", 1)->count();
-                $customersWithCreditToDay = $this->getCustomersWithCreditToDay();
-                $collectors = Usuarios::where("tipo_usuarios_id", 4)->where("estado", 1)->count();
-            } else {
-                $customers = Creditos::where("estado", 1)->where("sucursal_id", $branchId)->count();
-                $customersWithCreditToDay = $this->getCustomersWithCreditToDay()->filter(function ($item) use ($branchId){ return $item->sucursal_id == $branchId;});
-                $collectors = Usuarios::where("tipo_usuarios_id", 4)->where("estado", 1)->where("sucursales_id", $branchId)->count();
-            }
-            
-            $resumenDashboard->customers = $customers;
-            $resumenDashboard->customersWithCreditToDay = $customersWithCreditToDay->count();
-            $resumenDashboard->customersWithCreditNoToDay = intval($customers) - intval($customersWithCreditToDay->count());
-            $resumenDashboard->collectors = $collectors;
-            
-
+            $branchs = Sucursales::get()->map(function($item,$key){   
+                            $item->customers = Creditos::where("estado", 1)->where("sucursal_id", $item->id)->count();
+                            $item->customersWithCreditToDay = $this->getCustomersWithCreditToDay($item->id)->count();
+                            $item->collectors = Usuarios::where("tipo_usuarios_id", 4)->where("sucursales_id", $item->id)->count();
+                            $item->customersWithCreditNoToDay = $item->customers - $item->customerWithCreditToDay; 
+                            return $item;
+                        });
+        
             $this->statusCode   = 200;
             $this->result       = true;
             $this->message      = "Registro consultado exitosamente";
-            $this->records      = $resumenDashboard;
+
+            if ($branchId != 0)
+                $this->records = $branchs->filter(function ($item) use ($branchId){ return $item->id == $branchId; });        
+            else 
+                $this->records = $branchs;
+            
         } 
         catch (\Exception $e) 
         {

@@ -62,37 +62,37 @@ class CobradorMovilController extends Controller
                                     ->with("cliente")                                    
                                     ->get();
 
-            if( $registros ){
+            $array_collector = collect($registros)->ordeBy('cliente.nombre');            
+            dd(json_encode($array_collector));
+            if( $array_collector ){
 
                 $totalacobrar = 0;
                 $totalminimocobrar = 0;
                 $cantidadclientes = 0;
                 $pagohoy = false;
-                foreach ($registros as $item) {
+                foreach ($array_collector as $item) {
                     
                         $detailsPayments = $this->getDetailsPayments($item->id);   
                         $item['cantidad_cuotas_pagadas'] = $detailsPayments->totalFees;
                         $item['monto_abonado'] = $detailsPayments->paymentPaid;                    
                         $item['fecha_inicio'] = \Carbon\Carbon::parse($item->fecha_inicio)->format('d-m-Y');
                         $item['fecha_limite'] = \Carbon\Carbon::parse($item->fecha_limite)->format('d-m-Y');
-                        $item['pago_hoy'] = DetallePagos::where('credito_id', $item->id)->where('estado',1)->get()->contains('fecha_pago', $hoy);                    
-                        $item['nombre_completo'] = $item->cliente->nombre.' '.$item->cliente->apellido;
+                        $item['pago_hoy'] = DetallePagos::where('credito_id', $item->id)->where('estado',1)->get()->contains('fecha_pago', $hoy);                                            
                         $totalacobrar = $totalacobrar + $item->cuota_diaria;
                         $totalminimocobrar = $totalminimocobrar + $item->cuota_minima;
                         $cantidadclientes = $cantidadclientes + 1;
                     
                 }
-
+            
                 $datos = [];
                 $datos['total_cobrar'] = $totalacobrar;
                 $datos['total_minimo'] = $totalminimocobrar;                             
-                $datos['registros'] = $registros;
+                $datos['registros'] = $array_collector;
                 
-
                 $this->statusCode   = 200;
                 $this->result       = true;
                 $this->message      = "Registros consultados exitosamente";
-                $this->records      = $datos;
+                $this->records      = $array_collector;
             }
             else
                 throw new \Exception("No se encontraron registros");

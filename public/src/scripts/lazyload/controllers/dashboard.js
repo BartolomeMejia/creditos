@@ -6,12 +6,12 @@
 
 	.controller("DashboardController", ["$scope", "$http", "$modal", "$interval", 'dashboardService', "API_URL", function($scope, $http, $modal, $timeout, dashboardService, API_URL)  {	
         
-        $scope.resumen = {};
+        $scope.sucursales = [];
         loadData();
 
 		function loadData(){
 			dashboardService.index().then(function (response) {
-                $scope.resumen = response.data.records;
+                $scope.sucursales = response.data.records;
             });
         }        
 	}])

@@ -10,6 +10,7 @@ use App\Clientes;
 use App\Creditos;
 use App\DetallePagos;
 use App\Usuarios;
+use DB;
 use App\Http\Traits\detailsPaymentsTrait;
 use App\Http\Traits\detailsCreditsTrait;
 
@@ -23,9 +24,19 @@ class ClientesController extends Controller {
     use detailsPaymentsTrait;
     use detailsCreditsTrait;
 
-    public function index() {
+    public function index(Request $request) {
         try {
-            $registros = Clientes::all();
+            $userId = $request->session()->get('usuario')->tipo_usuarios_id == 4 ? $request->session()->get('usuario')->id : 0;
+
+            if ($userId != 0) {
+                $registros = Clientes::select("clientes.*")
+                            ->join('creditos', 'clientes.id', '=', 'creditos.clientes_id')
+                            ->where('creditos.usuarios_cobrador', $userId)
+                            ->groupBy('clientes.id')
+                            ->get();
+            } else {
+                $registros = Clientes::all();
+            }
             
             if ($registros) {
                 $registros->map(function ($item, $key){   

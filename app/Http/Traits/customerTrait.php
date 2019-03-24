@@ -10,9 +10,9 @@ trait customerTrait {
 
     use detailsPaymentsTrait;
     
-    public function getCustomersWithCreditToDay() {
+    public function getCustomersWithCreditToDay($branchId) {
         
-        $credits = Creditos::where("estado",1)->with('planes')->get();
+        $credits = Creditos::where("estado",1)->where("sucursal_id", $branchId)->with('planes')->get();
         
         $countCredits = $credits->map(function($item,$key){
             

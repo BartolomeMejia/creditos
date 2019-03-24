@@ -15,7 +15,6 @@ class Usuarios extends Model implements AuthenticatableContract, CanResetPasswor
 
 
 	protected $table = 'usuarios';
-	protected $dates = ['deleted_at'];
 	protected $fillable = ['tipo_usuarios_id','nombre','user','password','password_2','estado','sucursales_id'];
 
 	protected $hidden = ['password', 'password_2','remember_token'];
