@@ -17,7 +17,7 @@ trait detailsCustomerTrait {
             $today = \Carbon\Carbon::now();
             $startDate = \Carbon\Carbon::parse($credit->fecha_inicio);
             $days = $today->diffInDays($startDate);
-            if($totalFees)
+            if ( $totalFees > 0)
                 $totalDays = $days - $totalFees;
             else
                 $totalDays = $days;
