@@ -23,19 +23,19 @@
 				<span class="text">Dashboard</span>
 			</a>
 		</li>
-		<li ng-show="usuario.tipo_usuarios_id == 1 || usuario.tipo_usuarios_id == 2 || usuario.tipo_usuarios_id == 3">
+		<li ng-show="usuario.tipo_usuarios_id == 2 || usuario.tipo_usuarios_id == 3">
 			<a href="#/creditos" md-ink-ripple>
 				<i class="ion ion-cash"></i>
 				<span class="text">Nuevo crédito</span>
 			</a>
 		</li>
-		<li ng-show="usuario.tipo_usuarios_id == 1 || usuario.tipo_usuarios_id == 2 || usuario.tipo_usuarios_id == 3">
+		<li ng-show="usuario.tipo_usuarios_id == 2 || usuario.tipo_usuarios_id == 3">
 			<a href="#/abonos" md-ink-ripple>
 				<i class="ion ion-cash"></i>
 				<span class="text">Abonar crédito</span>
 			</a>
 		</li>
-		<li>
+		<li ng-show="usuario.tipo_usuarios_id == 2 || usuario.tipo_usuarios_id == 3">
 			<a href="#/historypayment" md-ink-ripple>
 				<i class="ion ion-ios-people"></i>
 				<span class="text">Historial de cobros</span>
