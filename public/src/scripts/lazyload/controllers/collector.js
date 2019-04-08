@@ -31,7 +31,18 @@
       var dateToday =  $filter('date')(new Date(), 'yyyy-MM-dd')
       $("#fechapago").val(dateToday);
       loadBranches();
-      loadData($("branch_id").val());
+      userCollector()
+
+      function userCollector() {
+        if ($scope.usuario.tipo_usuarios_id == 4){
+          $scope.showCollectorTable = false
+          collectorSelected = $scope.usuario
+          showCustomer($scope.usuario)
+        } else {
+          $scope.showCollectorTable = true
+          loadData($("branch_id").val());          
+        }
+      }
 
       function loadBranches() {
         $scope.sucursales = [];
@@ -118,6 +129,7 @@
       }
       
       $scope.showCustomerView = function(data){
+        console.log(data)
         showCustomer(data)
         collectorSelected = data
         pivotStructure = $scope.datas

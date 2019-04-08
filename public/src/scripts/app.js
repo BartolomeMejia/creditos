@@ -125,6 +125,10 @@
 				{
                     name: "app.service.report",
                     files: ["scripts/lazyload/services/report.js"]
+                },
+				{
+                    name: "app.service.branch",
+                    files: ["scripts/lazyload/services/branchs.js"]
                 }
 			]
 		})
@@ -356,7 +360,7 @@
 
 		$routeProvider.when("/reports/general", {
 			templateUrl: "views/reports/general.html",
-			controller: "ReportsController",
+			controller: "ReportsGeneralController",
 			resolve: {
 				deps: ["$ocLazyLoad", function(a) {
 					return a.load({

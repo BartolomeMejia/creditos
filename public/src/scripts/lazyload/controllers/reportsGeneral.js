@@ -1,23 +1,47 @@
 ; (function () {
     "use strict";
   
-    angular.module("app.reports", ["app.constants", 'app.service.report', 'app.service.pdfs'])
+    angular.module("app.reports", ["app.constants", 'app.service.report', 'app.service.pdfs', 'app.service.branch'])
   
-      .controller("ReportsController", ["$scope", "$filter", "$http", "$modal", "$interval", 'reportService', 'pdfsService', 'API_URL', function ($scope, $filter, $http, $modal, $timeout, reportService, pdfsService, API_URL) {
+      .controller("ReportsGeneralController", ["$scope", "$filter", "$http", "$modal", "$interval", 'reportService', 'pdfsService', 'branchService', function ($scope, $filter, $http, $modal, $timeout, reportService, pdfsService, branchService) {
 
         $scope.positionModel = "topRight";
         $scope.toasts = [];    
         $scope.customerGeneral = {}
-        var typeView = "";
+        $scope.branchs = []
 
-        loadGeneralReport()    
+        initLoadInfo();
+
+        function initLoadInfo() {
+            if ($scope.usuario.tipo_usuarios_id == 1) {
+                loadBranches()
+            } else {
+                loadGeneralReport($scope.usuario.sucursales_id)    
+            }
+        }
+
+        function loadBranches() {
+            branchService.branchs().then(
+                function successCallback(response) {    
+                    
+                    var itemAll = {}
+                    itemAll.descripcion = "Todos";
+                    itemAll.id = 0;
+                    $scope.branchs.push(itemAll)
+                    
+                    response.data.records.forEach(function (item) {                                        
+                        $scope.branchs.push(item)                        
+                    })
+                },
+                function errorCallback(response) {
+                    console.log(response)						
+            });
+        }
         
-
-        function loadGeneralReport(){        
-            var branch = $scope.usuario.sucursales_id            
-
-            reportService.general(branch)
-                .then(function(response){
+        function loadGeneralReport(branch){        
+            
+            reportService.general(branch).then(
+                function successCallback(response) {
                     if (response.data.result) {
                         var info = response.data.records                         
                         if (info != null && info != "" ) {
@@ -35,7 +59,15 @@
                         $scope.createToast("danger", "<strong>Error: Ocurrió un error al consultar los datos. </strong>");
                         $timeout(function () { $scope.closeAlert(0); }, 5000);
                     }
-            })
+                },
+                function errorCallback(response) {
+                    console.log(response)						
+                }
+            );
+        }
+
+        $scope.branchSelected = function(branch){
+            loadGeneralReport(branch)    
         }
 
          // toast function

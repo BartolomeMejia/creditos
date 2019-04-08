@@ -142,14 +142,25 @@ trait reportsTrait {
                             ->with('planes', 'montos')
                             ->get();
         } else if ($dateInit !=  "" && $dateFin != "") {
-            $credits = Creditos::where('sucursal_id', $branch)
+            if ($branch != 0) {
+                $credits = Creditos::where('sucursal_id', $branch)
                             ->where('fecha_inicio','<=',date($dateInit))
                             ->where('estado',1)
                             ->with('planes', 'montos')
                             ->get();
-        } else {            
+            } else {
+                $credits = Creditos::where('fecha_inicio','<=',date($dateInit))
+                            ->where('estado',1)
+                            ->with('planes', 'montos')
+                            ->get();
+            }
+        } else if ($branch != 0) {            
             $credits = Creditos::where('sucursal_id', $branch)                            
                             ->where('estado',1)
+                            ->with('planes', 'montos')
+                            ->get();
+        } else {
+            $credits = Creditos::where('estado',1)
                             ->with('planes', 'montos')
                             ->get();
         }
@@ -175,9 +186,13 @@ trait reportsTrait {
                             ->where('estado','!=',2)
                             ->with('planes', 'montos')
                             ->get();
-        } else {            
+        } else if ($branch != 0) {            
             $credits = Creditos::where('sucursal_id', $branch)                            
                             ->where('estado','!=',2)
+                            ->with('planes', 'montos')
+                            ->get();
+        } else {
+            $credits = Creditos::where('estado','!=',2)
                             ->with('planes', 'montos')
                             ->get();
         }

@@ -8,7 +8,13 @@
 					<div class="panel-heading">
 						<br>
 						
-						<form role="form" class="form-horizontal">														
+						<form role="form" class="form-horizontal">	
+							<div class="form-group" ng-if="usuario.tipo_usuarios_id == 1">								
+								<label class="col-sm-1  col-md-offset-1 control-label">Sucursal:</label>
+								<div class="col-md-5">
+									<select class="form-control" ng-model="branch" ng-options="item.id as item.descripcion for item in branchs" ng-change="branchSelected(branch)"></select>
+								</div>
+							</div>													
 							<div class="form-group">									
 								<label class="col-sm-1  col-md-offset-1 control-label">Fecha de inicio:</label>
 								<div class="col-md-2">

@@ -1,18 +1,21 @@
 <div class="page">
 	<div class="page-wrap">
 		<div class="row">
+
 			<div class="col-sm-12">
 				<div class="panel panel-default panel-hovered panel-stacked mb20">
 					<div class="panel-heading"><h4>Historial de cobros</h4></div>
-					<div class="panel-body">
-						<form role="form" class="form-horizontal" ng-submit="validarCliente(search_client)">
-							<div class="form-group">
-								<label class="col-sm-2 control-label">Nombre del cobrador:</label>
-								<div class="col-md-6">									
-									<select class="form-control" ng-model="history.collectors" ng-options="item as item.nombre for item in collectors" ng-change="selectCollector(history.collectors)"></select>
+					<div ng-if="usuario.tipo_usuarios_id != 4">
+						<div class="panel-body">
+							<form role="form" class="form-horizontal" ng-submit="validarCliente(search_client)">
+								<div class="form-group">
+									<label class="col-sm-2 control-label">Nombre del cobrador:</label>
+									<div class="col-md-6">									
+										<select class="form-control" ng-model="history.collectors" ng-options="item as item.nombre for item in collectors" ng-change="selectCollector(history.collectors)"></select>
+									</div>
 								</div>
-							</div>
-						</form>
+							</form>
+						</div>
 					</div>
 				</div>
 			</div>

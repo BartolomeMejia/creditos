@@ -31,23 +31,36 @@ class DashboardController extends Controller
             $customersWithCreditToDay = [];
             $resumenDashboard = new \stdClass();
         
-            $branchId = $request->session()->get('usuario')->tipo_usuarios_id == 1 ? 0 : $request->session()->get('usuario')->sucursales_id;
-            $branchs = Sucursales::get()->map(function($item,$key){   
-                            $item->customers = Creditos::where("estado", 1)->where("sucursal_id", $item->id)->count();
-                            $item->customersWithCreditToDay = $this->getCustomersWithCreditToDay($item->id)->count();
-                            $item->collectors = Usuarios::where("tipo_usuarios_id", 4)->where("sucursales_id", $item->id)->count();
-                            $item->customersWithCreditNoToDay = $item->customers - $item->customerWithCreditToDay; 
-                            return $item;
-                        });
-        
+            if ( $request->session()->get('usuario')->tipo_usuarios_id == 4 ) {        
+                $collectorId = $request->session()->get('usuario')->id;            
+                $resumenDashboard->customers = Creditos::where("estado", 1)->where("usuarios_cobrador", $collectorId)->groupBy("clientes_id")->get()->count();
+                $resumenDashboard->customersWithCreditToDay = $this->getCustomersWithCreditToDayForCollector($collectorId)->count();
+                $resumenDashboard->collectors = 1;
+                $resumenDashboard->customersWithCreditNoToDay = $resumenDashboard->customers - $resumenDashboard->customersWithCreditToDay; 
+
+                $this->records[] = $resumenDashboard;
+
+            } else { 
+                $branchId = $request->session()->get('usuario')->tipo_usuarios_id == 1 ? 0 : $request->session()->get('usuario')->sucursales_id;
+                $branchs = Sucursales::get()->map(function($item,$key){   
+                                $item->customers = Creditos::where("sucursal_id", $item->id)->where("estado", 1)->groupBy("clientes_id")->get()->count();
+                                $item->customersWithCreditToDay = $this->getCustomersWithCreditToDay($item->id)->count();
+                                $item->collectors = Usuarios::where("tipo_usuarios_id", 4)->where("sucursales_id", $item->id)->count();
+                                $item->customersWithCreditNoToDay = $item->customers - $item->customersWithCreditToDay; 
+                                return $item;
+                            });
+
+                if ($branchId != 0)
+                    $this->records = $branchs->filter(function ($item) use ($branchId){ return $item->id == $branchId; });        
+                else 
+                    $this->records = $branchs;
+            }
+
             $this->statusCode   = 200;
             $this->result       = true;
             $this->message      = "Registro consultado exitosamente";
-
-            if ($branchId != 0)
-                $this->records = $branchs->filter(function ($item) use ($branchId){ return $item->id == $branchId; });        
-            else 
-                $this->records = $branchs;
+            
+            
             
         } 
         catch (\Exception $e) 

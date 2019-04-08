@@ -25,8 +25,15 @@
 		$scope.existhistory = function(){
 			return showPanelPayments;
 		}
-	
+		
 		loadCollectors();
+		userCollector();
+
+		function userCollector(){
+			if ($scope.usuario.tipo_usuarios_id == 4){
+				showPanelPayments = true;
+			}
+		}
 		
 		function loadCollectors() {
 			
@@ -59,13 +66,12 @@
 		$scope.findRecords = function(){
 			if($("#fechainicio").val() != ""){
 				var selectedDate = $("#fechainicio").val()
-				var collectorId = collectorSelected.id
+				var collectorId = $scope.usuario.tipo_usuarios_id == 4 ? $scope.usuario.id : collectorSelected.id
 				loadPayments(collectorId, selectedDate)
 			}
 		}
 
 		$scope.saveData = function( record ) {
-			console.log(record)
 			if ($scope.accion == 'eliminar') {	
 				historyPaymentService.deleteHistory(record.id)			
 					.then(function successCallback(response) {
