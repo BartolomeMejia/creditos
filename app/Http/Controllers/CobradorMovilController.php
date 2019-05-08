@@ -14,6 +14,7 @@ use Auth;
 use DB;
 use Session;
 
+
 //revisar el usuario que no sea repedito
 //validar el password que vaya vacio
 
