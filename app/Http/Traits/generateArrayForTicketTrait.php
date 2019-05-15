@@ -23,7 +23,6 @@ trait generateArrayForTicketTrait {
         $timestamp = $dateInit->getTimestamp();
         $seconds = 0;
 
-        $countTemporal = 0;
         $countSundayTemporal = 0;
         for ($i=0; $i<$totalDays; $i++)  {  
             $dateTemporal = strtotime ( '+'.$i.' day' , strtotime ( $dateInitial) ) ;
@@ -33,8 +32,6 @@ trait generateArrayForTicketTrait {
 
             if($sundayTemporal == "Sun"){
                 ++$countSundayTemporal;
-            } else {
-                ++$countTemporal;
             }
         }
 

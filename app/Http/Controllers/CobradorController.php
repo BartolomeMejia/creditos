@@ -130,7 +130,7 @@ class CobradorController extends Controller
                 $detailsPaymentsGeneral = $this->getDetailsPaymentsForReportCollector($item->id);   
                 $item['cantidad_cuotas_pagadas'] = $detailsPaymentsForDay->totalFees;
                 $item['total_cuotas'] = $item->planes->dias;
-                $item['cuotas_atrasadas'] = $this->getDayOverdueCustomer($item->id, $detailsPaymentsGeneral->totalFees);
+                $item['cuotas_atrasadas'] = $this->getDayOverdueCustomer($item->id, $detailsPaymentsGeneral->totalFees) + 1;
                 $item['cantidad_cuotas_pendientes'] = $item->planes->dias - $detailsPaymentsGeneral->totalFees;
                 $item['monto_abonado'] = $detailsPaymentsForDay->paymentPaid;
                 $item['monto_pagado'] = $detailsPaymentsForDay->totalPayment;
