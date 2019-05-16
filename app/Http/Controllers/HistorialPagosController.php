@@ -76,6 +76,7 @@ class HistorialPagosController extends Controller
                 if($detallePago->save()){                    
                     $credito = Creditos::find($detallePago->credito_id);
                     $credito->saldo = $credito->saldo + $detallePago->abono;
+                    $credito->estado = 1;
                     
                     if($credito->save()){
                         $this->statusCode   = 200;

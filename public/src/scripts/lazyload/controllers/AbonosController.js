@@ -140,6 +140,7 @@
       }
 
       $scope.registrarAbono = function (cantidadAbonada) {
+        $('.btn-set-payment').prop('disabled', true)
         if (cantidadAbonada != '' && parseFloat(cantidadAbonada) > 0) {
           var datos = {
             idcredito: $scope.detalle_cliente.credit_id,

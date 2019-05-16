@@ -121,8 +121,8 @@
       }
 
       $scope.saveDataNewClient = function (cliente) {
+        $(".btn-new-customer").prop("disabled", true)
         if ($scope.accion == 'crear') {
-          console.log("entra");
           $http({
             method: 'POST',
             url: API_URL + 'clientes',
@@ -137,7 +137,7 @@
                 $scope.detalle_cliente.credito = 0;
                 $scope.detalle_cliente.nombre = response.data.records.nombre + ' ' + response.data.records.apellido
 
-                modal.close()
+                //modal.close()
                 $scope.createToast("success", "<strong>Éxito: </strong>" + response.data.message)
                 $timeout(function () {
                   $scope.closeAlert(0)
@@ -156,12 +156,14 @@
 
       $scope.addCredit = function (cliente){
         $('#row-detalle').removeClass('hidden')
+        $(".btn-new-customer").prop("disabled", true)
         modal.close()      
         updateCustomer(cliente)
       }
 
       $scope.addNewCredit = function (cliente){
         $('#row-detalle').removeClass('hidden')
+        $(".btn-new-customer").prop("disabled", true)
         modal.close()
 
         $scope.detalle_cliente = cliente

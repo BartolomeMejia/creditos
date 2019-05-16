@@ -67,8 +67,8 @@
 			</div>
 			<div class="row form-group" ng-if="accion == 'crear' || accion == 'editar'">
 				<div class="col-sm-12 text-right">
-					<button class="btn btn-success" ng-if="accion == 'crear'" ng-click="saveData(cliente)" ng-disabled="form.$invalid">Registrar</button>
-					<button class="btn btn-success" ng-if="accion == 'editar'" ng-click="saveData(cliente)" ng-disabled="form.$invalid">Actualizar</button>
+					<button id="newClienteButton" class="btn btn-success" ng-if="accion == 'crear'" ng-click="saveData(cliente)" ng-disabled="form.$invalid">Registrar</button>
+					<button id="editClienteButton" class="btn btn-success" ng-if="accion == 'editar'" ng-click="saveData(cliente)" ng-disabled="form.$invalid">Actualizar</button>
 				</div>
 			</div>
 		</form>

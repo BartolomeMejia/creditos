@@ -125,6 +125,7 @@
       }
 
       $scope.saveData = function (cliente) {
+        $('#newClienteButton').prop('disabled', true)
         if ($scope.accion == 'crear') {
           $http({
             method: 'POST',
