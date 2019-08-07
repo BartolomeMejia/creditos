@@ -129,6 +129,10 @@
 				{
                     name: "app.service.branch",
                     files: ["scripts/lazyload/services/branchs.js"]
+                },
+				{
+                    name: "app.service.cierreruta",
+                    files: ["scripts/lazyload/services/cierreruta.js"]
                 }
 			]
 		})
@@ -366,6 +370,19 @@
 					return a.load({
 						name: "app.reportsGeneral",
 						files: ["scripts/lazyload/controllers/reportsGeneral.js"]
+					})
+				}]
+			}
+		});
+
+		$routeProvider.when("/cierreruta", {
+			templateUrl: "views/cierreruta/cierreruta.html",
+			controller: "CierreRutaController",
+			resolve: {
+				deps: ["$ocLazyLoad", function(a) {
+					return a.load({
+						name: "app.cierreRuta",
+						files: ["scripts/lazyload/controllers/cierreruta.js"]
 					})
 				}]
 			}

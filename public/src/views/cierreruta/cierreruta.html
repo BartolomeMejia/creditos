@@ -3,23 +3,11 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="panel panel-default panel-hovered panel-stacked mb20">
-					<div class="panel-heading"><h4>Historial de cobros</h4></div>
-					<div ng-if="usuario.tipo_usuarios_id != 4">
-						<div class="panel-body">
-							<form role="form" class="form-horizontal" ng-submit="validarCliente(search_client)">
-								<div class="form-group">
-									<label class="col-sm-2 control-label">Nombre del cobrador:</label>
-									<div class="col-md-6">									
-										<select class="form-control" ng-model="history.collectors" ng-options="item as item.nombre for item in collectors" ng-change="selectCollector(history.collectors)"></select>
-									</div>
-								</div>
-							</form>
-						</div>
-					</div>
+					<div class="panel-heading"><h4>CIERRE DE RUTA</h4></div>
 				</div>
 			</div>
 		</div>
-		<div class="row" ng-show="existhistory()"> 
+		<div class="row"> 
 			<div class="col-sm-12">
 				<div class="panel panel-default panel-hovered panel-stacked mb20">
 					<div class="panel-heading">
@@ -65,27 +53,43 @@
 								</div>
 							</th>
 							<th>
-								Cliente
+								Cobrador
 								<div class="th">
-								<i class="fa fa-caret-up icon-up" ng-click=" order('nombre') " ng-class="{active: row == 'nombre'}"></i>
-								<i class="fa fa-caret-down icon-down" ng-click=" order('-nombre') " ng-class="{active: row == '-nombre'}"></i>
+								<i class="fa fa-caret-up icon-up" ng-click=" order('cobrador') " ng-class="{active: row == 'cobrador'}"></i>
+								<i class="fa fa-caret-down icon-down" ng-click=" order('-cobrador') " ng-class="{active: row == '-cobrador'}"></i>
 								</div>
 							</th>
 							<th>
-								Cantidad abonado
+								Monto
 								<div class="th">
-								<i class="fa fa-caret-up icon-up" ng-click=" order('nombre') " ng-class="{active: row == 'nombre'}"></i>
-								<i class="fa fa-caret-down icon-down" ng-click=" order('-nombre') " ng-class="{active: row == '-nombre'}"></i>
+								<i class="fa fa-caret-up icon-up" ng-click=" order('monto') " ng-class="{active: row == 'monto'}"></i>
+								<i class="fa fa-caret-down icon-down" ng-click=" order('-monto') " ng-class="{active: row == '-monto'}"></i>
 								</div>
-							</th>						
+							</th>
+							<th>
+								Fecha
+								<div class="th">
+								<i class="fa fa-caret-up icon-up" ng-click=" order('fecha') " ng-class="{active: row == 'fecha'}"></i>
+								<i class="fa fa-caret-down icon-down" ng-click=" order('-fecha') " ng-class="{active: row == '-fecha'}"></i>
+								</div>
+							</th>				
+							<th>
+								Hora
+								<div class="th">
+								<i class="fa fa-caret-up icon-up" ng-click=" order('hora') " ng-class="{active: row == 'hora'}"></i>
+								<i class="fa fa-caret-down icon-down" ng-click=" order('-hora') " ng-class="{active: row == '-hora'}"></i>
+								</div>
+							</th>										
 							<th>Acciones</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr ng-repeat="data in currentPageStores track by $index">
 							<td>{{ $index + 1 }}</td>
-							<td>{{ data.customer.nombre + " " + data.customer.apellido }}</td>
-							<td>Q. {{ data.abono | number: "2"}}</td>							
+							<td>{{ data.cobrador.nombre }}</td>
+							<td>Q. {{ data.monto_cierre | number: "2"}}</td>							
+							<td>{{ data.fecha }}</td>							
+							<td>{{ data.hora }}</td>							
 							<td>
 								<div class="btn-group">
 								<button type="button" class="btn btn-danger ion ion-close" ng-click="modalDeleteOpen(data)" md-ink-ripple></button>
@@ -118,5 +122,5 @@
 </div>
 
 <script>
-	$('.input-group.date').datepicker({format: "yyyy-mm-dd"}); 
+	$('.input-group.date').datepicker({format: "dd-mm-yyyy"}); 
 </script>

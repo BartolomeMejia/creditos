@@ -20,18 +20,20 @@
       $scope.toasts = [];
       $scope.showCollectorTable = true;
       $scope.collectorSelected = '';
-      $scope.totalCobrar = 0;
-      $scope.totalMinimoCobrar = 0;
-      $scope.totalCartera = 0;
-      $scope.totalPendientePago = 0;
+      $scope.totalCobrar = 0
+      $scope.totalMinimoCobrar = 0
+      $scope.totalCartera = 0
+      $scope.totalPendientePago = 0
+      $scope.showButtonRouteClosure = true
       var modal;
       var pivotStructure = []
       var collectorSelected = {}
 
       var dateToday =  $filter('date')(new Date(), 'yyyy-MM-dd')
       $("#fechapago").val(dateToday);
-      loadBranches();
+      loadBranches()
       userCollector()
+      validateButtonRouteClosure()
 
       function userCollector() {
         if ($scope.usuario.tipo_usuarios_id == 4){
@@ -114,6 +116,14 @@
         });
       }
 
+      function validateButtonRouteClosure(){
+        if ( $("#fechapago").val() != dateToday) {
+          $scope.showButtonRouteClosure = false
+        } else {
+          $scope.showButtonRouteClosure = true
+        }
+      }
+
       $scope.changeDataBranch = function(branch_id){
         loadData(branch_id);
       }
@@ -125,11 +135,11 @@
           $scope.totalCartera = 0
           $scope.totalPendientePago = 0
           showCustomer(collectorId)
+          validateButtonRouteClosure()
         }
       }
       
-      $scope.showCustomerView = function(data){
-        console.log(data)
+      $scope.showCustomerView = function(data){      
         showCustomer(data)
         collectorSelected = data
         pivotStructure = $scope.datas
@@ -192,43 +202,16 @@
       }
 
       // modals function
-      $scope.modalCreateOpen = function(){
-        $scope.usuario = {};
-        $scope.accion = 'crear';
+      $scope.modalConfirm = function(collector, amount) {			
+        $scope.accion = 'confirmar';
+        $scope.cobrador = collector;
+        $scope.montocierre = amount;
 
         modal = $modal.open({
-          templateUrl: "views/usuarios/modal.html",
+          templateUrl: "views/collectors/modal.html",
           scope: $scope,
           size: "md",
-          resolve: function () { },
-          windowClass: "default"
-        });
-      }
-
-      $scope.modalEditOpen = function(data){
-        $scope.accion = 'editar';
-        $scope.usuario = data;
-
-        data.estado == 1 ? $scope.usuario.estado = true : $scope.usuario.estado = false;
-
-        modal = $modal.open({
-          templateUrl: "views/usuarios/modal.html",
-          scope: $scope,
-          size: "md",
-          resolve: function () { },
-          windowClass: "default"
-        });
-      }
-
-      $scope.modalDeleteOpen = function (data) {
-        $scope.accion = 'eliminar';
-
-        $scope.usuario = data;
-        modal = $modal.open({
-          templateUrl: "views/usuarios/modal.html",
-          scope: $scope,
-          size: "md",
-          resolve: function () { },
+          resolve: function() {},
           windowClass: "default"
         });
       }

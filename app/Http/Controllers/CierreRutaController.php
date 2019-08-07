@@ -15,9 +15,10 @@ class CierreRutaController extends Controller
     private $message = '';
     private $records = [];
 
-    private function index(Request $request){
+    public function index(){
         try {
-            $registros = CierreRuta::where('sucursal_id', $request->input('sucursal'))->get();
+            //$registros = CierreRuta::where('sucursal_id', $request->input('sucursal'))->get();
+            $registros = CierreRuta::with('cobrador')->get();
 
             if ( $registros ) {
                 $this->statusCode   = 200;
@@ -50,8 +51,8 @@ class CierreRutaController extends Controller
                                     'sucursal_id' => $request->input('sucursal'),
                                     'cobrador_id' => $request->input('cobrador'),
                                     'monto_cierre' => $request->input('montoCierre'),
-                                    'fecha' => \Carbon\Carbon::now()->toDateString();   
-                                    'hora' => \Carbon\Carbon::now()->toDateString();  
+                                    'fecha' => \Carbon\Carbon::now()->toDateString(),   
+                                    'hora' => \Carbon\Carbon::now()->toTimeString(),
                                     'estado' => 1
                                 ]);
 

@@ -29,6 +29,7 @@ Route::group(['prefix' => 'ws'], function() {
 	Route::resource('creditos',				'CreditosController');
 	Route::resource('usuarios',				'UsuariosController');
 	Route::post('login',					'UsuariosController@login');
+	Route::resource('cierreruta',			'CierreRutaController');
 
 	Route::get('logout',function() {
 		Auth::logout();

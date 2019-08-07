@@ -304,7 +304,12 @@
                 </div>
                 <br>
                 <div class="col-sm-12 text-center">
-                  <button class="btn btn-info btn-rounded" ng-click="printResume()">Imprimir resumen</button>
+                  <button ng-if="showButtonRouteClosure" class="btn btn-danger btn-rounded" ng-click="modalConfirm(collectorSelected, collectionofday)">CIERRE DE RUTA</button>
+                </div>
+                <br>
+                <br>
+                <div class="col-sm-12 text-center">
+                  <button class="btn btn-info btn-rounded" ng-click="printResume()">IMPRIMIR RESUMEN</button>
                 </div>
               </div>
             </div>
