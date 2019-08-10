@@ -48,29 +48,30 @@ class CierreRutaController extends Controller
         try {
             $nuevoRegistro = \DB::transaction(function() use ($request) {
                                 $nuevoRegistro = CierreRuta::create([
-                                    'sucursal_id' => $request->input('sucursal'),
-                                    'cobrador_id' => $request->input('cobrador'),
-                                    'monto_cierre' => $request->input('montoCierre'),
-                                    'fecha' => \Carbon\Carbon::now()->toDateString(),   
+                                    'sucursal_id' => $request->input('branch_id'),
+                                    'cobrador_id' => $request->input('collector_id'),
+                                    'monto_cierre' => $request->input('total_amount'),
+                                    'fecha_cierre' => $request->input('date'),
+                                    'fecha_cerrado' => \Carbon\Carbon::now()->toDateString(),   
                                     'hora' => \Carbon\Carbon::now()->toTimeString(),
                                     'estado' => 1
                                 ]);
 
                                 if ( !$nuevoRegistro) 
-                                    throw new \Exception("No se pudo crear el registro");
+                                    throw new \Exception("Ocurrió un problema al realizar el cierre de la ruta. Por favor inténtelo nuevamente");
                                 else
                                     return $nuevoRegistro;
                             });
 
             $this->statusCode   =   200;
             $this->result       =   true;
-            $this->message      =   "Registro crear exitosamente";
+            $this->message      =   "Cierre de ruta generado exitosamente";
             $this->records      =   $nuevoRegistro;
             
         } catch (\Exception $e) {
             $this->statusCode   =   200;
             $this->result       =   false;
-            $this->message      =   env('APP_DEBUG') ? $e->getMessage() : "Ocurrio un problema al crear el registro";
+            $this->message      =   env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al realizar el cierre de la ruta. Por favor inténtelo nuevamente";
         } finally {
             $response = [
                 'result'    => $this->result,
@@ -140,11 +141,9 @@ class CierreRutaController extends Controller
         }
     }
 
-    public function destroy($id)
-    {
+    public function destroy($id) {
         try {
-            $deleteRegistro = \DB::transaction(function() use( $id )
-                        {
+            $deleteRegistro = \DB::transaction(function() use( $id ){
                             $registro = CierreRuta::find( $id );
                             $registro->delete();
                         });
@@ -162,6 +161,35 @@ class CierreRutaController extends Controller
                 'result'    => $this->result,
                 'message'   => $this->message,
             ];
+            return response()->json($response, $this->statusCode);
+        }
+    }
+
+    public function validateCierreRuta(Request $request) {
+        try {
+            $record = CierreRuta::where('cobrador_id', $request->input('collector_id'))
+                                ->where('fecha_cierre', $request->input('date'))
+                                ->where('estado', 1)
+                                ->first();
+            
+            if ($record) {
+                $this->result       = true;
+                $this->message      = "Registro consultado exitosamente";
+                $this->records      = true;
+            } else
+                throw new \Exception("No se encontro el registro");
+                                    
+        } catch (\Exception $e) {
+            $this->records = false;
+            $this->result       = false;
+            $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al obtener el registro";
+        } finally {
+            $response = [
+                'result' => $this->result,
+                'message' => $this->message,
+                'records'   => $this->records
+            ];
+
             return response()->json($response, $this->statusCode);
         }
     }

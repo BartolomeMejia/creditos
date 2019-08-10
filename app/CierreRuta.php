@@ -11,7 +11,8 @@ class CierreRuta extends Model
 						'cobrador_id',
 						'usuario_id',
 						'monto_cierre',
-						'fecha',
+						'fecha_cierre',
+						'fecha_cerrado',
 						'hora',
 						'estado'];
 

@@ -30,12 +30,7 @@ Route::group(['prefix' => 'ws'], function() {
 	Route::resource('usuarios',				'UsuariosController');
 	Route::post('login',					'UsuariosController@login');
 	Route::resource('cierreruta',			'CierreRutaController');
-
-	Route::get('logout',function() {
-		Auth::logout();
-		return \Redirect::to('/');
-	});
-
+	Route::get('validatecierreruta', 		'CierreRutaController@validatecierreruta');
 	Route::get('session/check',				'UsuariosController@checkSession');
 	Route::get('cobradorclientes',			'CreditosController@cobradorClientes');
 	Route::get('listacobradores',			'UsuariosController@listacobradores');
@@ -55,6 +50,11 @@ Route::group(['prefix' => 'ws'], function() {
 	Route::get('reportgeneral',				'ReportsController@general');
 	Route::get('reportcollector',			'ReportsController@collector');
 	Route::get('reportdates',				'ReportsController@dates');
+
+	Route::get('logout',function() {
+		Auth::logout();
+		return \Redirect::to('/');
+	});
 });
 
 Route::group(['prefix' => 'ws/movil'], function()

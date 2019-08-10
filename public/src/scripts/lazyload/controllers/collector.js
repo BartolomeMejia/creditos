@@ -1,9 +1,29 @@
 ; (function () {
   "use strict";
 
-  angular.module("app.collector", ["app.constants", 'app.service.collector', 'app.service.pdfs'])
+  angular.module("app.collector", ["app.constants", 
+                                  'app.service.collector', 
+                                  'app.service.pdfs',
+                                  'app.service.cierreruta'])
 
-    .controller("CollectorController", ["$scope", "$filter", "$http", "$modal", "$interval", 'collectorService', 'pdfsService', 'API_URL', function ($scope, $filter, $http, $modal, $timeout, collectorService, pdfsService, API_URL) {
+    .controller("CollectorController", ["$scope", 
+                                        "$filter", 
+                                        "$http", 
+                                        "$modal",
+                                        "$interval",
+                                        'collectorService', 
+                                        'pdfsService',
+                                        'cierreRutaService', 
+                                        'API_URL', 
+                                        function ($scope, 
+                                                  $filter, 
+                                                  $http, 
+                                                  $modal, 
+                                                  $timeout,
+                                                  collectorService, 
+                                                  pdfsService,
+                                                  cierreRutaService, 
+                                                  API_URL) {
 
       // general vars
       $scope.loadBranches = [];
@@ -25,6 +45,7 @@
       $scope.totalCartera = 0
       $scope.totalPendientePago = 0
       $scope.showButtonRouteClosure = true
+      $scope.routeClosure = {}
       var modal;
       var pivotStructure = []
       var collectorSelected = {}
@@ -33,7 +54,7 @@
       $("#fechapago").val(dateToday);
       loadBranches()
       userCollector()
-      validateButtonRouteClosure()
+      getServiceValidateRouteClosure()
 
       function userCollector() {
         if ($scope.usuario.tipo_usuarios_id == 4){
@@ -91,14 +112,13 @@
 
       function showCustomer(data){
         var date = $("#fechapago").val()
-        collectorService.detail(data.id, date).then(function(response){          
-          $scope.collectorSelected = data.nombre          
-          $scope.showCollectorTable = false
 
+        collectorService.detail(data.id, date).then(function(response){          
+          $scope.collectorSelected = data       
+          $scope.showCollectorTable = false
           $scope.totalCobrar = response.data.records.total_cobrar
           $scope.totalMinimoCobrar = response.data.records.total_minimo
 
-          var collectionofday = 0;
           response.data.records.registros.forEach(function (element) {
             if (element.estado == 1) {
               $scope.totalCartera = $scope.totalCartera + element.deudatotal
@@ -116,11 +136,26 @@
         });
       }
 
-      function validateButtonRouteClosure(){
-        if ( $("#fechapago").val() != dateToday) {
-          $scope.showButtonRouteClosure = false
+      function getServiceValidateRouteClosure(collectorId){  
+        
+        var date = $("#fechapago").val()      
+        
+        if ($scope.usuario.tipo_usuarios_id != 1) {
+          cierreRutaService.validateCierreRuta(collectorId, date)
+            .then(function successCallback(response){     
+              $scope.showButtonRouteClosure = response.data.records                  			          
+            },
+            function errorCallback(response) {
+              $scope.showButtonRouteClosure = false					
+            });
         } else {
-          $scope.showButtonRouteClosure = true
+          $scope.showButtonRouteClosure = false						
+        }
+      }
+
+      function printResume(){
+        if($("#fechapago").val() != ""){
+          pdfsService.resumenPaymentCollector(collectorSelected.id, $("#fechapago").val())
         }
       }
 
@@ -129,18 +164,17 @@
       }
 
       $scope.findCustomers = function(){
-        if($("#fechapago").val() != ""){
-          var selectedDate = $("#fechapago").val()
-          var collectorId = collectorSelected
+        if($("#fechapago").val() != ""){                    
           $scope.totalCartera = 0
           $scope.totalPendientePago = 0
-          showCustomer(collectorId)
-          validateButtonRouteClosure()
+          showCustomer(collectorSelected)
+          getServiceValidateRouteClosure(collectorSelected.id)
         }
       }
       
       $scope.showCustomerView = function(data){      
         showCustomer(data)
+        getServiceValidateRouteClosure(data.id)
         collectorSelected = data
         pivotStructure = $scope.datas
       }
@@ -158,10 +192,29 @@
         $scope.totalPendientePago = 0
       }
 
+      $scope.confirmRouteClosure = function(dataRouteClosure){
+        var newRouteClosure = {}
+        newRouteClosure.branch_id =  $scope.usuario.sucursales_id
+        newRouteClosure.collector_id = dataRouteClosure.collectorId
+        newRouteClosure.total_amount = dataRouteClosure.closingAmount
+        newRouteClosure.date = $("#fechapago").val()
+        cierreRutaService.saveClosingRoute(newRouteClosure)
+          .then(function successCallback(response){     
+            printResume()            
+            modal.close();
+            $scope.showButtonRouteClosure = true
+            $scope.createToast("success", "<strong>Éxito: </strong>"+response.data.message);
+            $timeout( function(){ $scope.closeAlert(0); }, 3000);		          
+          },
+          function errorCallback(response) {
+            $scope.showButtonRouteClosure = false
+            $scope.createToast("danger", "<strong>Error: </strong>"+response.data.message);
+							$timeout( function(){ $scope.closeAlert(0); }, 5000);	
+					});
+      }
+
       $scope.printResume = function(){
-        if($("#fechapago").val() != ""){
-          pdfsService.resumenPaymentCollector(collectorSelected.id, $("#fechapago").val())
-        }
+        printResume()
       }
 
       // datatable collector functions
@@ -202,10 +255,11 @@
       }
 
       // modals function
-      $scope.modalConfirm = function(collector, amount) {			
+      $scope.modalConfirm = function(dataCollector, amount) {			
         $scope.accion = 'confirmar';
-        $scope.cobrador = collector;
-        $scope.montocierre = amount;
+        $scope.routeClosure.collectorName = dataCollector.nombre;
+        $scope.routeClosure.collectorId = dataCollector.id;
+        $scope.routeClosure.closingAmount = amount;        
 
         modal = $modal.open({
           templateUrl: "views/collectors/modal.html",

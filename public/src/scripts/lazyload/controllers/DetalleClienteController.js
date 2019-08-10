@@ -38,8 +38,7 @@
 			showData(credit)
 		}
 
-		function showData(infoCredit){
-			console.log(infoCredit)
+		function showData(infoCredit){			
 			$scope.dpi	= customer.dpi
 			$scope.nombre = customer.nombre
 			$scope.apellido = customer.apellido

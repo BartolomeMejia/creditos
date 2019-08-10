@@ -67,7 +67,14 @@
 								</div>
 							</th>
 							<th>
-								Fecha
+								Fecha de Ruta
+								<div class="th">
+								<i class="fa fa-caret-up icon-up" ng-click=" order('fecha') " ng-class="{active: row == 'fecha'}"></i>
+								<i class="fa fa-caret-down icon-down" ng-click=" order('-fecha') " ng-class="{active: row == '-fecha'}"></i>
+								</div>
+							</th>
+							<th>
+								Fecha Cerrada
 								<div class="th">
 								<i class="fa fa-caret-up icon-up" ng-click=" order('fecha') " ng-class="{active: row == 'fecha'}"></i>
 								<i class="fa fa-caret-down icon-down" ng-click=" order('-fecha') " ng-class="{active: row == '-fecha'}"></i>
@@ -88,7 +95,8 @@
 							<td>{{ $index + 1 }}</td>
 							<td>{{ data.cobrador.nombre }}</td>
 							<td>Q. {{ data.monto_cierre | number: "2"}}</td>							
-							<td>{{ data.fecha }}</td>							
+							<td>{{ data.fecha_cierre }}</td>
+							<td>{{ data.fecha_cerrado }}</td>							
 							<td>{{ data.hora }}</td>							
 							<td>
 								<div class="btn-group">

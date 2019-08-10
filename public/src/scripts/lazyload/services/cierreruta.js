@@ -7,11 +7,11 @@ cierre_ruta.service('cierreRutaService', ['$http', 'API_URL', function($http, AP
         return $http.get(API_URL+'cierreruta');
     };
 
-    this.collectors = function () {
-        return $http.get(API_URL+'listacobradores');
+    this.validateCierreRuta = function (collectorId, date) {
+        return $http.get(API_URL+'validatecierreruta?collector_id='+collectorId+'&date='+date);
     };
 
-    this.deleteHistory = function(id){
-        return $http.get(API_URL+'deletepayment?detalle_id='+id);
+    this.saveClosingRoute = function(dataRouteClosure){
+        return $http.post(API_URL+'cierreruta', dataRouteClosure);
     }
 }]);
