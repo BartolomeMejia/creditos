@@ -14,7 +14,8 @@ class CierreRuta extends Model
 						'fecha_cierre',
 						'fecha_cerrado',
 						'hora',
-						'estado'];
+						'estado',
+						'info_closure'];
 
 	public function sucursal(){
 		return $this->hasOne('App\Sucursales', 'id', 'sucursal_id');

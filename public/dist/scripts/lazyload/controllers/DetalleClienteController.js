@@ -19,7 +19,7 @@
 			  	params: {cliente_id:id}
 			})
 			.then(function successCallback(response)  {		
-				console.log(response.data.records)
+				
 				customer =  response.data.records
 
 				if (customer.creditos.length > 1){
@@ -39,7 +39,7 @@
 		}
 
 		function showData(infoCredit){
-			console.log(infoCredit)
+			
 			$scope.dpi	= customer.dpi
 			$scope.nombre = customer.nombre
 			$scope.apellido = customer.apellido

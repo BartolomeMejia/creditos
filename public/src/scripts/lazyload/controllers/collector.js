@@ -153,9 +153,9 @@
         }
       }
 
-      function printResume(){
+      function printResume(routeClosureId){
         if($("#fechapago").val() != ""){
-          pdfsService.resumenPaymentCollector(collectorSelected.id, $("#fechapago").val())
+          pdfsService.resumenPaymentCollector(collectorSelected.id, $("#fechapago").val(),routeClosureId)
         }
       }
 
@@ -200,7 +200,7 @@
         newRouteClosure.date = $("#fechapago").val()
         cierreRutaService.saveClosingRoute(newRouteClosure)
           .then(function successCallback(response){     
-            printResume()            
+            printResume(response.data.records.id)            
             modal.close();
             $scope.showButtonRouteClosure = true
             $scope.createToast("success", "<strong>Éxito: </strong>"+response.data.message);
@@ -214,7 +214,7 @@
       }
 
       $scope.printResume = function(){
-        printResume()
+        printResume(0)
       }
 
       // datatable collector functions

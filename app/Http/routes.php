@@ -50,6 +50,7 @@ Route::group(['prefix' => 'ws'], function() {
 	Route::get('reportgeneral',				'ReportsController@general');
 	Route::get('reportcollector',			'ReportsController@collector');
 	Route::get('reportdates',				'ReportsController@dates');
+	Route::get('printinfoclosure',			'CierreRutaController@printReportClosure');
 
 	Route::get('logout',function() {
 		Auth::logout();

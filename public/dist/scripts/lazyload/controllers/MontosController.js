@@ -173,7 +173,7 @@
               })
         }
         else if ($scope.accion == 'eliminar') {
-          console.log(monto)
+          
           $http({
             method: 'DELETE',
             url: API_URL + 'montosprestamo/' + monto.id,

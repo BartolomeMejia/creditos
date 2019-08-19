@@ -124,7 +124,7 @@
       $scope.modalcreditos = function (infoCredit){
         $scope.name_customer = infoCredit.nombre + ' ' + infoCredit.apellido;
         $scope.credits = infoCredit.creditos
-        console.log(infoCredit.creditos)
+        
         modal = $modal.open({
           templateUrl: "views/abonos/modalCredito.html",
           scope: $scope,

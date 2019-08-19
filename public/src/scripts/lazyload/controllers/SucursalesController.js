@@ -33,7 +33,6 @@
 			}, 
 			function errorCallback(response)  {			
 			   console.log( response.data.message );
-			   console.log("aqui");
 			});
 		}
 

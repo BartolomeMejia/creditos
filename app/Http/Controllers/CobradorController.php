@@ -10,6 +10,7 @@ use App\Usuarios;
 use App\Creditos;
 use App\Sucursales;
 use App\DetallePagos;
+use App\CierreRuta;
 use App\Http\Traits\detailsPaymentsTrait;
 use App\Http\Traits\detailsCustomerTrait;
 
@@ -155,7 +156,15 @@ class CobradorController extends Controller
             $datos->registros = $registros;
             
         }
-        
+        if (intval($request->input("closure_id")) != 0 ) {
+            $routeClosure = CierreRuta::find($request->input("closure_id"));
+            
+            if ($routeClosure) {
+                $routeClosure->info_closure = json_encode($datos);
+                $routeClosure->save();
+            }
+        }
+
         $pdf = \App::make('dompdf');        
         $pdf = \PDF::loadView('pdf.resumentodaycollector', ['data' => $datos])->setPaper('legal', 'portrait');
         return $pdf->download($collector->nombre.'.pdf');

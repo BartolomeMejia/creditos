@@ -66,7 +66,7 @@
       }
 
       $scope.validarCliente = function (search_client) {    
-        console.log(search_client)  
+        
         $http({
           method: 'GET',
           url: API_URL + 'buscarcliente',

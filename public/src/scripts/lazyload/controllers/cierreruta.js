@@ -65,6 +65,10 @@
 			});
 		}
 
+		$scope.printInfoClosure = function(routeClosureId) {			
+			cierreRutaService.printInfoClosure(routeClosureId)
+		}
+
 		// #region Toasts		
 		$scope.createToast = function(tipo, mensaje) {
 			$scope.toasts.push({

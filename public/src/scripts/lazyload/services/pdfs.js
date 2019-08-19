@@ -7,7 +7,7 @@ pdfs_service.service('pdfsService', ['$window','$http', 'API_URL', function($win
         $window.location.href = API_URL+'boletapdf?credito_id=' + id;
     };
 
-    this.resumenPaymentCollector = function(cobradorId, date){
-        $window.location.href = API_URL+'collectorpdf?idusuario='+cobradorId+'&fecha='+date;
+    this.resumenPaymentCollector = function(cobradorId, date, routeClosureId){
+        $window.location.href = API_URL+'collectorpdf?idusuario='+cobradorId+'&fecha='+date+'&closure_id='+routeClosureId;
     }
 }]);

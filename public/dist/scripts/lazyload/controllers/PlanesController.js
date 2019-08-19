@@ -216,7 +216,7 @@
       $scope.modalEditOpen = function (data) {
         $scope.accion = 'editar'
         $scope.plan = data
-        console.log(data);
+        
         data.domingo == 1 ? $scope.plan.domingo = true : $scope.plan.domingo = false
         modal = $modal.open({
           templateUrl: "views/planes/modal.html",

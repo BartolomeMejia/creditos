@@ -18,8 +18,7 @@
 			  	url: 	API_URL+'detallecliente',
 			  	params: {cliente_id:id}
 			})
-			.then(function successCallback(response)  {		
-				console.log(response.data.records)
+			.then(function successCallback(response)  {						
 				customer =  response.data.records
 
 				if (customer.creditos.length > 1){

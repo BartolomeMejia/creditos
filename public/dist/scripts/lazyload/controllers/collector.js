@@ -128,8 +128,7 @@
         }
       }
       
-      $scope.showCustomerView = function(data){
-        console.log(data)
+      $scope.showCustomerView = function(data){        
         showCustomer(data)
         collectorSelected = data
         pivotStructure = $scope.datas

@@ -191,4 +191,13 @@ class CierreRutaController extends Controller
             return response()->json($response, $this->statusCode);
         }
     }
+
+    public function printReportClosure(Request $request){        
+        $routeClosure = CierreRuta::where("id", intval($request->input("closure_id")))->with('cobrador')->first();        
+        if ($routeClosure) {
+            $pdf = \App::make('dompdf');        
+            $pdf = \PDF::loadView('pdf.resumentodaycollector', ['data' => json_decode($routeClosure->info_closure)])->setPaper('legal', 'portrait');
+            return $pdf->download($routeClosure->cobrador->nombre.'.pdf');
+        }
+    }
 }
