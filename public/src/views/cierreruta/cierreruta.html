@@ -16,13 +16,13 @@
 							<div class="form-group">								
 								<label>Fecha de cobro: </label>
 								<div class="input-group date" >
-									<input  type="text" id="fechainicio" class="form-control">
+									<input  type="text" ng-model="dateRouteClosure" class="form-control">
 									<div class="input-group-addon" >
 										<span class="glyphicon glyphicon-th"></span>
 									</div>
 								</div>						
 								<label>&nbsp &nbsp &nbsp</label>	
-								<button align="center" type="button" class="btn btn-success btn-rounded" ng-click="findRecords()" ng-disabled="form.$invalid">Buscar</button>									
+								<button align="center" type="button" class="btn btn-success btn-rounded" ng-click="findRecordsDate()" ng-disabled="form.$invalid">Buscar</button>									
 							</div>	
 						</form>
 						<br>
@@ -83,6 +83,13 @@
 							<th>
 								Hora
 								<div class="th">
+								<i class="fa fa-caret-up icon-up" ng-click=" order('estado') " ng-class="{active: row == 'estado'}"></i>
+								<i class="fa fa-caret-down icon-down" ng-click=" order('-estado') " ng-class="{active: row == '-estado'}"></i>
+								</div>
+							</th>
+							<th>
+								Estado
+								<div class="th">
 								<i class="fa fa-caret-up icon-up" ng-click=" order('hora') " ng-class="{active: row == 'hora'}"></i>
 								<i class="fa fa-caret-down icon-down" ng-click=" order('-hora') " ng-class="{active: row == '-hora'}"></i>
 								</div>
@@ -99,8 +106,12 @@
 							<td>{{ data.fecha_cerrado }}</td>							
 							<td>{{ data.hora }}</td>							
 							<td>
+								<label ng-if="data.estado == 1" class="label label-danger mr5">Cerrado</label>
+								<label ng-if="data.estado == 2" class="label label-success mr5">Habilitado</label>
+							</td>							
+							<td>
 								<div class="btn-group">
-								<button type="button" class="btn btn-danger ion ion-close" ng-click="modalDeleteOpen(data)" md-ink-ripple></button>
+									<button ng-if="data.estado == 1" type="button" class="btn btn-danger ion ion-close" ng-click="modalOpenConfirme(data)" md-ink-ripple></button>							
 								</div>
 							</td>
 							</tr>
@@ -130,5 +141,5 @@
 </div>
 
 <script>
-	$('.input-group.date').datepicker({format: "dd-mm-yyyy"}); 
+	$('.input-group.date').datepicker({format: "yyyy-mm-dd"}); 
 </script>

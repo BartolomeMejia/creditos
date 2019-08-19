@@ -5,38 +5,67 @@
 	angular.module("app.cierreRuta", ["app.constants", 'app.service.cierreruta'])
 
 	.controller("CierreRutaController", ["$scope", "$filter", "$modal", "$interval", 'cierreRutaService', 'API_URL', function($scope, $filter, $modal, $timeout, cierreRutaService, API_URL)  {	
-		
-		$scope.datas = Array();
-		$scope.date = "";
+	
+		$scope.currentPageStores = []
+		$scope.searchKeywords = ""
+		$scope.filteredData = []	
+		$scope.row = ""
+		$scope.numPerPageOpts = [5, 10, 25, 50, 100]
+		$scope.numPerPage = $scope.numPerPageOpts[1]
+		$scope.currentPage = 1
+		$scope.positionModel = "topRight"
+		$scope.toasts = []
 
-		$scope.currentPageStores = [];
-		$scope.searchKeywords = "";
-		$scope.filteredData = [];	
-		$scope.row = "";
-		$scope.numPerPageOpts = [5, 10, 25, 50, 100];
-		$scope.numPerPage = $scope.numPerPageOpts[1];
-		$scope.currentPage = 1;
-		$scope.positionModel = "topRight";
-		$scope.toasts = [];
-		var modal;
-		var showPanelPayments = false;
-		var collectorSelected = {};
-		
+		$scope.datas = Array()
+		$scope.dateRouteClosure = $filter('date')(new Date(), 'yyyy-MM-dd')
+
+		var modal
+		var collectorSelected = {}
+
 		showCierreRutas();
 		
-		
 		function showCierreRutas() {
-			cierreRutaService.cierreRutaList()
-				.then(function successCallback(response) {        
-					console.log(response.data.records)        
+			var dateClosure = $scope.dateRouteClosure			
+			cierreRutaService.cierreRutaList(dateClosure)
+				.then(function successCallback(response) {        					        
                     $scope.datas = response.data.records;
 					$scope.search();
 					$scope.select($scope.currentPage);
 			  	})
 		}
 
+		$scope.findRecordsDate = function(){		
+			if($scope.dateRouteClosure != ""){								
+				showCierreRutas()
+			}
+		}
 
-		//FUNCIONES DE TOAST		
+		$scope.confirmeOpenRoute = function(routeClosure){
+			
+			cierreRutaService.updateClosingRoute(routeClosure.id) 
+			.then(function successCallback(response) {
+				if( response.data.result ) {
+				
+					showCierreRutas()
+					
+					modal.close();
+					$scope.createToast("success", "<strong>Éxito: </strong>"+response.data.message);
+					$timeout( function(){ $scope.closeAlert(0); }, 3000);
+				}
+				else {
+					modal.close();
+					$scope.createToast("danger", "<strong>Error: </strong>"+response.data.message);
+					$timeout( function(){ $scope.closeAlert(0); }, 5000);	
+				}
+			}, 
+			function errorCallback(response) {
+				modal.close();
+				$scope.createToast("danger", "<strong>Error: </strong>"+response.data.message);
+				$timeout( function(){ $scope.closeAlert(0); }, 5000);	
+			});
+		}
+
+		// #region Toasts		
 		$scope.createToast = function(tipo, mensaje) {
 			$scope.toasts.push({
 				anim: "bouncyflip",
@@ -48,8 +77,9 @@
 		$scope.closeAlert = function(index) {
 			$scope.toasts.splice(index, 1);
 		}
+		// #endregion
 
-		// FUNCIONES DE DATATABLE
+		// #region DataTable
 		$scope.select = function(page) {
 			var start = (page - 1)*$scope.numPerPage,
 				end = start + $scope.numPerPage;
@@ -84,11 +114,11 @@
 			$scope.row = rowName;
 			$scope.filteredData = $filter('orderBy')($scope.datas, rowName);
 			$scope.onOrderChange();
-		}	
+		}
+		// #endregion	
 
-		//FUNCIONES DE MODALES
-		$scope.modalConfirm = function(data) {			
-			$scope.accion = 'confirmar';
+		// #region Modals
+		$scope.modalOpenConfirme = function(data) {						
 			$scope.record = data;
 
 			modal = $modal.open({
@@ -103,5 +133,6 @@
 		$scope.modalClose = function() {
 			modal.close();
 		}
+		// #endregion
 	}])
 }())

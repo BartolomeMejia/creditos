@@ -15,10 +15,9 @@ class CierreRutaController extends Controller
     private $message = '';
     private $records = [];
 
-    public function index(){
+    public function index(Request $request){
         try {
-            //$registros = CierreRuta::where('sucursal_id', $request->input('sucursal'))->get();
-            $registros = CierreRuta::with('cobrador')->get();
+            $registros = CierreRuta::where('fecha_cerrado', $request->input('fecha_cerrado'))->with('cobrador')->get();
 
             if ( $registros ) {
                 $this->statusCode   = 200;
@@ -116,9 +115,7 @@ class CierreRutaController extends Controller
         {
             \DB::beginTransaction();
             $registro = CierreRuta::find( $id );
-            /*$registro->fecha = $request->input('descripcion', $registro->descripcion);
-            'fecha' => \Carbon\Carbon::now()->toDateString();   
-            'hora' => \Carbon\Carbon::now()->toDateString();  */
+            $registro->estado = 2;   
             $registro->save();
 
             \DB::commit();
@@ -170,6 +167,7 @@ class CierreRutaController extends Controller
             $record = CierreRuta::where('cobrador_id', $request->input('collector_id'))
                                 ->where('fecha_cierre', $request->input('date'))
                                 ->where('estado', 1)
+                                ->whereOr('estado', 2)
                                 ->first();
             
             if ($record) {
