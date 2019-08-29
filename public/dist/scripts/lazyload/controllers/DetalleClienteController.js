@@ -18,8 +18,7 @@
 			  	url: 	API_URL+'detallecliente',
 			  	params: {cliente_id:id}
 			})
-			.then(function successCallback(response)  {		
-				
+			.then(function successCallback(response)  {						
 				customer =  response.data.records
 
 				if (customer.creditos.length > 1){
@@ -38,8 +37,7 @@
 			showData(credit)
 		}
 
-		function showData(infoCredit){
-			
+		function showData(infoCredit){			
 			$scope.dpi	= customer.dpi
 			$scope.nombre = customer.nombre
 			$scope.apellido = customer.apellido

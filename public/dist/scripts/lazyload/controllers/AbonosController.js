@@ -161,9 +161,7 @@
               $timeout(function () { $scope.closeAlert(0); }, 5000);
             }
           }, function errorCallback(response) {
-              modal.close();
-              $scope.createToast("danger", "<strong>Error: </strong>" + response.data.message);
-              $timeout(function () { $scope.closeAlert(0); }, 5000);
+            console.log(response.data.message);
           });
         } else {
           $scope.createToast("danger", "<strong>Error: </strong>" + 'Debe ingresar una cantidad válida');

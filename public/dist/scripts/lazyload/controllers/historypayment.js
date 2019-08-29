@@ -86,16 +86,19 @@
 							$timeout( function(){ $scope.closeAlert(0); }, 3000);
 						}
 						else {
+							modal.close();
 							$scope.createToast("danger", "<strong>Error: </strong>"+response.data.message);
 							$timeout( function(){ $scope.closeAlert(0); }, 5000);	
 						}
 					}, 
 					function errorCallback(response) {
-						console.log( response.data.message );
+						modal.close();
+						$scope.createToast("danger", "<strong>Error: </strong>"+response.data.message);
+						$timeout( function(){ $scope.closeAlert(0); }, 5000);
 					});
 			}
 		}
-		//FUNCIONES DE TOAST		
+		// #region Modals		
 		$scope.createToast = function(tipo, mensaje) {
 			$scope.toasts.push({
 				anim: "bouncyflip",
@@ -107,8 +110,9 @@
 		$scope.closeAlert = function(index) {
 			$scope.toasts.splice(index, 1);
 		}
+		// #endregion
 
-		// FUNCIONES DE DATATABLE
+		// #region Function Table
 		$scope.select = function(page) {
 			var start = (page - 1)*$scope.numPerPage,
 				end = start + $scope.numPerPage;
@@ -144,8 +148,9 @@
 			$scope.filteredData = $filter('orderBy')($scope.datas, rowName);
 			$scope.onOrderChange();
 		}	
+		// #endregion
 
-		//FUNCIONES DE MODALES
+		// #region Modals
 		$scope.modalDeleteOpen = function(data) {			
 			$scope.accion = 'eliminar';
 			$scope.record = data;
@@ -162,5 +167,6 @@
 		$scope.modalClose = function() {
 			modal.close();
 		}
+		// #endregion
 	}])
 }())

@@ -100,7 +100,7 @@
       <div class="col-md-9">
         <div class="panel panel-default table-responsive panel-hovered mb20">
           <div class="panel-heading">
-            <h4>Lista de clientes de: {{ collectorSelected }}</h4>
+            <h4>Lista de clientes de: {{ collectorSelected.nombre }}</h4>
           </div>
 
           <div class="panel-heading">
@@ -304,7 +304,12 @@
                 </div>
                 <br>
                 <div class="col-sm-12 text-center">
-                  <button class="btn btn-info btn-rounded" ng-click="printResume()">Imprimir resumen</button>
+                  <button ng-hide="showButtonRouteClosure" class="btn btn-danger btn-rounded" ng-click="modalConfirm(collectorSelected, collectionofday)">CIERRE DE RUTA</button>
+                </div>
+                <br>
+                <br>
+                <div class="col-sm-12 text-center">
+                  <button class="btn btn-info btn-rounded" ng-click="printResume()">IMPRIMIR RESUMEN</button>
                 </div>
               </div>
             </div>
@@ -312,6 +317,11 @@
         </div>
       </div>
     </div>
+    <div class="toast toast-{{positionModel}}">
+			<alert ng-repeat="toast in toasts" type="{{toast.type}}" close="closeAlert($index)" class="toast-{{toast.anim}}">
+				<div ng-bind-html="toast.msg"></div>
+			</alert>
+		</div>
   </div>
   <!-- #end page-wrap -->
 </div>

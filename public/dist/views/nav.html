@@ -60,6 +60,12 @@
 				<span class="text">Cobradores</span>
 			</a>
 		</li>
+		<li ng-show="usuario.tipo_usuarios_id == 2 || usuario.tipo_usuarios_id == 3">
+			<a href="#/cierreruta" md-ink-ripple>
+				<i class="ion ion-android-bicycle"></i>
+				<span class="text">Cierre de Ruta</span>
+			</a>
+		</li>
 		<li>
 			<a href="#/planes" md-ink-ripple>
 				<i class="ion ion-arrow-graph-up-right"></i>
@@ -78,6 +84,7 @@
 				<span class="text">Usuarios</span>
 			</a>
 		</li>
+	
 		<li ng-show="usuario.tipo_usuarios_id == 1 || usuario.tipo_usuarios_id == 2 || usuario.tipo_usuarios_id == 3">
 			<a href="javascript:;" md-ink-ripple>
 				<i class="ion ion-android-options"></i>

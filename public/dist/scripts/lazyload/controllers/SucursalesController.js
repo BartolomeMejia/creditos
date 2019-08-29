@@ -32,7 +32,7 @@
 				$scope.select($scope.currentPage);
 			}, 
 			function errorCallback(response)  {			
-			   console.log( response.data.message );			   
+			   console.log( response.data.message );
 			});
 		}
 

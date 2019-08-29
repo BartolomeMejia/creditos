@@ -145,7 +145,6 @@
             console.log(response.data.message);
           });
         } else if ($scope.accion == 'editar') {
-          
           $http({
             method: 'PUT',
             url: API_URL + 'clientes/' + cliente.id,
