@@ -20,7 +20,6 @@
 		$scope.dateRouteClosure = $filter('date')(new Date(), 'yyyy-MM-dd')
 
 		var modal
-		var collectorSelected = {}
 
 		showCierreRutas();
 		

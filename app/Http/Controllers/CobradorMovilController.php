@@ -9,13 +9,11 @@ use App\Http\Controllers\Controller;
 use App\Usuarios;
 use App\Creditos;
 use App\DetallePagos;
+use App\CierreRuta;
 use Auth;
 use DB;
 use Session;
 use App\Http\Traits\detailsPaymentsTrait;
-
-//revisar el usuario que no sea repedito
-//validar el password que vaya vacio
 
 class CobradorMovilController extends Controller
 {
@@ -56,42 +54,49 @@ class CobradorMovilController extends Controller
     {
         try {
             $hoy = date('Y-m-d');
-            $registros = Creditos::where("usuarios_cobrador", $request->input("idusuario"))
-                                    ->where("estado",1)
-                                    ->where("fecha_inicio", "<=", $hoy)
-                                    ->with("cliente")                                    
-                                    ->get();
-            if( $registros ){
-                $totalacobrar = 0;
-                $totalminimocobrar = 0;
-                $cantidadclientes = 0;
-                $pagohoy = false;
-                foreach ($registros as $item) {
+
+            $routeClosure = CierreRuta::where('cobrador_id', $request->input('idusuario'))
+                                ->where('fecha_cierre', $hoy)
+                                ->where('estado', 1)
+                                ->whereOr('estado', 2)
+                                ->first();
+
+            if (!$routeClosure) {
+                $registros = Creditos::where("usuarios_cobrador", $request->input("idusuario"))
+                                        ->where("estado",1)
+                                        ->where("fecha_inicio", "<=", $hoy)
+                                        ->with("cliente")                                    
+                                        ->get();
+                if ($registros) {
+                    $totalacobrar = 0;
+                    $totalminimocobrar = 0;
+                    $cantidadclientes = 0;
+                    $pagohoy = false;
+                    foreach ($registros as $item) {                        
+                            $detailsPayments = $this->getDetailsPayments($item->id);   
+                            $item['cantidad_cuotas_pagadas'] = $detailsPayments->totalFees;
+                            $item['monto_abonado'] = $detailsPayments->paymentPaid;                    
+                            $item['fecha_inicio'] = \Carbon\Carbon::parse($item->fecha_inicio)->format('d-m-Y');
+                            $item['fecha_limite'] = \Carbon\Carbon::parse($item->fecha_limite)->format('d-m-Y');
+                            $item['pago_hoy'] = DetallePagos::where('credito_id', $item->id)->where('estado',1)->get()->contains('fecha_pago', $hoy);                    
+                            $item['nombre_completo'] = $item->cliente->nombre.' '.$item->cliente->apellido;
+                            $totalacobrar = $totalacobrar + $item->cuota_diaria;
+                            $totalminimocobrar = $totalminimocobrar + $item->cuota_minima;
+                            $cantidadclientes = $cantidadclientes + 1;                       
+                    }
+                    $datos = [];
+                    $datos['total_cobrar'] = $totalacobrar;
+                    $datos['total_minimo'] = $totalminimocobrar;                             
+                    $datos['registros'] = $registros;
                     
-                        $detailsPayments = $this->getDetailsPayments($item->id);   
-                        $item['cantidad_cuotas_pagadas'] = $detailsPayments->totalFees;
-                        $item['monto_abonado'] = $detailsPayments->paymentPaid;                    
-                        $item['fecha_inicio'] = \Carbon\Carbon::parse($item->fecha_inicio)->format('d-m-Y');
-                        $item['fecha_limite'] = \Carbon\Carbon::parse($item->fecha_limite)->format('d-m-Y');
-                        $item['pago_hoy'] = DetallePagos::where('credito_id', $item->id)->where('estado',1)->get()->contains('fecha_pago', $hoy);                    
-                        $item['nombre_completo'] = $item->cliente->nombre.' '.$item->cliente->apellido;
-                        $totalacobrar = $totalacobrar + $item->cuota_diaria;
-                        $totalminimocobrar = $totalminimocobrar + $item->cuota_minima;
-                        $cantidadclientes = $cantidadclientes + 1;
-                    
-                }
-                $datos = [];
-                $datos['total_cobrar'] = $totalacobrar;
-                $datos['total_minimo'] = $totalminimocobrar;                             
-                $datos['registros'] = $registros;
-                
-                $this->statusCode   = 200;
-                $this->result       = true;
-                $this->message      = "Registros consultados exitosamente";
-                $this->records      = $datos;
-            }
-            else
-                throw new \Exception("No se encontraron registros");
+                    $this->statusCode   = 200;
+                    $this->result       = true;
+                    $this->message      = "Registros consultados exitosamente";
+                    $this->records      = $datos;
+                } else
+                    throw new \Exception("No se encontraron registros");
+            } else 
+                throw new \Exception("La ruta del día de hoy ha sido cerrada");
                 
         } catch (\Exception $e) {
             $this->statusCode   = 200;
