@@ -172,7 +172,7 @@ class CobradorController extends Controller
                 return null;
             }
         } else {
-            dd("aqui 2");
+            dd($request->input("closure_id"));
             return null;
         }
     }
