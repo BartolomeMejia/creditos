@@ -167,12 +167,10 @@ class CobradorController extends Controller
                     $pdf = \PDF::loadView('pdf.resumentodaycollector', ['data' => $datos])->setPaper('legal', 'portrait');
                     return $pdf->download($collector->nombre.'.pdf');
                 }
-            } else {
-                dd("aqui 1");
+            } else {                
                 return null;
             }
-        } else {
-            dd($request->input("closure_id"));
+        } else {            
             return null;
         }
     }
