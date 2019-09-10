@@ -8,6 +8,7 @@ pdfs_service.service('pdfsService', ['$window','$http', 'API_URL', function($win
     };
 
     this.resumenPaymentCollector = function(cobradorId, date, routeClosureId){
+        console.log(routeClosureId)
         $window.location.href = API_URL+'collectorpdf?idusuario='+cobradorId+'&fecha='+date+'&closure_id='+routeClosureId;
     }
 }]);
