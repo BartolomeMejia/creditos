@@ -168,9 +168,11 @@ class CobradorController extends Controller
                     return $pdf->download($collector->nombre.'.pdf');
                 }
             } else {
+                dd("aqui 1");
                 return null;
             }
         } else {
+            dd("aqui 1");
             return null;
         }
     }
