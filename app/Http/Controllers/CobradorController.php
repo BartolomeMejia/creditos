@@ -172,7 +172,7 @@ class CobradorController extends Controller
                 return null;
             }
         } else {
-            dd("aqui 1");
+            dd("aqui 2");
             return null;
         }
     }
