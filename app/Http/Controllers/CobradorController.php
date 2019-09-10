@@ -161,13 +161,18 @@ class CobradorController extends Controller
             
             if ($routeClosure) {
                 $routeClosure->info_closure = json_encode($datos);
-                $routeClosure->save();
+                
+                if ($routeClosure->save() ) {
+                    $pdf = \App::make('dompdf');        
+                    $pdf = \PDF::loadView('pdf.resumentodaycollector', ['data' => $datos])->setPaper('legal', 'portrait');
+                    return $pdf->download($collector->nombre.'.pdf');
+                }
+            } else {
+                return null;
             }
+        } else {
+            return null;
         }
-
-        $pdf = \App::make('dompdf');        
-        $pdf = \PDF::loadView('pdf.resumentodaycollector', ['data' => $datos])->setPaper('legal', 'portrait');
-        return $pdf->download($collector->nombre.'.pdf');
     }
     
 } 
