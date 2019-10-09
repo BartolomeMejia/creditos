@@ -78,6 +78,7 @@ trait generateArrayForTicketTrait {
         $infoCredit->date = $data->fecha_inicio;
         $infoCredit->amount = $data->montos->monto;
         $infoCredit->fees = $data->cuota_diaria;
+        $infoCredit->amountDefault = $dailyAmount/2;
         $infoCredit->arrayQuota = $row;
         
         return $infoCredit;
@@ -135,6 +136,7 @@ trait generateArrayForTicketTrait {
         $infoCredit->date = $data->fecha_inicio;
         $infoCredit->amount = $data->montos->monto;
         $infoCredit->fees = $data->cuota_diaria;
+        $infoCredit->amountDefault = $dailyAmount/2;
         $infoCredit->arrayQuota = $row;
         
         return $infoCredit;

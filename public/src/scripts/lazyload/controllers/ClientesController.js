@@ -16,26 +16,24 @@
       $scope.currentPage = 1;
       $scope.positionModel = "topRight";
       $scope.toasts = [];
-      var modal;
 
-      function loadBranches() {
-        $http.get(API_URL + 'sucursales', {})
-          .then(function successCallback(response) {
-            if (response.data.result) {
-              $scope.sucursales = response.data.records;
-            }
-          });
-      }
+      $scope.buttonColor = "btn-danger"
+      $scope.buttonText = "Mostrar clientes eliminados y completados"
+
+      var modal
+      var flagShowCustomersActive = true
+
+      //#region "Initializers functions"
+      loadBranches()
+      //#endregion
 
       $scope.cargarUsuariosCobrador = function () {
-        
         $scope.usuarios_cobrador = [];
-
         $http.get(API_URL + 'listacobradores', {}).then(function (response) {
-          if (response.data.result){
+          if (response.data.result) {
             response.data.records.forEach(function (item) {
               if (item.sucursales_id == $scope.usuario.sucursales_id) {
-                $scope.usuarios_cobrador.push(item)
+                  $scope.usuarios_cobrador.push(item)
               }
             })
           }
@@ -43,7 +41,6 @@
       }
 
       $scope.LlenarTabla = function (branch_id) {
-
         var branch_selectd = branch_id != null ? branch_id : $scope.usuario.sucursales_id;
         $scope.datas = [];
 
@@ -53,71 +50,19 @@
         })
         .then(function successCallback(response) {
           response.data.records.forEach(function (item) {
-            if (item.sucursal_id == branch_selectd) {
-              $scope.datas.push(item)
+            if (item.sucursal_id == branch_selectd) {      
+                if (flagShowCustomersActive && item.statusCredit == 2)
+                  $scope.datas.push(item)            
+                else if (!flagShowCustomersActive && item.statusCredit != 2)
+                  $scope.datas.push(item)            
             }
           })
-
           $scope.search();
           $scope.select($scope.currentPage);
         }, 
         function errorCallback(response) {
           console.log(response.data.message);
         });
-      }
-
-      // FUNCIONES DE DATATABLE
-      $scope.select = function (page) {
-        var start = (page - 1) * $scope.numPerPage,
-          end = start + $scope.numPerPage;
-
-        $scope.currentPageStores = $scope.filteredData.slice(start, end);
-      }
-
-      $scope.onFilterChange = function () {
-        $scope.select(1);
-        $scope.currentPage = 1;
-        $scope.row = '';
-      }
-
-      $scope.onNumPerPageChange = function () {
-        $scope.select(1);
-        $scope.currentPage = 1;
-      }
-
-      $scope.onOrderChange = function () {
-        $scope.select(1);
-        $scope.currentPage = 1;
-      }
-
-      $scope.search = function () {
-        $scope.filteredData = $filter("filter")($scope.datas, $scope.searchKeywords);
-        $scope.onFilterChange();
-      }
-
-      $scope.order = function (rowName) {
-        if ($scope.row == rowName)
-          return;
-        $scope.row = rowName;
-        $scope.filteredData = $filter('orderBy')($scope.datas, rowName);
-        $scope.onOrderChange();
-      }
-
-      loadBranches()
-      $scope.LlenarTabla();
-      $scope.cargarUsuariosCobrador()
-
-      // Función para Toast
-      $scope.createToast = function (tipo, mensaje) {
-        $scope.toasts.push({
-          anim: "bouncyflip",
-          type: tipo,
-          msg: mensaje
-        });
-      }
-
-      $scope.closeAlert = function (index) {
-        $scope.toasts.splice(index, 1);
       }
 
       $scope.changeDataBranch = function (branch_id) {
@@ -182,7 +127,70 @@
         }
       }
 
-      // Funciones para Modales
+      $scope.showActiveCustomers = function() {
+        flagShowCustomersActive = !flagShowCustomersActive
+        if (flagShowCustomersActive) {
+          $scope.buttonColor = "btn-danger"
+          $scope.buttonText = "Mostrar clientes eliminados y completados"
+        } else {
+          $scope.buttonColor = "btn-info"
+          $scope.buttonText = "Mostrar clientes activos"
+        }
+        $scope.LlenarTabla();
+      }
+
+      //#region "Initializers scope"      
+      $scope.LlenarTabla();
+      $scope.cargarUsuariosCobrador()
+      //#endregion
+
+      function loadBranches() {
+        $http.get(API_URL + 'sucursales', {})
+          .then(function successCallback(response) {
+            if (response.data.result) {
+              $scope.sucursales = response.data.records;
+            }
+          });
+      }
+
+      //#region "Datatable"
+      $scope.select = function (page) {
+        var start = (page - 1) * $scope.numPerPage,
+          end = start + $scope.numPerPage;
+
+        $scope.currentPageStores = $scope.filteredData.slice(start, end);
+      }
+
+      $scope.onFilterChange = function () {
+        $scope.select(1);
+        $scope.currentPage = 1;
+        $scope.row = '';
+      }
+
+      $scope.onNumPerPageChange = function () {
+        $scope.select(1);
+        $scope.currentPage = 1;
+      }
+
+      $scope.onOrderChange = function () {
+        $scope.select(1);
+        $scope.currentPage = 1;
+      }
+
+      $scope.search = function () {
+        $scope.filteredData = $filter("filter")($scope.datas, $scope.searchKeywords);
+        $scope.onFilterChange();
+      }
+
+      $scope.order = function (rowName) {
+        if ($scope.row == rowName)
+          return;
+        $scope.row = rowName;
+        $scope.filteredData = $filter('orderBy')($scope.datas, rowName);
+        $scope.onOrderChange();
+      }
+      //#endregion
+      //#region "modal"
       $scope.modalCreateOpen = function () {
         $scope.cliente = {};
         $scope.accion = 'crear';
@@ -224,5 +232,19 @@
       $scope.modalClose = function () {
         modal.close();
       }
+      //#endregion
+      //#region "Toast"
+      $scope.createToast = function (tipo, mensaje) {
+        $scope.toasts.push({
+          anim: "bouncyflip",
+          type: tipo,
+          msg: mensaje
+        });
+      }
+
+      $scope.closeAlert = function (index) {
+        $scope.toasts.splice(index, 1);
+      }
+      //#endregion
     }])
 }())

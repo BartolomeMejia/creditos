@@ -53,8 +53,10 @@
       }
 
       $scope.calcularInteresCuota = function (plan) {
-        $scope.detalle_cliente.interes = ($scope.detalle_cliente.monto_id.monto * plan.porcentaje) / 100
-        $scope.detalle_cliente.cuota_diaria = ($scope.detalle_cliente.interes + $scope.detalle_cliente.monto_id.monto) / plan.dias
+        if (plan.id > 0) {
+          $scope.detalle_cliente.interes = ($scope.detalle_cliente.monto_id.monto * plan.porcentaje) / 100
+          $scope.detalle_cliente.cuota_diaria = ($scope.detalle_cliente.interes + $scope.detalle_cliente.monto_id.monto) / plan.dias
+        }
       }
 
       $scope.getEndDate = function (plan){
@@ -74,8 +76,7 @@
         }).then(function successCallback(response) {          
             if (response.data.result) {                         
               $scope.modalShowInfoCustomer(response.data.records)
-            }
-            else {
+            } else {
               $scope.createToast("danger", "<strong>Error: </strong>" + response.data.message)
               $timeout(function () { $scope.closeAlert(0) }, 5000)
             }
@@ -111,8 +112,7 @@
               $('#row-detalle').addClass('hidden')
               $('#customerDpi').val("")
               $timeout(function () { $scope.closeAlert(0) }, 5000)
-            }
-            else {
+            } else {
               $scope.createToast("danger", "<strong>Error: </strong>" + response.data.message)
               $timeout(function () { $scope.closeAlert(0) }, 5000)
             }
@@ -137,7 +137,7 @@
                 $scope.detalle_cliente.credito = 0;
                 $scope.detalle_cliente.nombre = response.data.records.nombre + ' ' + response.data.records.apellido
 
-                //modal.close()
+                modal.close()
                 $scope.createToast("success", "<strong>Éxito: </strong>" + response.data.message)
                 $timeout(function () {
                   $scope.closeAlert(0)
