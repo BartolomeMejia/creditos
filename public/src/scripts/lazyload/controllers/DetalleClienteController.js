@@ -11,8 +11,7 @@
 		$scope.itemCredit = "";
 		$scope.showInputSelect = false
 
-		$scope.datosCliente = function(id)
-		{
+		$scope.datosCliente = function(id) {
 			$http({
 				method: 'GET',
 			  	url: 	API_URL+'detallecliente',
@@ -21,7 +20,7 @@
 			.then(function successCallback(response)  {						
 				customer =  response.data.records
 
-				if (customer.creditos.length > 1){
+				if (customer.creditos.length > 1) {
 					$scope.showInputSelect = true
 					arrayCredits(customer.creditos)
 				}
@@ -33,11 +32,11 @@
 		}
 
 		$scope.datosCliente($routeParams.id);
-		$scope.creditSelected = function(credit){
+		$scope.creditSelected = function(credit) {
 			showData(credit)
 		}
 
-		function showData(infoCredit){			
+		function showData(infoCredit) {			
 			$scope.dpi	= customer.dpi
 			$scope.nombre = customer.nombre
 			$scope.apellido = customer.apellido
@@ -61,12 +60,43 @@
 			$scope.porcentaje = parseInt(infoCredit.porcentaje_pago);
 		}
 
-		function arrayCredits(credits){
-			credits.forEach(function (item) {            	
-				$scope.listCredito.push(item)                
+		function arrayCredits(credits) {
+			var array = [];
+			credits.forEach(function (item) {    
+				item.statusText = statusText(item.estado)	
+				array.push(item)                			
+				
 			})
 
+			$scope.listCredito = array.sort(function (a, b) {
+				if (a.statusText > b.statusText) {
+				  return 1;
+				} 
+				
+				if (a.statusText < b.statusText) {
+				  return -1;
+				}
+				// a must be equal to b
+				return 0;
+			  });
+
 			$scope.itemCredit = $scope.listCredito[0]
+		}
+
+		function statusText(status) {
+			switch (status) {
+				case 0 :
+					return "Completado"
+					break;
+				case 1 :
+					return "Activo"
+					break;
+				case 2 :
+					return "Eliminado"
+					break;
+				default:
+					return ""
+			}
 		}
 	}])
 }())

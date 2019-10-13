@@ -326,9 +326,14 @@ class ClientesController extends Controller {
 
     public function detalleCreditoCliente(Request $request) {
         try {            
-            $creditoCliente = Clientes::with(['creditos' => function($item) {
+            /*$creditoCliente = Clientes::with(['creditos' => function($item) {
                                             $item->where('estado', 1);
                                         }])                                
+                                        ->where('sucursal_id', $request->session()->get('usuario')->sucursales_id)
+                                        ->where('id', $request->input('cliente_id'))                                        
+                                        ->first();*/
+                                        
+            $creditoCliente = Clientes::with("creditos")                                
                                         ->where('sucursal_id', $request->session()->get('usuario')->sucursales_id)
                                         ->where('id', $request->input('cliente_id'))                                        
                                         ->first();
