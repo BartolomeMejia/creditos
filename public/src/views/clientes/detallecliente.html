@@ -65,6 +65,9 @@
 														ng-change="creditSelected(itemCredit)">
 												</select>							
 											</div>
+											<h4><span ng-if="status_credit == 1" class="label label-success">CRÉDITO ACTIVO</span></h4>
+											<h4><span ng-if="status_credit == 0" class="label label-info">CRÉDITO COMPLETADO</span></h4>
+											<h4><span ng-if="status_credit == 2" class="label label-danger">CRÉDITO ELIMINADO</span></h4>																						
 										</div>
 									</div>
 								</div>

@@ -19,12 +19,14 @@
 			})
 			.then(function successCallback(response)  {						
 				customer =  response.data.records
-
-				if (customer.creditos.length > 1) {
+				var credits = prepareListCredits(customer.creditos)
+				
+				if (credits.length > 1) { 
 					$scope.showInputSelect = true
-					arrayCredits(customer.creditos)
+					$scope.listCredito = credits
 				}
-				showData(customer.creditos[0])
+				$scope.itemCredit = credits[0]	
+				showData(credits[0])
 			}, 
 			function errorCallback(response)  {			
 			   console.log( response.data.message );
@@ -36,7 +38,8 @@
 			showData(credit)
 		}
 
-		function showData(infoCredit) {			
+		function showData(infoCredit) {	
+			console.log(infoCredit)		
 			$scope.dpi	= customer.dpi
 			$scope.nombre = customer.nombre
 			$scope.apellido = customer.apellido
@@ -47,28 +50,29 @@
 			$scope.telefono = customer.telefono
 
 			$scope.plan = infoCredit.planes.descripcion
-			$scope.monto_total = "Q. "+parseFloat(infoCredit.deudatotal).toFixed(2);
+			$scope.monto_total = "Q. "+parseFloat(infoCredit.deudatotal).toFixed(2)
 			$scope.fecha_inicio = infoCredit.fecha_inicio
 			$scope.fecha_fin = infoCredit.fecha_fin		
 			$scope.cobrador = infoCredit.usuariocobrador.nombre
-			$scope.cuota_diaria = "Q. "+parseFloat(infoCredit.cuota_diaria).toFixed(2);
-				
-			$scope.saldo_pendiente = "Q. "+parseFloat(infoCredit.saldo).toFixed(2);
-			$scope.total_cancelado = "Q. "+parseFloat(infoCredit.total_cancelado).toFixed(2);
+			$scope.cuota_diaria = "Q. "+parseFloat(infoCredit.cuota_diaria).toFixed(2)
+			$scope.status_credit = infoCredit.estado	
+			$scope.saldo_pendiente = "Q. "+parseFloat(infoCredit.saldo).toFixed(2)
+			$scope.total_cancelado = "Q. "+parseFloat(infoCredit.total_cancelado).toFixed(2)
 			$scope.cuotas_pagadas = infoCredit.cuotas_pagados;
 
-			$scope.porcentaje = parseInt(infoCredit.porcentaje_pago);
+			$scope.porcentaje = parseInt(infoCredit.porcentaje_pago)
 		}
 
-		function arrayCredits(credits) {
+		function prepareListCredits(credits) {
 			var array = [];
+			
 			credits.forEach(function (item) {    
 				item.statusText = statusText(item.estado)	
 				array.push(item)                			
 				
 			})
 
-			$scope.listCredito = array.sort(function (a, b) {
+			array.sort(function (a, b) {
 				if (a.statusText > b.statusText) {
 				  return 1;
 				} 
@@ -80,7 +84,8 @@
 				return 0;
 			  });
 
-			$scope.itemCredit = $scope.listCredito[0]
+			
+			return array
 		}
 
 		function statusText(status) {
