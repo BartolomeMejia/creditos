@@ -19,6 +19,10 @@ Route::get('/boletaview', function(){
 	return view('pdf.resumentodaycollector');
 });
 
+/*Route::get('/accountstatus', function(){
+	return view('pdf.accountstatus');
+});*/
+
 Route::group(['prefix' => 'ws'], function() {
 	Route::resource('tipousuarios', 		'TipoUsuariosController');
 	Route::resource('sucursales', 			'SucursalesController');
@@ -51,6 +55,7 @@ Route::group(['prefix' => 'ws'], function() {
 	Route::get('reportcollector',			'ReportsController@collector');
 	Route::get('reportdates',				'ReportsController@dates');
 	Route::get('printinfoclosure',			'CierreRutaController@printReportClosure');
+	Route::get('printaccountstatus',		'ClientesController@printPDFAccountStatus');
 
 	Route::get('logout',function() {
 		Auth::logout();

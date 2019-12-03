@@ -171,7 +171,9 @@ class CobradorController extends Controller
                 return null;
             }
         } else {            
-            return null;
+            $pdf = \App::make('dompdf');        
+            $pdf = \PDF::loadView('pdf.resumentodaycollector', ['data' => $datos])->setPaper('legal', 'portrait');
+            return $pdf->download($collector->nombre.'.pdf');
         }
     }
     

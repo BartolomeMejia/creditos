@@ -6,9 +6,20 @@
 					<div class="panel-heading"><h4>Clientes</h4></div>
 					<div class="panel-body">
 						<div class="col-sm-6">
-							<div class="row" ng-show="usuario.tipo_usuarios_id == 1 || usuario.tipo_usuarios_id == 2 || usuario.tipo_usuarios_id == 3">
-								<button type="button" class="btn btn-success btn-rounded" ng-click="modalCreateOpen()" md-ink-ripple><i class="fa fa-plus"></i> Crear cliente</button>						
-							</div>
+							<div class="row">
+								<button type="button" 
+										class="btn btn-success btn-rounded" 
+										ng-show="usuario.tipo_usuarios_id == 1 || usuario.tipo_usuarios_id == 2 || usuario.tipo_usuarios_id == 3"
+										ng-click="modalCreateOpen()" md-ink-ripple>
+										<i class="fa fa-plus"></i> 
+										Crear cliente
+								</button>													
+								<button type="button" 							
+										class="btn btn-rounded {{buttonColor}}" 										
+										ng-click="showActiveCustomers()" md-ink-ripple>										
+										{{buttonText}}
+								</button>					
+							</div>							
 						</div>	
 						<div class="col-sm-6">
 							<div class="row" ng-show="usuario.tipo_usuarios_id == 1">								
@@ -115,7 +126,7 @@
 									</div>
 								</th>
 								<th>
-									Cantidad de créditos
+									Créditos
 									<div class="th">
 										<i class="fa fa-caret-up icon-up"
 											ng-click=" order('sexo') "
@@ -136,7 +147,7 @@
                               				ng-class="{active: row == '-categoria'}"></i>
 									</div>
 								</th> -->
-								<th>
+								<!--<th>
 									Color
 									<div class="th">
 										<i class="fa fa-caret-up icon-up"
@@ -146,12 +157,12 @@
 											ng-click=" order('-color') "
                               				ng-class="{active: row == '-color'}"></i>
 									</div>
-								</th>
+								</th> -->
 								<th>Acciones</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr ng-repeat="data in currentPageStores track by $index">
+							<tr ng-repeat="data in currentPageStores track by $index">								
 								<td>{{ $index + 1 }}</td>
 								<td>{{ data.nombre}} {{ data.apellido }}</td>
 								<td>{{ data.direccion }}</td>
@@ -168,13 +179,13 @@
 									<label ng-if="data.categoria == 'C'" class="label label-warning mr5">C</label>
 									<label ng-if="data.categoria == 'D'" class="label label-danger mr5">D</label>
 								</td>-->
-								<td>
+								<!--<td>
 									<label ng-if="data.color == 'verde'" class="label label-success mr5">Verde</label>
 									<label ng-if="data.color == 'amarillo'" class="label label-warning mr5">Amarillo</label>
 									<label ng-if="data.color == 'rojo'" class="label label-danger mr5">Rojo</label>
-								</td>
+								</td>-->
 								<td>
-									<div class="btn-group">
+									<div class="btn-group btn-group-sm">
 					                    <button ng-show="data.statusCredit != 4 && data.statusCredit != 3" type="button" class="btn btn-info ion ion-edit" ng-click="modalEditOpen(data)" md-ink-ripple></button>
 					                    <button ng-show="data.statusCredit != 4" type="button" class="btn btn-danger ion ion-trash-a" ng-click="modalDeleteOpen(data)" md-ink-ripple></button>
 					                    <a ng-show="data.statusCredit == 2" type="button" class="btn btn-success ion ion-calculator" href="#/detallecliente/{{ data.id }}" md-ink-ripple></a>

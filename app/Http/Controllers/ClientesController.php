@@ -340,8 +340,9 @@ class ClientesController extends Controller {
             if ($creditoCliente) {                
                 if ($creditoCliente->creditos->count() > 0) {                                                                                
                     $creditoCliente->creditos = $creditoCliente->creditos->map(function($item,$key){
-                                                    if($item->estado == 1){        
+                                                    if($item->estado == 1){                                                    
                                                         $detailsPayments = $this->getDetailsPayments($item->id);                                    
+                                                        //$item->allPayments = $detailsPayments->allPayments;
                                                         $item->saldo_abonado = $detailsPayments->paymentPaid;
                                                         $item->cuotas_pagados = $detailsPayments->totalFees;
                                                         $item->total_cancelado = $detailsPayments->totalPayment;
@@ -398,21 +399,9 @@ class ClientesController extends Controller {
         }
     }
 
-    public function historyPayments(Request $request) {
-        try {
-            
-
-        } catch (\Exception $e) {
-            $this->statusCode   = 200;
-            $this->result       = false;
-            $this->message      = env('APP_DEBUG') ? $e->getMessage() : "Ocurrió un problema al consultar el registro";
-        } finally {
-            $response = [
-                'result'    => $this->result,
-                'message'   => $this->message,
-                'records'   => $this->records,
-            ];
-            return response()->json($response, $this->statusCode);
-        }
-    }
+   /* public function printPDFAccountStatus(Request $request) {
+        $datos = json_decode($this->detalleCreditoCliente($request));
+        $newDatos = $datos->creditos->filter(function ($item) use ($request){return $item->id == 7;});
+        return $datos;
+    }*/
 }

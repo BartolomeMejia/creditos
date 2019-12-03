@@ -44,7 +44,7 @@
 						<div class="row">
 							<div class="col-sm-4">
 								<label>Plan de préstamo</label>
-								<select class="form-control" ng-model="detalle_cliente.planes_id" ng-options="item as item.descripcion for item in planes" required></select>
+								<select class="form-control" ng-model="detalle_cliente.planes_id" ng-options="item as item.descripcion for item in planes" ng-change="calcularInteresCuota(detalle_cliente.planes_id)" required></select>
 							</div>
 							<div class="col-sm-4">
 								<label>Monto</label>
